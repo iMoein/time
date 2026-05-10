@@ -6,8 +6,8 @@ A lightweight Node.js and React single-page world-clock app inspired by Time.is,
 
 - Live clock with seconds for the selected city.
 - One-click switching between the active city cards.
-- Search thousands of IANA time zones by city, region, or timezone name.
-- Add new cities to the dashboard and remove cities you no longer need.
+- Enter edit mode to add or remove cities only when you want to manage the dashboard.
+- Search thousands of IANA time zones from a compact dropdown by city, region, or timezone name.
 - Saved city selections in the browser so the dashboard survives refreshes.
 - Date, calendar label, and ISO week number for every active city.
 - Persian calendar display for Tehran alongside the Gregorian date.

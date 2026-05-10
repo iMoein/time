@@ -188,6 +188,8 @@ function CityCard({ city, selected, canRemove, onRemove, onSelect }) {
 }
 
 function SearchPanel({ query, results, onAdd, onQueryChange }) {
+  const hasQuery = query.trim().length > 0;
+
   return h(
     'div',
     { className: 'search-panel' },
@@ -203,10 +205,10 @@ function SearchPanel({ query, results, onAdd, onQueryChange }) {
         autoComplete: 'off',
       }),
     ),
-    h(
+    hasQuery && h(
       'div',
       { className: 'search-results', 'aria-live': 'polite' },
-      query.trim()
+      results.length > 0
         ? results.map((city) => h(
           'button',
           { type: 'button', className: 'search-result', onClick: () => onAdd(city.id), key: city.id, style: { '--accent': city.accent } },
@@ -214,8 +216,7 @@ function SearchPanel({ query, results, onAdd, onQueryChange }) {
           h('small', null, `${city.country} · ${city.timeZone}`),
           h('strong', null, '+ Add'),
         ))
-        : h('p', { className: 'search-empty' }, 'Search thousands of IANA time zones and add the ones you need.'),
-      query.trim() && results.length === 0 && h('p', { className: 'search-empty' }, 'No city found, try another city or timezone name.'),
+        : h('p', { className: 'search-empty' }, 'No city found, try another city or timezone name.'),
     ),
   );
 }
@@ -234,6 +235,7 @@ function App() {
   const [activeCityIds, setActiveCityIds] = useState(getInitialCityIds);
   const [selectedCityId, setSelectedCityId] = useState(activeCityIds[0] || defaultCityIds[0]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [editMode, setEditMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
 
   useEffect(() => {
@@ -280,6 +282,11 @@ function App() {
   const addCity = (cityId) => {
     setActiveCityIds((currentIds) => (currentIds.includes(cityId) ? currentIds : [...currentIds, cityId]));
     setSelectedCityId(cityId);
+    setSearchQuery('');
+  };
+
+  const toggleEditMode = () => {
+    setEditMode((currentMode) => !currentMode);
     setSearchQuery('');
   };
 
@@ -336,15 +343,25 @@ function App() {
     h(
       'section',
       { className: 'switcher-panel', 'aria-label': 'Switch city time' },
-      h('div', { className: 'section-heading' }, h('span', null, 'Manage timezones'), h('strong', null, 'جستجو، افزودن و حذف شهر')),
-      h(SearchPanel, { query: searchQuery, results: searchResults, onAdd: addCity, onQueryChange: setSearchQuery }),
+      h(
+        'div',
+        { className: 'section-heading' },
+        h('span', null, 'Manage timezones'),
+        h(
+          'div',
+          { className: 'heading-actions' },
+          h('strong', null, editMode ? 'Search, add, and remove cities' : 'Switch between your saved cities'),
+          h('button', { type: 'button', className: 'edit-toggle', onClick: toggleEditMode }, editMode ? 'Done' : 'Edit'),
+        ),
+      ),
+      editMode && h(SearchPanel, { query: searchQuery, results: searchResults, onAdd: addCity, onQueryChange: setSearchQuery }),
       h(
         'div',
         { className: 'city-tabs' },
         activeSnapshots.map((city) => h(ToggleButton, {
           city,
           selected: city.id === selectedCity.id,
-          canRemove: activeSnapshots.length > 1,
+          canRemove: editMode && activeSnapshots.length > 1,
           onRemove: removeCity,
           onSelect: setSelectedCityId,
           key: city.id,
@@ -356,7 +373,7 @@ function App() {
         activeSnapshots.map((city) => h(CityCard, {
           city,
           selected: city.id === selectedCity.id,
-          canRemove: activeSnapshots.length > 1,
+          canRemove: editMode && activeSnapshots.length > 1,
           onRemove: removeCity,
           onSelect: setSelectedCityId,
           key: city.id,
