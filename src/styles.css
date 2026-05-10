@@ -166,21 +166,19 @@ button {
 }
 
 .split-pill__item + .split-pill__item {
-  margin-left: 0.75rem;
-  padding-left: 0.75rem;
+  margin-left: 0.55rem;
+  padding-left: 0.55rem;
   border-left: 1px solid rgba(148, 163, 184, 0.28);
 }
 
 .split-pill__item small {
-  overflow: hidden;
   color: #64748b;
-  font-size: 0.64rem;
+  font-size: clamp(0.52rem, 0.8vw, 0.62rem);
   font-weight: 900;
-  letter-spacing: 0.08em;
-  line-height: 1;
-  text-overflow: ellipsis;
+  letter-spacing: 0.045em;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .split-pill__item strong {
