@@ -1,0 +1,12 @@
+{
+  "name": "time",
+  "version": "1.0.0",
+  "description": "A React and Node.js world clock focused on Tehran time.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check src/main.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
