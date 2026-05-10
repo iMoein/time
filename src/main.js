@@ -131,22 +131,46 @@ function getCitySnapshot(now, city) {
   const localCalendar = city.id === 'tehran'
     ? formatDate(now, city.timeZone, 'fa-IR-u-nu-latn', 'persian')
     : gregorianDate;
+  const { hour } = getTimeParts(now, city.timeZone);
+  const numericHour = Number(hour);
 
   return {
     ...city,
     time: formatTime(now, city.timeZone),
     shortTime: formatTime(now, city.timeZone, false),
+    shortDate: new Intl.DateTimeFormat('en-US', {
+      timeZone: city.timeZone,
+      day: 'numeric',
+      month: 'short',
+    }).format(now),
     gregorianDate,
     localCalendar,
     week: getWeekNumber(cityDate),
     calendarName: city.id === 'tehran' ? 'Persian calendar' : 'Gregorian calendar',
+    timeOfDay: numericHour >= 6 && numericHour < 18 ? 'day' : 'night',
   };
 }
 
-function ToggleButton({ city, selected, canRemove, onRemove, onSelect }) {
+function ToggleButton({ city, selected, canRemove, editMode, dragging, onDragEnd, onDragStart, onDrop, onRemove, onSelect }) {
   return h(
     'article',
-    { className: `city-tab${selected ? ' selected' : ''}`, style: { '--accent': city.accent } },
+    {
+      className: `city-tab city-tab--${city.timeOfDay}${selected ? ' selected' : ''}${editMode ? ' editable' : ''}${dragging ? ' dragging' : ''}`,
+      draggable: editMode,
+      onDragEnd,
+      onDragOver: (event) => {
+        if (!editMode) {
+          return;
+        }
+
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+      },
+      onDragStart: (event) => onDragStart(event, city.id),
+      onDrop: (event) => onDrop(event, city.id),
+      style: { '--accent': city.accent },
+    },
+    editMode && h('span', { className: 'drag-handle', 'aria-hidden': 'true' }, '⋮⋮'),
     h(
       'button',
       {
@@ -155,34 +179,18 @@ function ToggleButton({ city, selected, canRemove, onRemove, onSelect }) {
         onClick: () => onSelect(city.id),
         'aria-pressed': selected,
       },
-      h('span', { className: 'city-tab__name' }, city.label),
+      h(
+        'span',
+        { className: 'city-tab__header' },
+        h('span', { className: 'city-tab__name' }, city.label),
+        h('span', { className: 'city-tab__date' }, city.shortDate),
+      ),
       h('span', { className: 'city-tab__time' }, city.shortTime),
     ),
     canRemove && h(
       'button',
       { type: 'button', className: 'remove-chip', onClick: () => onRemove(city.id), 'aria-label': `Remove ${city.label}` },
       '×',
-    ),
-  );
-}
-
-function CityCard({ city, selected, canRemove, onRemove, onSelect }) {
-  return h(
-    'article',
-    { className: `city-card${selected ? ' selected' : ''}`, style: { '--accent': city.accent } },
-    h(
-      'button',
-      { type: 'button', className: 'city-card__main', onClick: () => onSelect(city.id) },
-      h('span', { className: 'city-card__topline' }, city.country),
-      h('strong', null, city.label),
-      h('span', { className: 'city-card__time' }, city.shortTime),
-      h('span', { className: 'city-card__date' }, city.gregorianDate),
-      h('span', { className: 'city-card__meta' }, `${city.calendarName} · week ${city.week}`),
-    ),
-    canRemove && h(
-      'button',
-      { type: 'button', className: 'city-card__remove', onClick: () => onRemove(city.id), 'aria-label': `Remove ${city.label}` },
-      'Remove',
     ),
   );
 }
@@ -236,6 +244,7 @@ function App() {
   const [selectedCityId, setSelectedCityId] = useState(activeCityIds[0] || defaultCityIds[0]);
   const [searchQuery, setSearchQuery] = useState('');
   const [editMode, setEditMode] = useState(false);
+  const [draggingCityId, setDraggingCityId] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
 
   useEffect(() => {
@@ -306,6 +315,46 @@ function App() {
     });
   };
 
+  const moveCity = (draggedCityId, targetCityId) => {
+    if (!draggedCityId || draggedCityId === targetCityId) {
+      return;
+    }
+
+    setActiveCityIds((currentIds) => {
+      const draggedIndex = currentIds.indexOf(draggedCityId);
+      const targetIndex = currentIds.indexOf(targetCityId);
+
+      if (draggedIndex === -1 || targetIndex === -1) {
+        return currentIds;
+      }
+
+      const nextIds = [...currentIds];
+      const [draggedId] = nextIds.splice(draggedIndex, 1);
+      nextIds.splice(targetIndex, 0, draggedId);
+      return nextIds;
+    });
+  };
+
+  const handleDragStart = (event, cityId) => {
+    if (!editMode) {
+      return;
+    }
+
+    setDraggingCityId(cityId);
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', cityId);
+  };
+
+  const handleDrop = (event, targetCityId) => {
+    if (!editMode) {
+      return;
+    }
+
+    event.preventDefault();
+    moveCity(event.dataTransfer.getData('text/plain') || draggingCityId, targetCityId);
+    setDraggingCityId(null);
+  };
+
   const toggleFullscreen = () => {
     if (document.fullscreenElement) {
       document.exitFullscreen();
@@ -350,30 +399,23 @@ function App() {
         h(
           'div',
           { className: 'heading-actions' },
-          h('strong', null, editMode ? 'Search, add, and remove cities' : 'Switch between your saved cities'),
+          h('strong', null, editMode ? 'Search, add, remove, and drag cities' : 'Switch between your saved cities'),
           h('button', { type: 'button', className: 'edit-toggle', onClick: toggleEditMode }, editMode ? 'Done' : 'Edit'),
         ),
       ),
       editMode && h(SearchPanel, { query: searchQuery, results: searchResults, onAdd: addCity, onQueryChange: setSearchQuery }),
       h(
         'div',
-        { className: 'city-tabs' },
+        { className: `city-tabs${editMode ? ' city-tabs--editing' : ''}` },
         activeSnapshots.map((city) => h(ToggleButton, {
           city,
           selected: city.id === selectedCity.id,
           canRemove: editMode && activeSnapshots.length > 1,
-          onRemove: removeCity,
-          onSelect: setSelectedCityId,
-          key: city.id,
-        })),
-      ),
-      h(
-        'div',
-        { className: 'city-grid' },
-        activeSnapshots.map((city) => h(CityCard, {
-          city,
-          selected: city.id === selectedCity.id,
-          canRemove: editMode && activeSnapshots.length > 1,
+          editMode,
+          dragging: draggingCityId === city.id,
+          onDragEnd: () => setDraggingCityId(null),
+          onDragStart: handleDragStart,
+          onDrop: handleDrop,
           onRemove: removeCity,
           onSelect: setSelectedCityId,
           key: city.id,
