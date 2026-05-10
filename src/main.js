@@ -120,6 +120,33 @@ function getCityDate(date, timeZone) {
   return new Date(Date.UTC(parts.year, parts.month - 1, parts.day, 12));
 }
 
+
+function getPersianDateParts(date, timeZone) {
+  const parts = new Intl.DateTimeFormat('en-US-u-nu-latn', {
+    timeZone,
+    calendar: 'persian',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }).formatToParts(date);
+
+  const values = Object.fromEntries(parts.filter((part) => part.type !== 'literal' && part.type !== 'era').map((part) => [part.type, part.value]));
+  return {
+    year: Number(values.year),
+    month: Number(values.month),
+    day: Number(values.day),
+  };
+}
+
+function getPersianWeekNumber(date, timeZone) {
+  const { month, day } = getPersianDateParts(date, timeZone);
+  const dayOfYear = month <= 6
+    ? (month - 1) * 31 + day
+    : 186 + (month - 7) * 30 + day;
+
+  return Math.ceil(dayOfYear / 7);
+}
+
 function formatDate(date, timeZone, locale = 'en-US', calendar = 'gregory') {
   return new Intl.DateTimeFormat(locale, {
     timeZone,
@@ -158,9 +185,7 @@ function getTimeOfDay(numericHour) {
 function getCitySnapshot(now, city) {
   const cityDate = getCityDate(now, city.timeZone);
   const gregorianDate = formatDate(now, city.timeZone);
-  const localCalendar = city.id === 'tehran'
-    ? formatDate(now, city.timeZone, 'fa-IR-u-nu-latn', 'persian')
-    : gregorianDate;
+  const persianDate = formatDate(now, city.timeZone, 'fa-IR-u-nu-latn', 'persian');
   const { hour } = getTimeParts(now, city.timeZone);
   const timeOfDay = getTimeOfDay(Number(hour));
 
@@ -174,9 +199,9 @@ function getCitySnapshot(now, city) {
       month: 'short',
     }).format(now),
     gregorianDate,
-    localCalendar,
-    week: getWeekNumber(cityDate),
-    calendarName: city.id === 'tehran' ? 'Persian calendar' : 'Gregorian calendar',
+    persianDate,
+    gregorianWeek: getWeekNumber(cityDate),
+    jalaliWeek: getPersianWeekNumber(now, city.timeZone),
     timeOfDay: timeOfDay.id,
     timeOfDayLabel: timeOfDay.label,
   };
@@ -551,13 +576,18 @@ function App() {
           isFullscreen ? 'Exit fullscreen' : 'Fullscreen',
         ),
       ),
-      h('h1', { className: 'clock', 'aria-live': 'polite' }, selectedCity.time),
       h(
         'div',
-        { className: 'hero-meta' },
-        h(InfoPill, { label: 'Date', value: selectedCity.gregorianDate }),
-        h(InfoPill, { label: selectedCity.calendarName, value: selectedCity.localCalendar }),
-        h(InfoPill, { label: 'Week of year', value: `Week ${selectedCity.week}` }),
+        { className: 'hero-content' },
+        h('h1', { className: 'clock', 'aria-live': 'polite' }, selectedCity.time),
+        h(
+          'div',
+          { className: 'hero-meta', 'aria-label': 'Calendar details' },
+          h(InfoPill, { label: 'Gregorian date', value: selectedCity.gregorianDate }),
+          h(InfoPill, { label: 'Jalali date', value: selectedCity.persianDate }),
+          h(InfoPill, { label: 'Gregorian week', value: `Week ${selectedCity.gregorianWeek}` }),
+          h(InfoPill, { label: 'Jalali week', value: `Week ${selectedCity.jalaliWeek}` }),
+        ),
       ),
     ),
     h(

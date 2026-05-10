@@ -90,10 +90,18 @@ button {
   box-shadow: 0 16px 38px rgba(15, 23, 42, 0.24);
 }
 
+.hero-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+  gap: clamp(1rem, 2vw, 2rem);
+  align-items: stretch;
+}
+
 .clock {
+  align-self: center;
   margin: 0;
   color: #111827;
-  font-size: clamp(4.8rem, 17vw, 15.8rem);
+  font-size: clamp(4.8rem, 12vw, 12rem);
   font-weight: 950;
   letter-spacing: -0.09em;
   line-height: 0.86;
@@ -103,15 +111,15 @@ button {
 
 .hero-meta {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.9rem;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
 }
 
 .info-pill {
   display: grid;
   gap: 0.35rem;
-  min-height: 6.25rem;
-  padding: 1rem;
+  min-height: 5.6rem;
+  padding: 0.95rem 1rem;
   border: 1px solid rgba(148, 163, 184, 0.28);
   border-radius: 1.25rem;
   background: rgba(255, 255, 255, 0.72);
@@ -610,8 +618,12 @@ button {
 }
 
 @media (max-width: 980px) {
-  .hero-meta {
+  .hero-content {
     grid-template-columns: 1fr;
+  }
+
+  .hero-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .search-results {
