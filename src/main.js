@@ -15,6 +15,8 @@ const defaultCities = [
 ];
 
 const savedCitiesKey = 'time-app-cities';
+const savedNtpHostKey = 'time-app-ntp-host';
+const defaultNtpHost = 'ntp.time.ir';
 
 function toTitleCase(value) {
   return value
@@ -51,6 +53,10 @@ function getAllCities() {
 const allCities = getAllCities();
 const allCityIds = new Set(allCities.map((city) => city.id));
 const defaultCityIds = defaultCities.map((city) => city.id);
+
+function getInitialNtpHost() {
+  return localStorage.getItem(savedNtpHostKey) || defaultNtpHost;
+}
 
 function getInitialCityIds() {
   const savedValue = localStorage.getItem(savedCitiesKey);
@@ -125,28 +131,77 @@ function formatDate(date, timeZone, locale = 'en-US', calendar = 'gregory') {
   }).format(date);
 }
 
+function getTimeOfDay(numericHour) {
+  if (numericHour >= 4 && numericHour < 7) {
+    return { id: 'dawn', label: 'Early morning' };
+  }
+
+  if (numericHour >= 7 && numericHour < 12) {
+    return { id: 'morning', label: 'Morning' };
+  }
+
+  if (numericHour >= 12 && numericHour < 15) {
+    return { id: 'noon', label: 'Noon' };
+  }
+
+  if (numericHour >= 15 && numericHour < 18) {
+    return { id: 'afternoon', label: 'Afternoon' };
+  }
+
+  if (numericHour >= 18 && numericHour < 21) {
+    return { id: 'evening', label: 'Evening' };
+  }
+
+  return { id: 'night', label: 'Night' };
+}
+
 function getCitySnapshot(now, city) {
   const cityDate = getCityDate(now, city.timeZone);
   const gregorianDate = formatDate(now, city.timeZone);
   const localCalendar = city.id === 'tehran'
     ? formatDate(now, city.timeZone, 'fa-IR-u-nu-latn', 'persian')
     : gregorianDate;
+  const { hour } = getTimeParts(now, city.timeZone);
+  const timeOfDay = getTimeOfDay(Number(hour));
 
   return {
     ...city,
     time: formatTime(now, city.timeZone),
     shortTime: formatTime(now, city.timeZone, false),
+    shortDate: new Intl.DateTimeFormat('en-US', {
+      timeZone: city.timeZone,
+      day: 'numeric',
+      month: 'short',
+    }).format(now),
     gregorianDate,
     localCalendar,
     week: getWeekNumber(cityDate),
     calendarName: city.id === 'tehran' ? 'Persian calendar' : 'Gregorian calendar',
+    timeOfDay: timeOfDay.id,
+    timeOfDayLabel: timeOfDay.label,
   };
 }
 
-function ToggleButton({ city, selected, canRemove, onRemove, onSelect }) {
+function ToggleButton({ city, selected, canRemove, editMode, dragging, onDragEnd, onDragStart, onDrop, onRemove, onSelect }) {
   return h(
     'article',
-    { className: `city-tab${selected ? ' selected' : ''}`, style: { '--accent': city.accent } },
+    {
+      className: `city-tab city-tab--${city.timeOfDay}${selected ? ' selected' : ''}${editMode ? ' editable' : ''}${dragging ? ' dragging' : ''}`,
+      draggable: editMode,
+      onDragEnd,
+      onDragOver: (event) => {
+        if (!editMode) {
+          return;
+        }
+
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+      },
+      onDragStart: (event) => onDragStart(event, city.id),
+      onDrop: (event) => onDrop(event, city.id),
+      style: { '--accent': city.accent },
+    },
+    editMode && h('span', { className: 'drag-handle', 'aria-hidden': 'true' }, '⋮⋮'),
     h(
       'button',
       {
@@ -155,34 +210,19 @@ function ToggleButton({ city, selected, canRemove, onRemove, onSelect }) {
         onClick: () => onSelect(city.id),
         'aria-pressed': selected,
       },
-      h('span', { className: 'city-tab__name' }, city.label),
+      h(
+        'span',
+        { className: 'city-tab__header' },
+        h('span', { className: 'city-tab__name' }, city.label),
+        h('span', { className: 'city-tab__date' }, city.shortDate),
+      ),
       h('span', { className: 'city-tab__time' }, city.shortTime),
+      h('span', { className: 'city-tab__phase' }, city.timeOfDayLabel),
     ),
     canRemove && h(
       'button',
       { type: 'button', className: 'remove-chip', onClick: () => onRemove(city.id), 'aria-label': `Remove ${city.label}` },
       '×',
-    ),
-  );
-}
-
-function CityCard({ city, selected, canRemove, onRemove, onSelect }) {
-  return h(
-    'article',
-    { className: `city-card${selected ? ' selected' : ''}`, style: { '--accent': city.accent } },
-    h(
-      'button',
-      { type: 'button', className: 'city-card__main', onClick: () => onSelect(city.id) },
-      h('span', { className: 'city-card__topline' }, city.country),
-      h('strong', null, city.label),
-      h('span', { className: 'city-card__time' }, city.shortTime),
-      h('span', { className: 'city-card__date' }, city.gregorianDate),
-      h('span', { className: 'city-card__meta' }, `${city.calendarName} · week ${city.week}`),
-    ),
-    canRemove && h(
-      'button',
-      { type: 'button', className: 'city-card__remove', onClick: () => onRemove(city.id), 'aria-label': `Remove ${city.label}` },
-      'Remove',
     ),
   );
 }
@@ -221,6 +261,38 @@ function SearchPanel({ query, results, onAdd, onQueryChange }) {
   );
 }
 
+
+function SettingsPanel({ ntpHostInput, ntpStatus, onHostInputChange, onSave, onSync }) {
+  return h(
+    'form',
+    { className: 'settings-panel', onSubmit: onSave },
+    h(
+      'label',
+      { className: 'settings-field' },
+      h('span', null, 'NTP server'),
+      h('input', {
+        type: 'text',
+        value: ntpHostInput,
+        onChange: (event) => onHostInputChange(event.target.value),
+        placeholder: 'ntp.time.ir',
+        autoComplete: 'off',
+      }),
+    ),
+    h(
+      'div',
+      { className: `ntp-status ntp-status--${ntpStatus.kind}` },
+      h('strong', null, ntpStatus.label),
+      h('span', null, ntpStatus.detail),
+    ),
+    h(
+      'div',
+      { className: 'settings-actions' },
+      h('button', { type: 'submit', className: 'edit-toggle' }, 'Save NTP'),
+      h('button', { type: 'button', className: 'secondary-button', onClick: onSync }, 'Sync now'),
+    ),
+  );
+}
+
 function InfoPill({ label, value }) {
   return h(
     'article',
@@ -232,20 +304,33 @@ function InfoPill({ label, value }) {
 
 function App() {
   const [now, setNow] = useState(() => new Date());
+  const [timeOffset, setTimeOffset] = useState(0);
   const [activeCityIds, setActiveCityIds] = useState(getInitialCityIds);
   const [selectedCityId, setSelectedCityId] = useState(activeCityIds[0] || defaultCityIds[0]);
   const [searchQuery, setSearchQuery] = useState('');
   const [editMode, setEditMode] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [ntpHost, setNtpHost] = useState(getInitialNtpHost);
+  const [ntpHostInput, setNtpHostInput] = useState(ntpHost);
+  const [ntpStatus, setNtpStatus] = useState({ kind: 'local', label: 'Local clock', detail: 'Using this device until NTP sync succeeds.' });
+  const [ntpSyncRequest, setNtpSyncRequest] = useState(0);
+  const [draggingCityId, setDraggingCityId] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 1000);
+    const updateClock = () => setNow(new Date(Date.now() + timeOffset));
+    updateClock();
+    const timer = setInterval(updateClock, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [timeOffset]);
 
   useEffect(() => {
     localStorage.setItem(savedCitiesKey, JSON.stringify(activeCityIds));
   }, [activeCityIds]);
+
+  useEffect(() => {
+    localStorage.setItem(savedNtpHostKey, ntpHost);
+  }, [ntpHost]);
 
   useEffect(() => {
     if (!activeCityIds.includes(selectedCityId)) {
@@ -259,12 +344,82 @@ function App() {
     return () => document.removeEventListener('fullscreenchange', syncFullscreenState);
   }, []);
 
+
+  useEffect(() => {
+    let ignore = false;
+
+    const syncNtp = async () => {
+      if (!navigator.onLine) {
+        setTimeOffset(0);
+        setNtpStatus({ kind: 'offline', label: 'Offline', detail: 'No internet detected; using this device clock.' });
+        return;
+      }
+
+      setNtpStatus({ kind: 'syncing', label: 'Syncing NTP', detail: `Reading ${ntpHost}...` });
+      const startedAt = Date.now();
+
+      try {
+        const response = await fetch(`/api/ntp?host=${encodeURIComponent(ntpHost)}`);
+        const data = await response.json();
+        const endedAt = Date.now();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'NTP sync failed.');
+        }
+
+        if (ignore) {
+          return;
+        }
+
+        const midpoint = startedAt + (endedAt - startedAt) / 2;
+        setTimeOffset(data.time - midpoint);
+        setNtpStatus({
+          kind: 'ntp',
+          label: 'Synced with NTP',
+          detail: `${data.host} · ${Math.round(endedAt - startedAt)}ms round trip`,
+        });
+      } catch (error) {
+        if (ignore) {
+          return;
+        }
+
+        setTimeOffset(0);
+        setNtpStatus({
+          kind: 'error',
+          label: 'NTP unavailable',
+          detail: `${error.message || 'Could not sync.'} Using this device clock.`,
+        });
+      }
+    };
+
+    syncNtp();
+    const syncTimer = setInterval(syncNtp, 300000);
+    window.addEventListener('online', syncNtp);
+    window.addEventListener('offline', syncNtp);
+
+    return () => {
+      ignore = true;
+      clearInterval(syncTimer);
+      window.removeEventListener('online', syncNtp);
+      window.removeEventListener('offline', syncNtp);
+    };
+  }, [ntpHost, ntpSyncRequest]);
+
   const activeCities = useMemo(
     () => activeCityIds.map((id) => allCities.find((city) => city.id === id)).filter(Boolean),
     [activeCityIds],
   );
   const activeSnapshots = useMemo(() => activeCities.map((city) => getCitySnapshot(now, city)), [activeCities, now]);
   const selectedCity = activeSnapshots.find((city) => city.id === selectedCityId) || activeSnapshots[0];
+
+  useEffect(() => {
+    if (!selectedCity) {
+      return;
+    }
+
+    document.title = `${selectedCity.label} · ${selectedCity.time}`;
+  }, [selectedCity]);
+
   const activeIdSet = useMemo(() => new Set(activeCityIds), [activeCityIds]);
   const searchResults = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -304,6 +459,71 @@ function App() {
 
       return nextIds;
     });
+  };
+
+  const moveCity = (draggedCityId, targetCityId) => {
+    if (!draggedCityId || draggedCityId === targetCityId) {
+      return;
+    }
+
+    setActiveCityIds((currentIds) => {
+      const draggedIndex = currentIds.indexOf(draggedCityId);
+      const targetIndex = currentIds.indexOf(targetCityId);
+
+      if (draggedIndex === -1 || targetIndex === -1) {
+        return currentIds;
+      }
+
+      const nextIds = [...currentIds];
+      const [draggedId] = nextIds.splice(draggedIndex, 1);
+      nextIds.splice(targetIndex, 0, draggedId);
+      return nextIds;
+    });
+  };
+
+  const handleDragStart = (event, cityId) => {
+    if (!editMode) {
+      return;
+    }
+
+    setDraggingCityId(cityId);
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', cityId);
+  };
+
+  const handleDrop = (event, targetCityId) => {
+    if (!editMode) {
+      return;
+    }
+
+    event.preventDefault();
+    moveCity(event.dataTransfer.getData('text/plain') || draggingCityId, targetCityId);
+    setDraggingCityId(null);
+  };
+
+
+  const saveNtpHost = (event) => {
+    event.preventDefault();
+    const nextHost = ntpHostInput.trim();
+
+    if (!nextHost) {
+      setNtpStatus({ kind: 'error', label: 'NTP host required', detail: 'Enter a hostname like ntp.time.ir.' });
+      return;
+    }
+
+    setNtpHost(nextHost);
+    setNtpSyncRequest((requestId) => requestId + 1);
+  };
+
+  const syncCurrentNtpHost = () => {
+    const nextHost = ntpHostInput.trim();
+
+    if (nextHost && nextHost !== ntpHost) {
+      setNtpHost(nextHost);
+      return;
+    }
+
+    setNtpSyncRequest((requestId) => requestId + 1);
   };
 
   const toggleFullscreen = () => {
@@ -350,30 +570,31 @@ function App() {
         h(
           'div',
           { className: 'heading-actions' },
-          h('strong', null, editMode ? 'Search, add, and remove cities' : 'Switch between your saved cities'),
+          h('strong', null, editMode ? 'Search, add, remove, and drag cities' : 'Switch between your saved cities'),
+          h('button', { type: 'button', className: 'secondary-button', onClick: () => setSettingsOpen((isOpen) => !isOpen) }, settingsOpen ? 'Close settings' : 'Settings'),
           h('button', { type: 'button', className: 'edit-toggle', onClick: toggleEditMode }, editMode ? 'Done' : 'Edit'),
         ),
       ),
+      settingsOpen && h(SettingsPanel, {
+        ntpHostInput,
+        ntpStatus,
+        onHostInputChange: setNtpHostInput,
+        onSave: saveNtpHost,
+        onSync: syncCurrentNtpHost,
+      }),
       editMode && h(SearchPanel, { query: searchQuery, results: searchResults, onAdd: addCity, onQueryChange: setSearchQuery }),
       h(
         'div',
-        { className: 'city-tabs' },
+        { className: `city-tabs${editMode ? ' city-tabs--editing' : ''}` },
         activeSnapshots.map((city) => h(ToggleButton, {
           city,
           selected: city.id === selectedCity.id,
           canRemove: editMode && activeSnapshots.length > 1,
-          onRemove: removeCity,
-          onSelect: setSelectedCityId,
-          key: city.id,
-        })),
-      ),
-      h(
-        'div',
-        { className: 'city-grid' },
-        activeSnapshots.map((city) => h(CityCard, {
-          city,
-          selected: city.id === selectedCity.id,
-          canRemove: editMode && activeSnapshots.length > 1,
+          editMode,
+          dragging: draggingCityId === city.id,
+          onDragEnd: () => setDraggingCityId(null),
+          onDragStart: handleDragStart,
+          onDrop: handleDrop,
           onRemove: removeCity,
           onSelect: setSelectedCityId,
           key: city.id,
