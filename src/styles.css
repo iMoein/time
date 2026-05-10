@@ -92,7 +92,7 @@ button {
 
 .hero-content {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(15rem, 21rem);
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
   gap: clamp(1.25rem, 2.4vw, 2.7rem);
   align-items: stretch;
 }
@@ -101,7 +101,7 @@ button {
   align-self: center;
   margin: 0;
   color: #111827;
-  font-size: clamp(5.4rem, 11.2vw, 12.4rem);
+  font-size: clamp(5.8rem, 12.4vw, 14rem);
   font-weight: 950;
   letter-spacing: -0.09em;
   line-height: 0.86;
@@ -111,7 +111,7 @@ button {
 
 .hero-meta {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-content: center;
   gap: 0.58rem;
   padding-left: clamp(0.35rem, 1vw, 0.9rem);
@@ -143,6 +143,10 @@ button {
 
 .split-pill {
   gap: 0.45rem;
+}
+
+.split-pill--wide {
+  grid-column: 1 / -1;
 }
 
 .split-pill__grid {
@@ -664,7 +668,6 @@ button {
   }
 
   .hero-meta {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     padding-left: 0;
   }
 

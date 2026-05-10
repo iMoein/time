@@ -158,6 +158,15 @@ function formatDate(date, timeZone, locale = 'en-US', calendar = 'gregory', with
   }).format(date);
 }
 
+function formatMonthDay(date, timeZone, locale = 'en-US', calendar = 'gregory') {
+  return new Intl.DateTimeFormat(locale, {
+    timeZone,
+    calendar,
+    day: 'numeric',
+    month: 'long',
+  }).format(date);
+}
+
 function formatWeekday(date, timeZone) {
   return new Intl.DateTimeFormat('en-US', {
     timeZone,
@@ -191,8 +200,10 @@ function getTimeOfDay(numericHour) {
 
 function getCitySnapshot(now, city) {
   const cityDate = getCityDate(now, city.timeZone);
-  const gregorianDate = formatDate(now, city.timeZone, 'en-US', 'gregory', false);
-  const persianDate = formatDate(now, city.timeZone, 'en-US-u-nu-latn', 'persian', false).replace(/ AP$/, '');
+  const gregorianParts = getZonedDateParts(now, city.timeZone);
+  const persianParts = getPersianDateParts(now, city.timeZone);
+  const gregorianDate = formatMonthDay(now, city.timeZone);
+  const persianDate = formatMonthDay(now, city.timeZone, 'en-US-u-nu-latn', 'persian');
   const { hour } = getTimeParts(now, city.timeZone);
   const timeOfDay = getTimeOfDay(Number(hour));
 
@@ -207,6 +218,8 @@ function getCitySnapshot(now, city) {
     }).format(now),
     gregorianDate,
     persianDate,
+    gregorianYear: gregorianParts.year,
+    persianYear: persianParts.year,
     weekday: formatWeekday(now, city.timeZone),
     gregorianWeek: getWeekNumber(cityDate),
     jalaliWeek: getPersianWeekNumber(now, city.timeZone),
@@ -327,10 +340,10 @@ function SettingsPanel({ ntpHostInput, ntpStatus, onHostInputChange, onSave, onS
 }
 
 
-function SplitPill({ label, items }) {
+function SplitPill({ label, items, wide = false }) {
   return h(
     'article',
-    { className: 'info-pill split-pill' },
+    { className: `info-pill split-pill${wide ? ' split-pill--wide' : ''}` },
     h('span', null, label),
     h(
       'div',
@@ -612,7 +625,15 @@ function App() {
           { className: 'hero-meta', 'aria-label': 'Calendar details' },
           h(InfoPill, { label: 'Weekday', value: selectedCity.weekday }),
           h(SplitPill, {
+            label: 'Years',
+            items: [
+              { label: 'Gregorian', value: selectedCity.gregorianYear },
+              { label: 'Solar Hijri', value: selectedCity.persianYear },
+            ],
+          }),
+          h(SplitPill, {
             label: 'Dates',
+            wide: true,
             items: [
               { label: 'Gregorian', value: selectedCity.gregorianDate },
               { label: 'Solar Hijri', value: selectedCity.persianDate },
@@ -620,6 +641,7 @@ function App() {
           }),
           h(SplitPill, {
             label: 'Week of year',
+            wide: true,
             items: [
               { label: 'Gregorian', value: `Week ${selectedCity.gregorianWeek}` },
               { label: 'Solar Hijri', value: `Week ${selectedCity.jalaliWeek}` },
