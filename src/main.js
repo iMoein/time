@@ -274,6 +274,15 @@ function App() {
   );
   const activeSnapshots = useMemo(() => activeCities.map((city) => getCitySnapshot(now, city)), [activeCities, now]);
   const selectedCity = activeSnapshots.find((city) => city.id === selectedCityId) || activeSnapshots[0];
+
+  useEffect(() => {
+    if (!selectedCity) {
+      return;
+    }
+
+    document.title = `${selectedCity.label} · ${selectedCity.time}`;
+  }, [selectedCity]);
+
   const activeIdSet = useMemo(() => new Set(activeCityIds), [activeCityIds]);
   const searchResults = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();

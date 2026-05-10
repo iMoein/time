@@ -306,10 +306,10 @@ button {
   border: 1px solid rgba(148, 163, 184, 0.22);
   border-radius: 1rem;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.88);
-  color: #172033;
+  background: var(--tab-surface);
+  color: var(--tab-text);
   box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
-  transition: transform 180ms ease, background 180ms ease, color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+  transition: transform 180ms ease, background 180ms ease, color 180ms ease, box-shadow 180ms ease, opacity 180ms ease, outline-color 180ms ease;
 }
 
 .city-tab__main {
@@ -322,45 +322,51 @@ button {
   color: inherit;
 }
 
-.city-tab::before {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  content: '';
-  opacity: 0;
-  transition: opacity 180ms ease;
+.city-tab--day {
+  --tab-surface:
+    radial-gradient(circle at 14% 14%, rgba(255, 255, 255, 0.8), transparent 2.4rem),
+    linear-gradient(135deg, rgba(254, 243, 199, 0.96), rgba(186, 230, 253, 0.92));
+  --tab-text: #172033;
+  --tab-muted: #475569;
+  --tab-time: #0f766e;
 }
 
-.city-tab--day.selected::before {
-  background:
-    radial-gradient(circle at 16% 16%, rgba(255, 255, 255, 0.75), transparent 2.2rem),
-    linear-gradient(135deg, rgba(254, 243, 199, 0.96), rgba(56, 189, 248, 0.9));
-}
-
-.city-tab--night.selected::before {
-  background:
-    radial-gradient(circle at 18% 20%, rgba(226, 232, 240, 0.36), transparent 2.1rem),
+.city-tab--night {
+  --tab-surface:
+    radial-gradient(circle at 16% 18%, rgba(226, 232, 240, 0.32), transparent 2.3rem),
     linear-gradient(135deg, #0f172a, #312e81 58%, #111827);
+  --tab-text: #eef2ff;
+  --tab-muted: rgba(226, 232, 240, 0.72);
+  --tab-time: #dbeafe;
 }
 
 .city-tab:hover,
 .city-tab.selected {
   transform: translateY(-2px);
-  color: #fff;
   box-shadow: 0 16px 34px rgba(15, 23, 42, 0.14);
 }
 
-.city-tab:hover::before,
-.city-tab.selected::before {
-  opacity: 1;
+.city-tab.selected {
+  border-color: rgba(255, 255, 255, 0.78);
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
 }
 
-.city-tab:hover::before {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--accent), #fff 10%), var(--accent));
+.city-tab.selected::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  content: '';
 }
 
 .city-tab.editable {
   cursor: grab;
+}
+
+.city-tab.editable .city-tab__main {
+  padding-bottom: 1.7rem;
 }
 
 .city-tab.editable:active {
@@ -374,18 +380,25 @@ button {
 
 .remove-chip {
   position: absolute;
-  top: 0.35rem;
-  right: 0.45rem;
+  z-index: 2;
+  bottom: 0.45rem;
+  left: 0.55rem;
   display: grid;
   place-items: center;
-  width: 1.35rem;
-  height: 1.35rem;
+  width: 1.45rem;
+  height: 1.45rem;
   cursor: pointer;
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.12);
-  color: currentColor;
+  background: rgba(255, 255, 255, 0.68);
+  color: #b91c1c;
   font-size: 1rem;
   font-weight: 950;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+}
+
+.remove-chip:hover {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .city-tab__header,
@@ -415,7 +428,7 @@ button {
 
 .city-tab__date {
   justify-self: end;
-  color: #64748b;
+  color: var(--tab-muted);
   font-size: 0.72rem;
   font-weight: 900;
   line-height: 1.1;
@@ -424,11 +437,11 @@ button {
 
 .city-tab:hover .city-tab__date,
 .city-tab.selected .city-tab__date {
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--tab-muted);
 }
 
 .city-tab__time {
-  color: var(--accent);
+  color: var(--tab-time);
   font-size: 1.55rem;
   font-weight: 950;
   letter-spacing: -0.04em;
@@ -437,7 +450,7 @@ button {
 
 .city-tab:hover .city-tab__time,
 .city-tab.selected .city-tab__time {
-  color: #fff;
+  color: var(--tab-time);
 }
 
 .drag-handle {
