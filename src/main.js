@@ -185,7 +185,7 @@ function getTimeOfDay(numericHour) {
 function getCitySnapshot(now, city) {
   const cityDate = getCityDate(now, city.timeZone);
   const gregorianDate = formatDate(now, city.timeZone);
-  const persianDate = formatDate(now, city.timeZone, 'fa-IR-u-nu-latn', 'persian');
+  const persianDate = formatDate(now, city.timeZone, 'en-US-u-nu-latn', 'persian').replace(/ AP$/, '');
   const { hour } = getTimeParts(now, city.timeZone);
   const timeOfDay = getTimeOfDay(Number(hour));
 
@@ -584,9 +584,9 @@ function App() {
           'div',
           { className: 'hero-meta', 'aria-label': 'Calendar details' },
           h(InfoPill, { label: 'Gregorian date', value: selectedCity.gregorianDate }),
-          h(InfoPill, { label: 'Jalali date', value: selectedCity.persianDate }),
+          h(InfoPill, { label: 'Solar Hijri date', value: selectedCity.persianDate }),
           h(InfoPill, { label: 'Gregorian week', value: `Week ${selectedCity.gregorianWeek}` }),
-          h(InfoPill, { label: 'Jalali week', value: `Week ${selectedCity.jalaliWeek}` }),
+          h(InfoPill, { label: 'Solar Hijri week', value: `Week ${selectedCity.jalaliWeek}` }),
         ),
       ),
     ),
