@@ -44,8 +44,8 @@ button {
 
 .hero-panel {
   display: grid;
-  gap: clamp(1rem, 2vw, 1.75rem);
-  padding: clamp(1.25rem, 3.5vw, 3rem);
+  gap: clamp(0.75rem, 1.8vw, 1.35rem);
+  padding: clamp(1.15rem, 2.8vw, 2.35rem);
   overflow: hidden;
   background:
     linear-gradient(110deg, rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.78)),
@@ -92,8 +92,8 @@ button {
 
 .hero-content {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(14rem, 20rem);
-  gap: clamp(1.75rem, 3vw, 3.25rem);
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 21rem);
+  gap: clamp(1.25rem, 2.4vw, 2.7rem);
   align-items: stretch;
 }
 
@@ -101,7 +101,7 @@ button {
   align-self: center;
   margin: 0;
   color: #111827;
-  font-size: clamp(4.4rem, 9vw, 9.2rem);
+  font-size: clamp(5.4rem, 11.2vw, 12.4rem);
   font-weight: 950;
   letter-spacing: -0.09em;
   line-height: 0.86;
@@ -113,15 +113,15 @@ button {
   display: grid;
   grid-template-columns: 1fr;
   align-content: center;
-  gap: 0.65rem;
+  gap: 0.58rem;
   padding-left: clamp(0.35rem, 1vw, 0.9rem);
 }
 
 .info-pill {
   display: grid;
   gap: 0.25rem;
-  min-height: 4.35rem;
-  padding: 0.7rem 0.82rem;
+  min-height: 4rem;
+  padding: 0.65rem 0.78rem;
   border: 1px solid rgba(148, 163, 184, 0.28);
   border-radius: 1rem;
   background: rgba(255, 255, 255, 0.72);
@@ -137,8 +137,47 @@ button {
 
 .info-pill strong {
   color: #172033;
-  font-size: clamp(0.86rem, 1vw, 1.05rem);
-  line-height: 1.14;
+  font-size: clamp(0.9rem, 1.05vw, 1.08rem);
+  line-height: 1.1;
+}
+
+.split-pill {
+  gap: 0.45rem;
+}
+
+.split-pill__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  align-items: stretch;
+}
+
+.split-pill__item {
+  display: grid;
+  gap: 0.22rem;
+  min-width: 0;
+}
+
+.split-pill__item + .split-pill__item {
+  margin-left: 0.65rem;
+  padding-left: 0.65rem;
+  border-left: 1px solid rgba(148, 163, 184, 0.28);
+}
+
+.split-pill__item small {
+  overflow: hidden;
+  color: #64748b;
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.split-pill__item strong {
+  overflow-wrap: anywhere;
 }
 
 .switcher-panel {
@@ -664,7 +703,7 @@ button {
   }
 
   .clock {
-    font-size: clamp(4rem, 22vw, 6.2rem);
+    font-size: clamp(4.4rem, 24vw, 7rem);
   }
 
   .search-panel {
