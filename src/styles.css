@@ -166,7 +166,8 @@ button {
   gap: 0.75rem;
 }
 
-.edit-toggle {
+.edit-toggle,
+.secondary-button {
   cursor: pointer;
   border-radius: 999px;
   padding: 0.65rem 0.95rem;
@@ -176,7 +177,14 @@ button {
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
-.edit-toggle:hover {
+.secondary-button {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #fff;
+  color: #111827;
+}
+
+.edit-toggle:hover,
+.secondary-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 26px rgba(15, 23, 42, 0.16);
 }
@@ -285,6 +293,83 @@ button {
   font-weight: 700;
 }
 
+
+.settings-panel {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(14rem, 1.2fr) auto;
+  gap: 0.85rem;
+  align-items: end;
+  padding: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 1.25rem;
+  background: rgba(248, 250, 252, 0.92);
+}
+
+.settings-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.settings-field span,
+.ntp-status strong {
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.settings-field input {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 1rem;
+  padding: 0.8rem 0.9rem;
+  outline: none;
+  background: #fff;
+  color: #172033;
+  font: inherit;
+  font-weight: 800;
+}
+
+.settings-field input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.ntp-status {
+  display: grid;
+  gap: 0.35rem;
+  min-height: 4.2rem;
+  padding: 0.78rem 0.9rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.72);
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 750;
+}
+
+.ntp-status--ntp {
+  background: rgba(220, 252, 231, 0.9);
+  color: #166534;
+}
+
+.ntp-status--syncing {
+  background: rgba(219, 234, 254, 0.9);
+  color: #1d4ed8;
+}
+
+.ntp-status--error,
+.ntp-status--offline {
+  background: rgba(254, 226, 226, 0.86);
+  color: #991b1b;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 0.55rem;
+  justify-content: flex-end;
+}
+
 .city-tabs {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
@@ -322,13 +407,49 @@ button {
   color: inherit;
 }
 
-.city-tab--day {
+.city-tab--dawn {
   --tab-surface:
-    radial-gradient(circle at 14% 14%, rgba(255, 255, 255, 0.8), transparent 2.4rem),
-    linear-gradient(135deg, rgba(254, 243, 199, 0.96), rgba(186, 230, 253, 0.92));
+    radial-gradient(circle at 14% 16%, rgba(255, 255, 255, 0.74), transparent 2.35rem),
+    linear-gradient(135deg, rgba(254, 215, 170, 0.96), rgba(191, 219, 254, 0.92));
+  --tab-text: #172033;
+  --tab-muted: #64748b;
+  --tab-time: #7c2d12;
+}
+
+.city-tab--morning {
+  --tab-surface:
+    radial-gradient(circle at 14% 14%, rgba(255, 255, 255, 0.85), transparent 2.4rem),
+    linear-gradient(135deg, rgba(254, 249, 195, 0.98), rgba(186, 230, 253, 0.94));
   --tab-text: #172033;
   --tab-muted: #475569;
   --tab-time: #0f766e;
+}
+
+.city-tab--noon {
+  --tab-surface:
+    radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.9), transparent 2.5rem),
+    linear-gradient(135deg, rgba(254, 240, 138, 0.98), rgba(125, 211, 252, 0.94));
+  --tab-text: #172033;
+  --tab-muted: #475569;
+  --tab-time: #0369a1;
+}
+
+.city-tab--afternoon {
+  --tab-surface:
+    radial-gradient(circle at 14% 16%, rgba(255, 255, 255, 0.72), transparent 2.35rem),
+    linear-gradient(135deg, rgba(253, 186, 116, 0.95), rgba(251, 207, 232, 0.92));
+  --tab-text: #172033;
+  --tab-muted: #6b4f3f;
+  --tab-time: #c2410c;
+}
+
+.city-tab--evening {
+  --tab-surface:
+    radial-gradient(circle at 16% 18%, rgba(253, 230, 138, 0.36), transparent 2.3rem),
+    linear-gradient(135deg, #4338ca, #be185d 62%, #7c2d12);
+  --tab-text: #fff7ed;
+  --tab-muted: rgba(255, 237, 213, 0.78);
+  --tab-time: #ffedd5;
 }
 
 .city-tab--night {
@@ -405,6 +526,7 @@ button {
 .city-tab__name,
 .city-tab__date,
 .city-tab__time,
+.city-tab__phase,
 .drag-handle {
   position: relative;
   z-index: 1;
@@ -453,11 +575,20 @@ button {
   color: var(--tab-time);
 }
 
+.city-tab__phase {
+  color: var(--tab-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
 .drag-handle {
   position: absolute;
   right: 0.55rem;
   bottom: 0.5rem;
-  color: rgba(100, 116, 139, 0.72);
+  color: var(--tab-muted);
   font-size: 0.9rem;
   font-weight: 950;
   letter-spacing: -0.18em;
@@ -486,6 +617,14 @@ button {
   .search-results {
     width: min(36rem, calc(100vw - 2rem));
   }
+
+  .settings-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-actions {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 640px) {
@@ -511,6 +650,10 @@ button {
 
   .search-panel {
     width: 100%;
+  }
+
+  .settings-actions {
+    flex-direction: column;
   }
 
   .search-results {
