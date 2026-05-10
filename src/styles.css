@@ -181,6 +181,18 @@ button {
   text-transform: uppercase;
 }
 
+.split-pill:not(.split-pill--wide) .split-pill__item + .split-pill__item {
+  margin-left: 0.42rem;
+  padding-left: 0.42rem;
+}
+
+.split-pill:not(.split-pill--wide) .split-pill__item small {
+  font-size: clamp(0.46rem, 0.62vw, 0.54rem);
+  letter-spacing: 0.02em;
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
 .split-pill__item strong {
   overflow-wrap: anywhere;
 }
