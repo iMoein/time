@@ -1,13 +1,15 @@
 # Time in Tehran
 
-A lightweight Node.js and React single-page app that recreates a Time.is-style layout for the current time in Tehran, Iran.
+A lightweight Node.js and React single-page world-clock app inspired by Time.is, with Tehran selected by default.
 
 ## Features
 
-- Live Tehran clock with seconds.
-- Tehran date, ISO week number, sunrise, sunset, and daylight duration.
-- Quick comparison cards for Los Angeles, London, Paris, and Tehran.
-- Responsive layout that keeps the oversized clock readable on small screens.
+- Live clock with seconds for the selected city.
+- One-click switching between Tehran, Los Angeles, London, Paris, Tokyo, and Dubai.
+- Date, calendar label, and ISO week number for every city.
+- Persian calendar display for Tehran alongside the Gregorian date.
+- Fullscreen button for dashboard-style usage.
+- Responsive UI that works on desktop, tablet, and mobile.
 
 ## Run locally
 
