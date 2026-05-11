@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "check": "node --check server.js && node --check src/main.js"
+    "check": "node --check server.js && node --check src/main.js && node --check src/vendor-tiny-react.js && node --check src/vendor-tiny-react-dom-client.js"
   },
   "dependencies": {},
   "devDependencies": {}
