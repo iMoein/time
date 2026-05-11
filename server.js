@@ -3,7 +3,7 @@ import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { extname, join, normalize, resolve } from 'node:path';
 
-const port = Number(process.env.PORT || 3000);
+const port = Number(process.env.PORT || 8585);
 const root = resolve(process.cwd());
 const ntpPort = 123;
 const ntpTimeoutMs = 3000;
