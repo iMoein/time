@@ -20,7 +20,7 @@ A lightweight Node.js and React single-page world-clock app inspired by Time.is,
 npm start
 ```
 
-Then open <http://localhost:3000> in your browser.
+Then open <http://localhost:8585> in your browser.
 
 ## Check syntax
 
@@ -28,4 +28,4 @@ Then open <http://localhost:3000> in your browser.
 npm run check
 ```
 
-> React is loaded in the browser through an import map CDN so the project can run without installing npm packages.
+> The app uses local browser modules through an import map, so the UI keeps loading after the server is started even when the internet is unavailable.
