@@ -148,6 +148,7 @@ function createDom(vNode, path, isSvg = false) {
     const childVNode = renderFunctionComponent(vNode, path);
     vNode.child = childVNode;
     vNode.dom = createDom(childVNode, `${path}.0`, isSvg);
+    childVNode.dom = vNode.dom;
     return vNode.dom;
   }
 
@@ -155,9 +156,16 @@ function createDom(vNode, path, isSvg = false) {
   const dom = shouldUseSvgNamespace
     ? document.createElementNS('http://www.w3.org/2000/svg', vNode.type)
     : document.createElement(vNode.type);
+  vNode.dom = dom;
   updateProps(dom, {}, vNode.props);
   vNode.children.forEach((child, index) => {
-    dom.appendChild(createDom(child, `${path}.${index}`, shouldUseSvgNamespace));
+    const childDom = createDom(child, `${path}.${index}`, shouldUseSvgNamespace);
+
+    if (!isTextVNode(child)) {
+      child.dom = childDom;
+    }
+
+    dom.appendChild(childDom);
   });
   return dom;
 }
