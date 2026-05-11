@@ -6,12 +6,12 @@ const { createElement: h } = React;
 const accentPalette = ['#f97316', '#7c3aed', '#2563eb', '#db2777', '#059669', '#0891b2', '#ea580c', '#4f46e5'];
 
 const defaultCities = [
-  { id: 'tehran', label: 'Tehran', country: 'Iran', timeZone: 'Asia/Tehran', accent: accentPalette[0] },
-  { id: 'los-angeles', label: 'Los Angeles', country: 'United States', timeZone: 'America/Los_Angeles', accent: accentPalette[1] },
-  { id: 'london', label: 'London', country: 'United Kingdom', timeZone: 'Europe/London', accent: accentPalette[2] },
-  { id: 'paris', label: 'Paris', country: 'France', timeZone: 'Europe/Paris', accent: accentPalette[3] },
-  { id: 'tokyo', label: 'Tokyo', country: 'Japan', timeZone: 'Asia/Tokyo', accent: accentPalette[4] },
-  { id: 'dubai', label: 'Dubai', country: 'United Arab Emirates', timeZone: 'Asia/Dubai', accent: accentPalette[5] },
+  { id: 'tehran', label: 'Tehran', country: 'Iran', timeZone: 'Asia/Tehran', latitude: 35.6892, longitude: 51.3890, accent: accentPalette[0] },
+  { id: 'los-angeles', label: 'Los Angeles', country: 'United States', timeZone: 'America/Los_Angeles', latitude: 34.0522, longitude: -118.2437, accent: accentPalette[1] },
+  { id: 'london', label: 'London', country: 'United Kingdom', timeZone: 'Europe/London', latitude: 51.5072, longitude: -0.1276, accent: accentPalette[2] },
+  { id: 'paris', label: 'Paris', country: 'France', timeZone: 'Europe/Paris', latitude: 48.8566, longitude: 2.3522, accent: accentPalette[3] },
+  { id: 'tokyo', label: 'Tokyo', country: 'Japan', timeZone: 'Asia/Tokyo', latitude: 35.6762, longitude: 139.6503, accent: accentPalette[4] },
+  { id: 'dubai', label: 'Dubai', country: 'United Arab Emirates', timeZone: 'Asia/Dubai', latitude: 25.2048, longitude: 55.2708, accent: accentPalette[5] },
 ];
 
 const savedCitiesKey = 'time-app-cities';
@@ -89,6 +89,196 @@ function getTimeParts(date, timeZone) {
 function formatTime(date, timeZone, withSeconds = true) {
   const { hour, minute, second } = getTimeParts(date, timeZone);
   return withSeconds ? `${hour}:${minute}:${second}` : `${hour}:${minute}`;
+}
+
+
+function padClockPart(value) {
+  return String(value).padStart(2, '0');
+}
+
+function formatMinutesAsTime(totalMinutes) {
+  const normalizedMinutes = ((Math.round(totalMinutes) % 1440) + 1440) % 1440;
+  const hours = Math.floor(normalizedMinutes / 60);
+  const minutes = normalizedMinutes % 60;
+
+  return `${padClockPart(hours)}:${padClockPart(minutes)}`;
+}
+
+function formatDuration(totalMinutes) {
+  const roundedMinutes = Math.max(0, Math.round(totalMinutes));
+  const hours = Math.floor(roundedMinutes / 60);
+  const minutes = roundedMinutes % 60;
+
+  if (hours === 0) {
+    return `${minutes}min`;
+  }
+
+  if (minutes === 0) {
+    return `${hours}hr`;
+  }
+
+  return `${hours}hr ${minutes}min`;
+}
+
+function getMinuteOfDay(date, timeZone) {
+  const { hour, minute, second } = getTimeParts(date, timeZone);
+  return Number(hour) * 60 + Number(minute) + Number(second) / 60;
+}
+
+function getSolarY(minute, sunrise, sunset, horizonY, peakY, nightY) {
+  if (minute >= sunrise && minute <= sunset) {
+    const daylightProgress = (minute - sunrise) / (sunset - sunrise);
+    return horizonY - Math.sin(daylightProgress * Math.PI) * (horizonY - peakY);
+  }
+
+  const nightProgress = minute < sunrise
+    ? (minute + (1440 - sunset)) / (1440 - sunset + sunrise)
+    : (minute - sunset) / (1440 - sunset + sunrise);
+
+  return horizonY + Math.sin(Math.min(1, nightProgress) * Math.PI) * (nightY - horizonY);
+}
+
+function buildSolarPath({ sunrise, sunset, horizonY, peakY, nightY }) {
+  const points = [];
+
+  for (let minute = 0; minute <= 1440; minute += 20) {
+    const x = (minute / 1440) * 1000;
+    const y = getSolarY(minute, sunrise, sunset, horizonY, peakY, nightY);
+    points.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+  }
+
+  return points.join(' ');
+}
+
+function getDayOfYear(date) {
+  const startOfYear = Date.UTC(date.getUTCFullYear(), 0, 0);
+  return Math.floor((date - startOfYear) / 86400000);
+}
+
+function toRadians(value) {
+  return (value * Math.PI) / 180;
+}
+
+function toDegrees(value) {
+  return (value * 180) / Math.PI;
+}
+
+function getTimeZoneOffsetMinutes(date, timeZone) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]));
+  const zonedUtcTime = Date.UTC(
+    Number(values.year),
+    Number(values.month) - 1,
+    Number(values.day),
+    Number(values.hour),
+    Number(values.minute),
+    Number(values.second),
+  );
+
+  return (zonedUtcTime - date.getTime()) / 60000;
+}
+
+function getSolarEventMinutes(cityDate, timeZone, latitude, longitude, zenith) {
+  const dayOfYear = getDayOfYear(cityDate);
+  const gamma = ((2 * Math.PI) / 365) * (dayOfYear - 1);
+  const equationOfTime = 229.18 * (
+    0.000075
+    + 0.001868 * Math.cos(gamma)
+    - 0.032077 * Math.sin(gamma)
+    - 0.014615 * Math.cos(2 * gamma)
+    - 0.040849 * Math.sin(2 * gamma)
+  );
+  const declination = 0.006918
+    - 0.399912 * Math.cos(gamma)
+    + 0.070257 * Math.sin(gamma)
+    - 0.006758 * Math.cos(2 * gamma)
+    + 0.000907 * Math.sin(2 * gamma)
+    - 0.002697 * Math.cos(3 * gamma)
+    + 0.00148 * Math.sin(3 * gamma);
+  const latitudeRad = toRadians(latitude);
+  const hourAngleInput = (Math.cos(toRadians(zenith)) / (Math.cos(latitudeRad) * Math.cos(declination)))
+    - Math.tan(latitudeRad) * Math.tan(declination);
+
+  if (hourAngleInput < -1 || hourAngleInput > 1) {
+    return null;
+  }
+
+  const hourAngle = toDegrees(Math.acos(hourAngleInput));
+  const offsetMinutes = getTimeZoneOffsetMinutes(cityDate, timeZone);
+  const sunrise = 720 - 4 * (longitude + hourAngle) - equationOfTime + offsetMinutes;
+  const sunset = 720 - 4 * (longitude - hourAngle) - equationOfTime + offsetMinutes;
+
+  return { sunrise, sunset };
+}
+
+function getSolarSchedule(date, city) {
+  const fallback = { firstLight: 330, sunrise: 360, sunset: 1080, lastLight: 1110, estimated: true };
+
+  if (typeof city.latitude !== 'number' || typeof city.longitude !== 'number') {
+    return fallback;
+  }
+
+  const cityDate = getCityDate(date, city.timeZone);
+  const daylight = getSolarEventMinutes(cityDate, city.timeZone, city.latitude, city.longitude, 90.833);
+  const twilight = getSolarEventMinutes(cityDate, city.timeZone, city.latitude, city.longitude, 96);
+
+  if (!daylight || !twilight) {
+    return fallback;
+  }
+
+  return {
+    firstLight: twilight.sunrise,
+    sunrise: daylight.sunrise,
+    sunset: daylight.sunset,
+    lastLight: twilight.sunset,
+    estimated: false,
+  };
+}
+
+function getDayNightData(date, city) {
+  const currentMinute = getMinuteOfDay(date, city.timeZone);
+  const { firstLight, sunrise, sunset, lastLight, estimated } = getSolarSchedule(date, city);
+  const isDaylight = currentMinute >= sunrise && currentMinute < sunset;
+  const isTwilight = !isDaylight && currentMinute >= firstLight && currentMinute < lastLight;
+  const nextSunrise = currentMinute < sunrise ? sunrise : sunrise + 1440;
+  const nextSunset = currentMinute < sunset ? sunset : sunset + 1440;
+  const daylightDuration = sunset - sunrise;
+  const remainingMinutes = isDaylight ? sunset - currentMinute : nextSunrise - currentMinute;
+  const status = isDaylight ? 'Daylight remaining' : isTwilight ? 'Twilight' : 'Night remaining';
+  const eventLabel = isDaylight ? 'Sunset' : 'Sunrise';
+  const eventTime = isDaylight ? sunset : nextSunrise;
+  const horizonY = 160;
+  const peakY = 48;
+  const nightY = 208;
+  const currentY = getSolarY(currentMinute, sunrise, sunset, horizonY, peakY, nightY);
+
+  return {
+    currentX: (currentMinute / 1440) * 1000,
+    currentY,
+    daylightDuration,
+    eventLabel,
+    eventTime: formatMinutesAsTime(eventTime),
+    firstLight: formatMinutesAsTime(firstLight),
+    isDaylight,
+    isTwilight,
+    lastLight: formatMinutesAsTime(lastLight),
+    remaining: formatDuration(remainingMinutes),
+    status,
+    sunPath: buildSolarPath({ sunrise, sunset, horizonY, peakY, nightY }),
+    sunrise: formatMinutesAsTime(sunrise),
+    sunset: formatMinutesAsTime(sunset),
+    totalDaylight: formatDuration(daylightDuration),
+    isEstimated: estimated,
+  };
 }
 
 function getZonedDateParts(date, timeZone) {
@@ -225,6 +415,7 @@ function getCitySnapshot(now, city) {
     jalaliWeek: getPersianWeekNumber(now, city.timeZone),
     timeOfDay: timeOfDay.id,
     timeOfDayLabel: timeOfDay.label,
+    dayNight: getDayNightData(now, city),
   };
 }
 
@@ -339,6 +530,60 @@ function SettingsPanel({ ntpHostInput, ntpStatus, onHostInputChange, onSave, onS
   );
 }
 
+
+
+function DayNightCard({ city }) {
+  const timeline = city.dayNight;
+
+  return h(
+    'section',
+    { className: `day-night-card${timeline.isDaylight ? ' day-night-card--day' : ' day-night-card--night'}`, 'aria-label': `Day and night in ${city.label}` },
+    h(
+      'div',
+      { className: 'day-night-card__header' },
+      h('span', { className: 'day-night-card__icon', 'aria-hidden': 'true' }, timeline.isDaylight ? '☀️' : timeline.isTwilight ? '🌅' : '🌙'),
+      h('div', null, h('span', null, timeline.eventLabel), h('strong', null, timeline.eventTime)),
+      h('p', null, `${timeline.status}: ${timeline.remaining}${timeline.isEstimated ? ' · estimated' : ''}`),
+    ),
+    h(
+      'div',
+      { className: 'sun-chart' },
+      h(
+        'svg',
+        { viewBox: '0 0 1000 300', role: 'img', 'aria-label': 'Twenty-four hour day and night curve' },
+        h('defs', null,
+          h('linearGradient', { id: 'daySkyGradient', x1: '0', x2: '0', y1: '0', y2: '1' },
+            h('stop', { offset: '0%', stopColor: '#79b8f3', stopOpacity: '0.92' }),
+            h('stop', { offset: '100%', stopColor: '#0f4f86', stopOpacity: '0.92' }),
+          ),
+          h('filter', { id: 'sunGlow', x: '-80%', y: '-80%', width: '260%', height: '260%' },
+            h('feGaussianBlur', { stdDeviation: '12', result: 'blur' }),
+            h('feMerge', null, h('feMergeNode', { in: 'blur' }), h('feMergeNode', { in: 'SourceGraphic' })),
+          ),
+        ),
+        h('rect', { x: '0', y: '0', width: '1000', height: '160', rx: '18', fill: 'url(#daySkyGradient)' }),
+        h('rect', { x: '0', y: '160', width: '1000', height: '140', fill: '#15161a' }),
+        [250, 500, 750].map((x) => h('line', { key: `v-${x}`, x1: x, x2: x, y1: '0', y2: '286', className: 'sun-chart__grid sun-chart__grid--dash' })),
+        [75, 145, 215, 285].map((y) => h('line', { key: `h-${y}`, x1: '0', x2: '1000', y1: y, y2: y, className: 'sun-chart__grid' })),
+        h('line', { x1: '0', x2: '1000', y1: '160', y2: '160', className: 'sun-chart__horizon' }),
+        h('polyline', { points: timeline.sunPath, className: 'sun-chart__path' }),
+        h('circle', { cx: timeline.currentX, cy: timeline.currentY, r: '22', className: 'sun-chart__sun', filter: timeline.isDaylight ? 'url(#sunGlow)' : undefined }),
+        ['00', '06', '12', '18'].map((label, index) => h('text', { key: label, x: 12 + index * 250, y: '276', className: 'sun-chart__label' }, label)),
+      ),
+    ),
+    h(
+      'div',
+      { className: 'day-night-card__details' },
+      [
+        ['First Light', timeline.firstLight],
+        ['Sunrise', timeline.sunrise],
+        ['Sunset', timeline.sunset],
+        ['Last Light', timeline.lastLight],
+        ['Total Daylight', timeline.totalDaylight],
+      ].map(([label, value]) => h('div', { className: 'day-night-card__row', key: label }, h('strong', null, label), h('span', null, value))),
+    ),
+  );
+}
 
 function SplitPill({ label, items, wide = false }) {
   return h(
@@ -650,6 +895,7 @@ function App() {
         ),
       ),
     ),
+    h(DayNightCard, { city: selectedCity }),
     h(
       'section',
       { className: 'switcher-panel', 'aria-label': 'Switch city time' },

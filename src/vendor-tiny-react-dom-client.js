@@ -123,6 +123,11 @@ function updateProps(dom, previousProps = {}, nextProps = {}) {
       return;
     }
 
+    if (name === 'className' || name === 'htmlFor') {
+      setAttribute(dom, name, value);
+      return;
+    }
+
     if (name in dom && !name.startsWith('aria-') && !name.startsWith('data-')) {
       if (dom[name] !== value) {
         dom[name] = value;
@@ -134,7 +139,7 @@ function updateProps(dom, previousProps = {}, nextProps = {}) {
   });
 }
 
-function createDom(vNode, path) {
+function createDom(vNode, path, isSvg = false) {
   if (isTextVNode(vNode)) {
     return document.createTextNode(String(vNode));
   }
@@ -142,14 +147,25 @@ function createDom(vNode, path) {
   if (typeof vNode.type === 'function') {
     const childVNode = renderFunctionComponent(vNode, path);
     vNode.child = childVNode;
-    vNode.dom = createDom(childVNode, `${path}.0`);
+    vNode.dom = createDom(childVNode, `${path}.0`, isSvg);
+    childVNode.dom = vNode.dom;
     return vNode.dom;
   }
 
-  const dom = document.createElement(vNode.type);
+  const shouldUseSvgNamespace = isSvg || vNode.type === 'svg';
+  const dom = shouldUseSvgNamespace
+    ? document.createElementNS('http://www.w3.org/2000/svg', vNode.type)
+    : document.createElement(vNode.type);
+  vNode.dom = dom;
   updateProps(dom, {}, vNode.props);
   vNode.children.forEach((child, index) => {
-    dom.appendChild(createDom(child, `${path}.${index}`));
+    const childDom = createDom(child, `${path}.${index}`, shouldUseSvgNamespace);
+
+    if (!isTextVNode(child)) {
+      child.dom = childDom;
+    }
+
+    dom.appendChild(childDom);
   });
   return dom;
 }
@@ -170,7 +186,7 @@ function reconcile(parent, previousVNode, nextVNode, index, path) {
   }
 
   if (!previousVNode) {
-    const dom = createDom(nextVNode, path);
+    const dom = createDom(nextVNode, path, parent.namespaceURI === 'http://www.w3.org/2000/svg');
     parent.appendChild(dom);
     if (!isTextVNode(nextVNode)) {
       nextVNode.dom = dom;
@@ -179,7 +195,7 @@ function reconcile(parent, previousVNode, nextVNode, index, path) {
   }
 
   if (changedType(previousVNode, nextVNode)) {
-    const dom = createDom(nextVNode, path);
+    const dom = createDom(nextVNode, path, parent.namespaceURI === 'http://www.w3.org/2000/svg');
     parent.replaceChild(dom, previousVNode.dom);
     if (!isTextVNode(nextVNode)) {
       nextVNode.dom = dom;
