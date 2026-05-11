@@ -33,6 +33,7 @@ button {
 }
 
 .hero-panel,
+.day-night-card,
 .switcher-panel {
   width: min(100%, 1180px);
   margin: 0 auto;
@@ -204,6 +205,151 @@ button {
   overflow: visible;
   background: rgba(255, 255, 255, 0.72);
 }
+
+.day-night-card {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  padding: clamp(1rem, 2.2vw, 1.5rem);
+  overflow: hidden;
+  background: #18181b;
+  color: #f8fafc;
+}
+
+.day-night-card__header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.day-night-card__icon {
+  display: grid;
+  place-items: center;
+  width: 3.15rem;
+  height: 3.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 1.45rem;
+}
+
+.day-night-card__header div {
+  display: flex;
+  gap: 0.7rem;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.day-night-card__header span,
+.day-night-card__header p {
+  color: rgba(248, 250, 252, 0.62);
+  font-weight: 900;
+}
+
+.day-night-card__header div > span {
+  color: #fff;
+  font-size: clamp(1.15rem, 2vw, 1.55rem);
+}
+
+.day-night-card__header strong {
+  color: #fff;
+  font-size: clamp(2.1rem, 4.8vw, 4.6rem);
+  letter-spacing: -0.06em;
+  line-height: 0.9;
+}
+
+.day-night-card__header p {
+  justify-self: end;
+  margin: 0;
+  font-size: clamp(0.9rem, 1.35vw, 1.08rem);
+}
+
+.sun-chart {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.35rem;
+  overflow: hidden;
+  background: #111113;
+}
+
+.sun-chart svg {
+  display: block;
+  width: 100%;
+  min-height: 15rem;
+}
+
+.sun-chart__grid {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 2;
+}
+
+.sun-chart__grid--dash {
+  stroke-dasharray: 5 9;
+}
+
+.sun-chart__horizon {
+  stroke: rgba(205, 202, 219, 0.72);
+  stroke-width: 5;
+}
+
+.sun-chart__path {
+  fill: none;
+  stroke: rgba(226, 232, 240, 0.7);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 10;
+}
+
+.sun-chart__sun {
+  fill: #fff;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 2;
+}
+
+.day-night-card--night .sun-chart__sun {
+  fill: #a3a3a3;
+  stroke: #a3a3a3;
+}
+
+.sun-chart__label {
+  fill: rgba(248, 250, 252, 0.72);
+  font-size: 32px;
+  font-weight: 900;
+}
+
+.day-night-card__details {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.2rem;
+  overflow: hidden;
+}
+
+.day-night-card__row {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.95rem;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.day-night-card__row + .day-night-card__row {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.day-night-card__row strong {
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 950;
+}
+
+.day-night-card__row span {
+  color: rgba(248, 250, 252, 0.62);
+  font-size: clamp(1.05rem, 1.8vw, 1.42rem);
+  font-weight: 850;
+  letter-spacing: -0.03em;
+}
+
 
 .section-heading {
   display: flex;
@@ -671,6 +817,7 @@ button {
 }
 
 :fullscreen .hero-panel,
+:fullscreen .day-night-card,
 :fullscreen .switcher-panel {
   width: min(100%, 1440px);
 }
@@ -700,6 +847,20 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .day-night-card__header,
+  .day-night-card__details {
+    grid-template-columns: 1fr;
+  }
+
+  .day-night-card__header p {
+    justify-self: start;
+  }
+
+  .day-night-card__row + .day-night-card__row {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 0;
+  }
+
   .settings-actions {
     justify-content: flex-start;
   }
@@ -711,6 +872,7 @@ button {
   }
 
   .hero-panel,
+  .day-night-card,
   .switcher-panel {
     border-radius: 1.35rem;
   }
@@ -741,5 +903,14 @@ button {
   .hero-meta,
   .city-tabs {
     grid-template-columns: 1fr;
+  }
+
+  .day-night-card__header div {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .sun-chart svg {
+    min-height: 12rem;
   }
 }
