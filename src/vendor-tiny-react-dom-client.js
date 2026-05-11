@@ -44,6 +44,10 @@ function setStyle(dom, previousStyle = {}, nextStyle = {}) {
   });
 }
 
+function isSvgDom(dom) {
+  return dom.namespaceURI === 'http://www.w3.org/2000/svg';
+}
+
 function setAttribute(dom, name, value) {
   if (name === 'className') {
     dom.setAttribute('class', value);
@@ -90,7 +94,7 @@ function updateProps(dom, previousProps = {}, nextProps = {}) {
     }
 
     if (!(name in nextProps)) {
-      if (name in dom) {
+      if (!isSvgDom(dom) && name in dom) {
         try {
           dom[name] = '';
         } catch {
@@ -123,7 +127,7 @@ function updateProps(dom, previousProps = {}, nextProps = {}) {
       return;
     }
 
-    if (name === 'className' || name === 'htmlFor') {
+    if (name === 'className' || name === 'htmlFor' || isSvgDom(dom)) {
       setAttribute(dom, name, value);
       return;
     }
