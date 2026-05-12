@@ -55,7 +55,7 @@ button {
 
 .top-bar {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
 }
@@ -75,20 +75,80 @@ button {
 }
 
 .fullscreen-button {
+  --button-bg: rgba(15, 23, 42, 0.92);
+  --button-border: rgba(255, 255, 255, 0.18);
+  display: inline-grid;
+  grid-template-columns: auto minmax(0, auto) auto;
+  align-items: center;
+  gap: 0.48rem;
   flex: 0 0 auto;
+  min-height: 3rem;
   cursor: pointer;
+  border: 1px solid var(--button-border);
   border-radius: 999px;
-  padding: 0.8rem 1.05rem;
-  background: #111827;
+  padding: 0.34rem 0.42rem 0.34rem 0.34rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 45%),
+    var(--button-bg);
   color: #fff;
-  font-weight: 800;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.22);
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.fullscreen-button:hover {
+.fullscreen-button:hover:not(:disabled),
+.fullscreen-button:focus-visible {
   transform: translateY(-2px);
-  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.24);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 45%),
+    #0f172a;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.28);
+}
+
+.fullscreen-button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.24);
+  outline-offset: 4px;
+}
+
+.fullscreen-button:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.fullscreen-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.fullscreen-button__icon {
+  display: grid;
+  width: 2.18rem;
+  height: 2.18rem;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.fullscreen-button__copy {
+  padding-inline: 0.05rem;
+  white-space: nowrap;
+}
+
+.fullscreen-button__hint {
+  min-width: 2.35rem;
+  border-radius: 999px;
+  padding: 0.34rem 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.7rem;
+  font-weight: 950;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .hero-content {
@@ -882,6 +942,22 @@ button {
   .heading-actions {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .fullscreen-button {
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-content: stretch;
+    width: 100%;
+    min-height: 3.25rem;
+    padding-right: 0.9rem;
+  }
+
+  .fullscreen-button__copy {
+    justify-self: start;
+  }
+
+  .fullscreen-button__hint {
+    display: none;
   }
 
   .clock {
