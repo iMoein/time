@@ -945,18 +945,6 @@ button {
   }
 
   .fullscreen-button {
-    grid-template-columns: auto minmax(0, 1fr);
-    justify-content: stretch;
-    width: 100%;
-    min-height: 3.25rem;
-    padding-right: 0.9rem;
-  }
-
-  .fullscreen-button__copy {
-    justify-self: start;
-  }
-
-  .fullscreen-button__hint {
     display: none;
   }
 
