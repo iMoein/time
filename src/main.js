@@ -465,7 +465,10 @@ function ToggleButton({ city, selected, canRemove, editMode, dragging, onDragEnd
 }
 
 function SearchPanel({ query, results, onAdd, onQueryChange }) {
+  const [isOpen, setIsOpen] = useState(false);
   const hasQuery = query.trim().length > 0;
+  const showResults = isOpen || hasQuery;
+  const updateQuery = (event) => onQueryChange(event.target.value);
 
   return h(
     'div',
@@ -477,18 +480,29 @@ function SearchPanel({ query, results, onAdd, onQueryChange }) {
       h('input', {
         type: 'search',
         value: query,
-        onChange: (event) => onQueryChange(event.target.value),
+        onInput: updateQuery,
+        onChange: updateQuery,
+        onFocus: () => setIsOpen(true),
+        onBlur: () => setTimeout(() => setIsOpen(false), 120),
         placeholder: 'Try New York, Berlin, Istanbul, Sydney...',
         autoComplete: 'off',
+        'aria-expanded': String(showResults),
       }),
     ),
-    hasQuery && h(
+    showResults && h(
       'div',
       { className: 'search-results', 'aria-live': 'polite' },
       results.length > 0
         ? results.map((city) => h(
           'button',
-          { type: 'button', className: 'search-result', onClick: () => onAdd(city.id), key: city.id, style: { '--accent': city.accent } },
+          {
+            type: 'button',
+            className: 'search-result',
+            onMouseDown: (event) => event.preventDefault(),
+            onClick: () => onAdd(city.id),
+            key: city.id,
+            style: { '--accent': city.accent },
+          },
           h('span', null, city.label),
           h('small', null, `${city.country} · ${city.timeZone}`),
           h('strong', null, '+ Add'),
@@ -510,6 +524,7 @@ function SettingsPanel({ ntpHostInput, ntpStatus, onHostInputChange, onSave, onS
       h('input', {
         type: 'text',
         value: ntpHostInput,
+        onInput: (event) => onHostInputChange(event.target.value),
         onChange: (event) => onHostInputChange(event.target.value),
         placeholder: 'ntp.time.ir',
         autoComplete: 'off',
@@ -734,13 +749,9 @@ function App() {
   const searchResults = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
-    if (!query) {
-      return [];
-    }
-
     return allCities
       .filter((city) => !activeIdSet.has(city.id))
-      .filter((city) => `${city.label} ${city.country} ${city.timeZone}`.toLowerCase().includes(query))
+      .filter((city) => !query || `${city.label} ${city.country} ${city.timeZone}`.toLowerCase().includes(query))
       .slice(0, 8);
   }, [activeIdSet, searchQuery]);
 
