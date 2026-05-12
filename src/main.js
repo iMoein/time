@@ -847,13 +847,20 @@ function App() {
     setNtpSyncRequest((requestId) => requestId + 1);
   };
 
+  const fullscreenSupported = Boolean(document.documentElement.requestFullscreen && document.exitFullscreen);
+  const fullscreenLabel = isFullscreen ? 'Exit fullscreen' : 'Fullscreen';
+
   const toggleFullscreen = () => {
+    if (!fullscreenSupported) {
+      return;
+    }
+
     if (document.fullscreenElement) {
       document.exitFullscreen();
       return;
     }
 
-    document.documentElement.requestFullscreen?.();
+    document.documentElement.requestFullscreen();
   };
 
   return h(
@@ -868,8 +875,18 @@ function App() {
         h('p', { className: 'eyebrow' }, 'Time in ', h('strong', null, selectedCity.label), `, ${selectedCity.country} now`),
         h(
           'button',
-          { type: 'button', className: 'fullscreen-button', onClick: toggleFullscreen },
-          isFullscreen ? 'Exit fullscreen' : 'Fullscreen',
+          {
+            type: 'button',
+            className: 'fullscreen-button',
+            onClick: toggleFullscreen,
+            disabled: !fullscreenSupported,
+            'aria-pressed': isFullscreen,
+            title: fullscreenSupported ? fullscreenLabel : 'Fullscreen is not supported on this device',
+            'aria-label': fullscreenSupported ? fullscreenLabel : 'Fullscreen is not supported on this device',
+          },
+          h('span', { className: 'fullscreen-button__icon', 'aria-hidden': 'true' }, isFullscreen ? '↙' : '↗'),
+          h('span', { className: 'fullscreen-button__copy' }, fullscreenLabel),
+          h('span', { className: 'fullscreen-button__hint', 'aria-hidden': 'true' }, isFullscreen ? 'Esc' : 'View'),
         ),
       ),
       h(
