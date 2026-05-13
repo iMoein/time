@@ -627,12 +627,13 @@ button {
 
 .monthly-calendars--synced {
   grid-template-columns: minmax(0, 760px) minmax(18rem, 1fr);
-  align-items: start;
+  align-items: stretch;
   width: min(100%, 1180px);
 }
 
 .monthly-calendar--synced {
   gap: 1rem;
+  height: 100%;
 }
 
 .monthly-calendar__mode {
@@ -742,12 +743,10 @@ button {
   background: #fff;
 }
 
-.monthly-calendar__day--selected strong span,
 .monthly-calendar__day--selected small {
   color: rgba(255, 255, 255, 0.78);
 }
 
-.monthly-calendar__day--outside strong span,
 .monthly-calendar__day--outside small {
   color: #94a3b8;
 }
@@ -757,7 +756,7 @@ button {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 0.85rem;
-  height: min(46rem, calc(100vh - 4rem));
+  height: 100%;
   min-height: 0;
   padding: clamp(1rem, 2vw, 1.25rem);
   overflow: hidden;
@@ -1505,6 +1504,19 @@ button {
   .hero-meta,
   .city-tabs,
   .weekly-calendar__days {
+    grid-template-columns: 1fr;
+  }
+
+  .monthly-calendar__header {
+    grid-template-columns: 1fr;
+  }
+
+  .monthly-calendar__actions {
+    justify-self: start;
+  }
+
+  .monthly-calendar__filters,
+  .monthly-calendar__mode {
     grid-template-columns: 1fr;
   }
 

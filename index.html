@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Time in Tehran</title>
-    <link rel="stylesheet" href="/src/styles.css?v=monthly-calendar-fix-3" />
+    <link rel="stylesheet" href="/src/styles.css?v=monthly-calendar-fix-4" />
     <script type="importmap">
       {
         "imports": {
@@ -30,7 +30,7 @@
         const firstDay = calendar === 'persian' ? 6 : 1;
         const startDate = new Date(cityDate.getTime() - ((cityDate.getUTCDay() - firstDay + 7) % 7) * dayMs);
         const formatter = new Intl.DateTimeFormat('en-US-u-nu-latn', {
-          timeZone: 'UTC', calendar: calendar === 'persian' ? 'persian' : 'gregory', day: 'numeric', month: 'short',
+          timeZone: 'UTC', calendar: calendar === 'persian' ? 'persian' : 'gregory', day: '2-digit', month: '2-digit',
         });
         return weekdays.map(function mapWeekday(weekday, index) {
           const dayDate = new Date(startDate.getTime() + index * dayMs);
@@ -39,6 +39,6 @@
         });
       };
     </script>
-    <script type="module" src="/src/main.js?v=monthly-calendar-fix-3"></script>
+    <script type="module" src="/src/main.js?v=monthly-calendar-fix-4"></script>
   </body>
 </html>

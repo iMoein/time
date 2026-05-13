@@ -341,7 +341,6 @@ function getPersianWeekNumber(date, timeZone) {
 const dayInMilliseconds = 86400000;
 const gregorianWeekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const persianWeekdays = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-const gregorianMonthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 function addUtcDays(date, days) {
   return new Date(date.getTime() + days * dayInMilliseconds);
@@ -371,16 +370,12 @@ function getWeekStartDate(date, firstDayOfWeek) {
 }
 
 function formatGregorianWeekDate(date) {
-  return new Intl.DateTimeFormat('en-US', {
-    timeZone: 'UTC',
-    day: 'numeric',
-    month: 'short',
-  }).format(date);
+  return `${formatNumber(date.getUTCMonth() + 1)}/${formatNumber(date.getUTCDate())}`;
 }
 
 function formatPersianWeekDate(date) {
   const { month, day } = getPersianDatePartsFromUtc(date);
-  return `${persianMonthNames[month - 1]} ${day}`;
+  return `${formatNumber(month)}/${formatNumber(day)}`;
 }
 
 function getWeeklyCalendar(date, timeZone, calendar) {
@@ -404,7 +399,6 @@ function getWeeklyCalendar(date, timeZone, calendar) {
 
 globalThis.getWeeklyCalendar = getWeeklyCalendar;
 
-const persianMonthNames = ['Farvardin', 'Ordibehesht', 'Khordad', 'Tir', 'Mordad', 'Shahrivar', 'Mehr', 'Aban', 'Azar', 'Dey', 'Bahman', 'Esfand'];
 
 const internationalOccasions = [
   { month: 1, day: 1, title: 'New Year’s Day' },
@@ -693,28 +687,24 @@ function findGregorianDateForPersianDate(year, month, day) {
   throw new Error(`Unable to map Persian date ${year}/${month}/${day}`);
 }
 
-function formatGregorianMonthTitle(date) {
-  return new Intl.DateTimeFormat('en-US', {
-    timeZone: 'UTC',
-    month: 'long',
-    year: 'numeric',
-  }).format(date);
+function formatNumber(value) {
+  return String(value).padStart(2, '0');
 }
 
-function formatPersianMonthTitle(date) {
-  const { year, month } = getPersianDatePartsFromUtc(date);
-  return `${persianMonthNames[month - 1]} ${year}`;
+function formatNumericCalendarTitle(date, calendarId) {
+  const { year, month } = getCalendarPartsFromUtc(date, calendarId);
+  return `${year} / ${formatNumber(month)}`;
 }
 
-function formatSelectedCalendarDate(date, calendar) {
-  return new Intl.DateTimeFormat('en-US-u-nu-latn', {
+function formatSelectedCalendarDate(date, calendarId) {
+  const { year, month, day } = getCalendarPartsFromUtc(date, calendarId);
+  const weekday = new Intl.DateTimeFormat('en-US-u-nu-latn', {
     timeZone: 'UTC',
-    calendar,
+    calendar: calendarId === 'gregorian' ? 'gregory' : 'persian',
     weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
   }).format(date);
+
+  return `${weekday} ${year}/${formatNumber(month)}/${formatNumber(day)}`;
 }
 
 function buildYearOptions(selectedYear) {
@@ -738,13 +728,13 @@ function getGregorianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
   return {
     id: 'gregorian',
     eyebrow: 'Gregorian monthly calendar',
-    title: formatGregorianMonthTitle(monthStart),
+    title: formatNumericCalendarTitle(monthStart, 'gregorian'),
     weekdays: gregorianWeekdays,
     monthValue: monthStart.getUTCMonth() + 1,
-    monthOptions: gregorianMonthNames.map((label, index) => ({ label, value: index + 1 })),
+    monthOptions: getCalendarMonthOptions('gregorian'),
     yearValue: monthStart.getUTCFullYear(),
     yearOptions: buildYearOptions(monthStart.getUTCFullYear()),
-    selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, 'gregory'),
+    selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, 'gregorian'),
     days: Array.from({ length: 42 }, (_, index) => {
       const dayDate = addUtcDays(gridStart, index);
       const dateKey = getCalendarDateKey(dayDate);
@@ -771,10 +761,10 @@ function getPersianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
   return {
     id: 'persian',
     eyebrow: 'Solar Hijri monthly calendar',
-    title: formatPersianMonthTitle(monthStart),
+    title: formatNumericCalendarTitle(monthStart, 'persian'),
     weekdays: persianWeekdays,
     monthValue: targetMonth.month,
-    monthOptions: persianMonthNames.map((label, index) => ({ label, value: index + 1 })),
+    monthOptions: getCalendarMonthOptions('persian'),
     yearValue: targetMonth.year,
     yearOptions: buildYearOptions(targetMonth.year),
     selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, 'persian'),
@@ -831,22 +821,22 @@ function getCalendarMonthStart(cityDate, calendarId, monthOffset) {
   return findGregorianDateForPersianDate(targetMonth.year, targetMonth.month, 1);
 }
 
-function getCalendarMonthOptions(calendarId) {
-  const monthNames = calendarId === 'gregorian' ? gregorianMonthNames : persianMonthNames;
-  return monthNames.map((label, index) => ({ label, value: index + 1 }));
+function getCalendarMonthOptions() {
+  return Array.from({ length: 12 }, (_, index) => {
+    const value = index + 1;
+
+    return { label: formatNumber(value), value };
+  });
 }
 
 function formatCalendarMonthTitle(date, calendarId) {
-  return calendarId === 'gregorian' ? formatGregorianMonthTitle(date) : formatPersianMonthTitle(date);
+  return formatNumericCalendarTitle(date, calendarId);
 }
 
 function formatCompactCalendarDate(date, calendarId) {
   const { day, month } = getCalendarPartsFromUtc(date, calendarId);
-  const monthLabel = calendarId === 'gregorian'
-    ? gregorianMonthNames[month - 1].slice(0, 3)
-    : persianMonthNames[month - 1];
 
-  return { day, month: monthLabel };
+  return { day, month: formatNumber(month) };
 }
 
 function getDateOccasions(date) {
@@ -855,10 +845,10 @@ function getDateOccasions(date) {
   const islamicParts = getIslamicDatePartsFromUtc(date);
   const internationalEvents = internationalOccasions
     .filter((event) => event.month === gregorianParts.month && event.day === gregorianParts.day)
-    .map((event) => ({ ...event, calendar: 'International', dateLabel: `${gregorianParts.day} ${gregorianMonthNames[gregorianParts.month - 1].slice(0, 3)}` }));
+    .map((event) => ({ ...event, calendar: 'International', dateLabel: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` }));
   const iranEvents = iranOccasions
     .filter((event) => event.month === persianParts.month && event.day === persianParts.day)
-    .map((event) => ({ ...event, calendar: 'Iran', dateLabel: `${persianParts.day} ${persianMonthNames[persianParts.month - 1]}` }));
+    .map((event) => ({ ...event, calendar: 'Iran', dateLabel: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` }));
   const islamicEvents = iranIslamicOccasions
     .filter((event) => event.month === islamicParts.month && event.day === islamicParts.day)
     .map((event) => ({ ...event, calendar: 'Iran Islamic', dateLabel: `${islamicParts.day}/${islamicParts.month} AH` }));
@@ -874,9 +864,7 @@ function getMonthOccasionGroups(days, primaryCalendar) {
       dateKey: day.dateKey,
       primaryDate: day.primaryDate,
       secondaryDate: day.secondaryDate,
-      title: primaryCalendar === 'gregorian'
-        ? `${day.primaryDate.day} ${day.primaryDate.month}`
-        : `${day.primaryDate.day} ${day.primaryDate.month}`,
+      title: `${day.primaryDate.month}/${formatNumber(day.primaryDate.day)}`,
       events: day.events,
     }));
 }
@@ -917,7 +905,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     monthOptions: getCalendarMonthOptions(primaryCalendar),
     yearValue: primaryParts.year,
     yearOptions: buildYearOptions(primaryParts.year),
-    selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, primaryCalendar === 'gregorian' ? 'gregory' : 'persian'),
+    selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, primaryCalendar),
     days,
     occasions: getMonthOccasionGroups(days, primaryCalendar),
   };
@@ -1296,7 +1284,7 @@ function MonthlyCalendarCard({ city }) {
                 value: calendar.monthValue,
                 onChange: (event) => selectMonth(Number(event.target.value)),
               },
-              calendar.monthOptions.map((option) => h('option', { value: option.value, key: option.value }, `${option.value}. ${option.label}`)),
+              calendar.monthOptions.map((option) => h('option', { value: option.value, key: option.value }, option.label)),
             ),
           ),
           h(
@@ -1335,13 +1323,11 @@ function MonthlyCalendarCard({ city }) {
             'strong',
             null,
             day.primaryDate.day,
-            h('span', null, day.primaryDate.month),
           ),
           h(
             'small',
             null,
-            day.secondaryDate.day,
-            h('span', null, day.secondaryDate.month),
+            `${day.secondaryDate.month}/${formatNumber(day.secondaryDate.day)}`,
           ),
         )),
       ),
@@ -1367,8 +1353,7 @@ function MonthlyCalendarCard({ city }) {
               'div',
               { className: 'monthly-occasions__date' },
               h('strong', null, group.primaryDate.day),
-              h('span', null, group.primaryDate.month),
-              h('small', null, `${group.secondaryDate.day} ${group.secondaryDate.month}`),
+              h('small', null, `${group.secondaryDate.month}/${formatNumber(group.secondaryDate.day)}`),
             ),
             h(
               'ul',
