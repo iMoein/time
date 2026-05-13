@@ -337,6 +337,245 @@ function getPersianWeekNumber(date, timeZone) {
   return Math.ceil(dayOfYear / 7);
 }
 
+
+const dayInMilliseconds = 86400000;
+const gregorianWeekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const persianWeekdays = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+
+function addUtcDays(date, days) {
+  return new Date(date.getTime() + days * dayInMilliseconds);
+}
+
+function addUtcMonths(date, months) {
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + months, 1, 12));
+}
+
+function getCalendarDateKey(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function isSameUtcDay(firstDate, secondDate) {
+  return firstDate.getUTCFullYear() === secondDate.getUTCFullYear()
+    && firstDate.getUTCMonth() === secondDate.getUTCMonth()
+    && firstDate.getUTCDate() === secondDate.getUTCDate();
+}
+
+function getMonthGridStart(date, firstDayOfWeek) {
+  const dayOffset = (date.getUTCDay() - firstDayOfWeek + 7) % 7;
+  return addUtcDays(date, -dayOffset);
+}
+
+function div(number, divisor) {
+  return Math.floor(number / divisor);
+}
+
+function gregorianToJdn(year, month, day) {
+  let jdn = div((year + div(month - 8, 6) + 100100) * 1461, 4)
+    + div(153 * ((month + 9) % 12) + 2, 5)
+    + day
+    - 34840408;
+  jdn -= div(div(year + 100100 + div(month - 8, 6), 100) * 3, 4);
+  return jdn + 752;
+}
+
+function jdnToGregorian(jdn) {
+  let j = 4 * jdn + 139361631;
+  j += div(div(4 * jdn + 183187720, 146097) * 3, 4) * 4 - 3908;
+  const i = div((j % 1461), 4) * 5 + 308;
+  const day = div((i % 153), 5) + 1;
+  const month = ((div(i, 153) % 12) + 1);
+  const year = div(j, 1461) - 100099 + div(8 - month, 6);
+
+  return { year, month, day };
+}
+
+const jalaliBreaks = [-61, 9, 38, 199, 426, 686, 756, 818, 1111, 1181, 1210, 1635, 2060, 2097, 2192, 2262, 2324, 2394, 2456, 3178];
+const persianMonthNames = ['Farvardin', 'Ordibehesht', 'Khordad', 'Tir', 'Mordad', 'Shahrivar', 'Mehr', 'Aban', 'Azar', 'Dey', 'Bahman', 'Esfand'];
+
+function getJalaliCalendarData(year) {
+  const gregorianYear = year + 621;
+  let leapJ = -14;
+  let previousBreak = jalaliBreaks[0];
+  let jump = 0;
+
+  for (let index = 1; index < jalaliBreaks.length; index += 1) {
+    const currentBreak = jalaliBreaks[index];
+    jump = currentBreak - previousBreak;
+
+    if (year < currentBreak) {
+      break;
+    }
+
+    leapJ += div(jump, 33) * 8 + div((jump % 33), 4);
+    previousBreak = currentBreak;
+  }
+
+  let yearsSinceBreak = year - previousBreak;
+  leapJ += div(yearsSinceBreak, 33) * 8 + div(((yearsSinceBreak % 33) + 3), 4);
+
+  if (jump % 33 === 4 && jump - yearsSinceBreak === 4) {
+    leapJ += 1;
+  }
+
+  const leapG = div(gregorianYear, 4) - div((div(gregorianYear, 100) + 1) * 3, 4) - 150;
+  const march = 20 + leapJ - leapG;
+
+  if (jump - yearsSinceBreak < 6) {
+    yearsSinceBreak = yearsSinceBreak - jump + div(jump + 4, 33) * 33;
+  }
+
+  let leap = (((yearsSinceBreak + 1) % 33) - 1) % 4;
+
+  if (leap === -1) {
+    leap = 4;
+  }
+
+  return { gregorianYear, march, leap };
+}
+
+function jalaliToJdn(year, month, day) {
+  const { gregorianYear, march } = getJalaliCalendarData(year);
+  const monthOffset = (month - 1) * 31 - div(month, 7) * (month - 7);
+  return gregorianToJdn(gregorianYear, 3, march) + monthOffset + day - 1;
+}
+
+function jdnToJalali(jdn) {
+  const { year: gregorianYear } = jdnToGregorian(jdn);
+  let year = gregorianYear - 621;
+  let { gregorianYear: jalaliGregorianYear, march, leap } = getJalaliCalendarData(year);
+  const firstFarvardin = gregorianToJdn(jalaliGregorianYear, 3, march);
+  let dayOfYear = jdn - firstFarvardin;
+
+  if (dayOfYear >= 0) {
+    if (dayOfYear <= 185) {
+      return { year, month: 1 + div(dayOfYear, 31), day: (dayOfYear % 31) + 1 };
+    }
+
+    dayOfYear -= 186;
+  } else {
+    year -= 1;
+    ({ gregorianYear: jalaliGregorianYear, march, leap } = getJalaliCalendarData(year));
+    dayOfYear += 179;
+
+    if (leap === 1) {
+      dayOfYear += 1;
+    }
+  }
+
+  return { year, month: 7 + div(dayOfYear, 30), day: (dayOfYear % 30) + 1 };
+}
+
+function getPersianDatePartsFromUtc(date) {
+  return jdnToJalali(gregorianToJdn(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate()));
+}
+
+function addPersianMonths({ year, month }, monthOffset) {
+  const zeroBasedMonth = month - 1 + monthOffset;
+  const normalizedYear = year + Math.floor(zeroBasedMonth / 12);
+  const normalizedMonth = ((zeroBasedMonth % 12) + 12) % 12;
+
+  return { year: normalizedYear, month: normalizedMonth + 1 };
+}
+
+function findGregorianDateForPersianDate(year, month, day) {
+  const gregorianParts = jdnToGregorian(jalaliToJdn(year, month, day));
+  return new Date(Date.UTC(gregorianParts.year, gregorianParts.month - 1, gregorianParts.day, 12));
+}
+
+function formatGregorianMonthTitle(date) {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: 'UTC',
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+}
+
+function formatPersianMonthTitle(date) {
+  const { year, month } = getPersianDatePartsFromUtc(date);
+  return `${persianMonthNames[month - 1]} ${year}`;
+}
+
+function formatSelectedCalendarDate(date, calendar) {
+  return new Intl.DateTimeFormat('en-US-u-nu-latn', {
+    timeZone: 'UTC',
+    calendar,
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+}
+
+function getGregorianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
+  const monthDate = addUtcMonths(cityDate, monthOffset);
+  const monthStart = new Date(Date.UTC(monthDate.getUTCFullYear(), monthDate.getUTCMonth(), 1, 12));
+  const gridStart = getMonthGridStart(monthStart, 1);
+
+  return {
+    id: 'gregorian',
+    eyebrow: 'Gregorian monthly calendar',
+    title: formatGregorianMonthTitle(monthStart),
+    weekdays: gregorianWeekdays,
+    selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, 'gregory'),
+    days: Array.from({ length: 42 }, (_, index) => {
+      const dayDate = addUtcDays(gridStart, index);
+      const dateKey = getCalendarDateKey(dayDate);
+
+      return {
+        id: `gregorian-${dateKey}`,
+        date: dayDate,
+        dateKey,
+        number: dayDate.getUTCDate(),
+        isOutsideMonth: dayDate.getUTCMonth() !== monthStart.getUTCMonth(),
+        isToday: isSameUtcDay(dayDate, cityDate),
+        isSelected: selectedDateKey === dateKey,
+      };
+    }),
+  };
+}
+
+function getPersianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
+  const currentPersianParts = getPersianDatePartsFromUtc(cityDate);
+  const targetMonth = addPersianMonths(currentPersianParts, monthOffset);
+  const monthStart = findGregorianDateForPersianDate(targetMonth.year, targetMonth.month, 1);
+  const gridStart = getMonthGridStart(monthStart, 6);
+
+  return {
+    id: 'persian',
+    eyebrow: 'Solar Hijri monthly calendar',
+    title: formatPersianMonthTitle(monthStart),
+    weekdays: persianWeekdays,
+    selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, 'persian'),
+    days: Array.from({ length: 42 }, (_, index) => {
+      const dayDate = addUtcDays(gridStart, index);
+      const persianParts = getPersianDatePartsFromUtc(dayDate);
+      const dateKey = getCalendarDateKey(dayDate);
+
+      return {
+        id: `persian-${dateKey}`,
+        date: dayDate,
+        dateKey,
+        number: persianParts.day,
+        isOutsideMonth: persianParts.year !== targetMonth.year || persianParts.month !== targetMonth.month,
+        isToday: isSameUtcDay(dayDate, cityDate),
+        isSelected: selectedDateKey === dateKey,
+      };
+    }),
+  };
+}
+
+
+
+function getCalendarMonthOffset(calendarId, cityDate, date) {
+  if (calendarId === 'gregorian') {
+    return (date.getUTCFullYear() - cityDate.getUTCFullYear()) * 12 + date.getUTCMonth() - cityDate.getUTCMonth();
+  }
+
+  const cityPersianParts = getPersianDatePartsFromUtc(cityDate);
+  const datePersianParts = getPersianDatePartsFromUtc(date);
+  return (datePersianParts.year - cityPersianParts.year) * 12 + datePersianParts.month - cityPersianParts.month;
+}
+
 function formatDate(date, timeZone, locale = 'en-US', calendar = 'gregory', withWeekday = true) {
   return new Intl.DateTimeFormat(locale, {
     timeZone,
@@ -411,6 +650,7 @@ function getCitySnapshot(now, city) {
     gregorianYear: gregorianParts.year,
     persianYear: persianParts.year,
     weekday: formatWeekday(now, city.timeZone),
+    cityDate,
     gregorianWeek: getWeekNumber(cityDate),
     jalaliWeek: getPersianWeekNumber(now, city.timeZone),
     timeOfDay: timeOfDay.id,
@@ -597,6 +837,84 @@ function DayNightCard({ city }) {
         ['Total Daylight', timeline.totalDaylight],
       ].map(([label, value]) => h('div', { className: 'day-night-card__row', key: label }, h('strong', null, label), h('span', null, value))),
     ),
+  );
+}
+
+
+function MonthlyCalendarCard({ city }) {
+  const todayKey = getCalendarDateKey(city.cityDate);
+  const [monthOffsets, setMonthOffsets] = useState({ gregorian: 0, persian: 0 });
+  const [selectedDateKeys, setSelectedDateKeys] = useState({ gregorian: todayKey, persian: todayKey });
+  const calendars = [
+    getGregorianMonthCalendar(city.cityDate, monthOffsets.gregorian, selectedDateKeys.gregorian),
+    getPersianMonthCalendar(city.cityDate, monthOffsets.persian, selectedDateKeys.persian),
+  ];
+  const moveMonth = (calendarId, direction) => {
+    setMonthOffsets((offsets) => ({ ...offsets, [calendarId]: offsets[calendarId] + direction }));
+  };
+  const resetMonth = (calendarId) => {
+    setMonthOffsets((offsets) => ({ ...offsets, [calendarId]: 0 }));
+    setSelectedDateKeys((dateKeys) => ({ ...dateKeys, [calendarId]: todayKey }));
+  };
+  const selectDay = (calendarId, dateKey) => {
+    const selectedDate = new Date(`${dateKey}T12:00:00Z`);
+
+    setSelectedDateKeys((dateKeys) => ({ ...dateKeys, [calendarId]: dateKey }));
+    setMonthOffsets((offsets) => ({ ...offsets, [calendarId]: getCalendarMonthOffset(calendarId, city.cityDate, selectedDate) }));
+  };
+  const moveDay = (calendarId, direction) => {
+    const activeDateKey = selectedDateKeys[calendarId] || todayKey;
+    const nextDate = addUtcDays(new Date(`${activeDateKey}T12:00:00Z`), direction);
+    selectDay(calendarId, getCalendarDateKey(nextDate));
+  };
+
+  return h(
+    'section',
+    { className: 'monthly-calendars', 'aria-label': `Monthly Gregorian and Solar Hijri calendars for ${city.label}` },
+    calendars.map((calendar) => h(
+      'article',
+      { className: `monthly-calendar monthly-calendar--${calendar.id}`, key: calendar.id },
+      h(
+        'header',
+        { className: 'monthly-calendar__header' },
+        h('span', null, calendar.eyebrow),
+        h('strong', null, calendar.title),
+        h(
+          'div',
+          { className: 'monthly-calendar__actions', 'aria-label': `${calendar.title} navigation` },
+          h('button', { type: 'button', onClick: () => moveMonth(calendar.id, -1), 'aria-label': `Previous ${calendar.eyebrow}` }, '‹'),
+          h('button', { type: 'button', onClick: () => resetMonth(calendar.id) }, 'Today'),
+          h('button', { type: 'button', onClick: () => moveMonth(calendar.id, 1), 'aria-label': `Next ${calendar.eyebrow}` }, '›'),
+        ),
+        h('small', null, `Selected: ${calendar.selectedLabel}`),
+        h(
+          'div',
+          { className: 'monthly-calendar__day-actions', 'aria-label': `${calendar.title} selected day navigation` },
+          h('button', { type: 'button', onClick: () => moveDay(calendar.id, -1) }, 'Previous day'),
+          h('button', { type: 'button', onClick: () => moveDay(calendar.id, 1) }, 'Next day'),
+        ),
+      ),
+      h(
+        'div',
+        { className: 'monthly-calendar__weekdays', 'aria-hidden': 'true' },
+        calendar.weekdays.map((weekday) => h('span', { key: weekday }, weekday)),
+      ),
+      h(
+        'div',
+        { className: 'monthly-calendar__days' },
+        calendar.days.map((day) => h(
+          'button',
+          {
+            type: 'button',
+            className: `monthly-calendar__day${day.isOutsideMonth ? ' monthly-calendar__day--outside' : ''}${day.isToday ? ' monthly-calendar__day--today' : ''}${day.isSelected ? ' monthly-calendar__day--selected' : ''}`,
+            onClick: () => selectDay(calendar.id, day.dateKey),
+            'aria-pressed': day.isSelected,
+            key: day.id,
+          },
+          h('span', null, day.number),
+        )),
+      ),
+    )),
   );
 }
 
@@ -924,6 +1242,7 @@ function App() {
       ),
     ),
     h(DayNightCard, { city: selectedCity }),
+    h(MonthlyCalendarCard, { city: selectedCity }),
     h(
       'section',
       { className: 'switcher-panel', 'aria-label': 'Switch city time' },
