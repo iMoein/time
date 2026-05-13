@@ -632,6 +632,7 @@ button {
 }
 
 .monthly-calendar--synced {
+  align-content: start;
   gap: 1rem;
   height: 100%;
 }
@@ -756,7 +757,7 @@ button {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 0.85rem;
-  height: 100%;
+  height: min(46rem, calc(100vh - 4rem));
   min-height: 0;
   padding: clamp(1rem, 2vw, 1.25rem);
   overflow: hidden;
@@ -1508,15 +1509,6 @@ button {
   }
 
   .monthly-calendar__header {
-    grid-template-columns: 1fr;
-  }
-
-  .monthly-calendar__actions {
-    justify-self: start;
-  }
-
-  .monthly-calendar__filters,
-  .monthly-calendar__mode {
     grid-template-columns: 1fr;
   }
 
