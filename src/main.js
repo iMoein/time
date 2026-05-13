@@ -337,6 +337,59 @@ function getPersianWeekNumber(date, timeZone) {
   return Math.ceil(dayOfYear / 7);
 }
 
+
+const dayInMilliseconds = 86400000;
+const gregorianWeekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const persianWeekdays = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+
+function addUtcDays(date, days) {
+  return new Date(date.getTime() + days * dayInMilliseconds);
+}
+
+function getWeekStartDate(date, firstDayOfWeek) {
+  const dayOffset = (date.getUTCDay() - firstDayOfWeek + 7) % 7;
+  return addUtcDays(date, -dayOffset);
+}
+
+function formatGregorianWeekDate(date) {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: 'UTC',
+    day: 'numeric',
+    month: 'short',
+  }).format(date);
+}
+
+function formatPersianWeekDate(date) {
+  return new Intl.DateTimeFormat('en-US-u-nu-latn', {
+    timeZone: 'UTC',
+    calendar: 'persian',
+    day: 'numeric',
+    month: 'short',
+  }).format(date);
+}
+
+function getWeeklyCalendar(date, timeZone, calendar) {
+  const cityDate = getCityDate(date, timeZone);
+  const startsOnSaturday = calendar === 'persian';
+  const startDate = getWeekStartDate(cityDate, startsOnSaturday ? 6 : 1);
+  const weekdays = startsOnSaturday ? persianWeekdays : gregorianWeekdays;
+  const formatter = startsOnSaturday ? formatPersianWeekDate : formatGregorianWeekDate;
+
+  return weekdays.map((weekday, index) => {
+    const dayDate = addUtcDays(startDate, index);
+    const isToday = dayDate.getUTCFullYear() === cityDate.getUTCFullYear()
+      && dayDate.getUTCMonth() === cityDate.getUTCMonth()
+      && dayDate.getUTCDate() === cityDate.getUTCDate();
+
+    return {
+      id: `${calendar}-${dayDate.toISOString().slice(0, 10)}`,
+      weekday,
+      date: formatter(dayDate),
+      isToday,
+    };
+  });
+}
+
 function formatDate(date, timeZone, locale = 'en-US', calendar = 'gregory', withWeekday = true) {
   return new Intl.DateTimeFormat(locale, {
     timeZone,
@@ -412,7 +465,9 @@ function getCitySnapshot(now, city) {
     persianYear: persianParts.year,
     weekday: formatWeekday(now, city.timeZone),
     gregorianWeek: getWeekNumber(cityDate),
+    gregorianWeekDays: getWeeklyCalendar(now, city.timeZone, 'gregorian'),
     jalaliWeek: getPersianWeekNumber(now, city.timeZone),
+    persianWeekDays: getWeeklyCalendar(now, city.timeZone, 'persian'),
     timeOfDay: timeOfDay.id,
     timeOfDayLabel: timeOfDay.label,
     dayNight: getDayNightData(now, city),
@@ -597,6 +652,52 @@ function DayNightCard({ city }) {
         ['Total Daylight', timeline.totalDaylight],
       ].map(([label, value]) => h('div', { className: 'day-night-card__row', key: label }, h('strong', null, label), h('span', null, value))),
     ),
+  );
+}
+
+
+function WeeklyCalendarCard({ city }) {
+  const calendars = [
+    {
+      id: 'gregorian',
+      eyebrow: 'Gregorian weekly calendar',
+      title: `Week ${city.gregorianWeek}`,
+      range: `${city.gregorianWeekDays[0].date} – ${city.gregorianWeekDays[6].date}`,
+      days: city.gregorianWeekDays,
+    },
+    {
+      id: 'persian',
+      eyebrow: 'Solar Hijri weekly calendar',
+      title: `Week ${city.jalaliWeek}`,
+      range: `${city.persianWeekDays[0].date} – ${city.persianWeekDays[6].date}`,
+      days: city.persianWeekDays,
+    },
+  ];
+
+  return h(
+    'section',
+    { className: 'weekly-calendars', 'aria-label': `Weekly Gregorian and Solar Hijri calendars for ${city.label}` },
+    calendars.map((calendar) => h(
+      'article',
+      { className: `weekly-calendar weekly-calendar--${calendar.id}`, key: calendar.id },
+      h(
+        'header',
+        { className: 'weekly-calendar__header' },
+        h('span', null, calendar.eyebrow),
+        h('strong', null, calendar.title),
+        h('small', null, calendar.range),
+      ),
+      h(
+        'div',
+        { className: 'weekly-calendar__days' },
+        calendar.days.map((day) => h(
+          'div',
+          { className: `weekly-calendar__day${day.isToday ? ' weekly-calendar__day--today' : ''}`, key: day.id },
+          h('span', null, day.weekday),
+          h('strong', null, day.date),
+        )),
+      ),
+    )),
   );
 }
 
@@ -924,6 +1025,7 @@ function App() {
       ),
     ),
     h(DayNightCard, { city: selectedCity }),
+    h(WeeklyCalendarCard, { city: selectedCity }),
     h(
       'section',
       { className: 'switcher-panel', 'aria-label': 'Switch city time' },
