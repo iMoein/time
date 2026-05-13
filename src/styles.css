@@ -626,6 +626,8 @@ button {
 
 
 .monthly-calendars--synced {
+  --synced-calendar-height: clamp(44rem, calc(100vh - 3rem), 47rem);
+
   grid-template-columns: minmax(0, 760px) minmax(18rem, 1fr);
   align-items: stretch;
   width: min(100%, 1180px);
@@ -634,7 +636,7 @@ button {
 .monthly-calendar--synced {
   align-content: start;
   gap: 1rem;
-  height: 100%;
+  height: var(--synced-calendar-height);
 }
 
 .monthly-calendar__mode {
@@ -757,7 +759,7 @@ button {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: 0.85rem;
-  height: min(46rem, calc(100vh - 4rem));
+  height: var(--synced-calendar-height);
   min-height: 0;
   padding: clamp(1rem, 2vw, 1.25rem);
   overflow: hidden;
@@ -1431,6 +1433,7 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .monthly-calendar--synced,
   .monthly-occasions {
     height: auto;
     max-height: none;
@@ -1509,6 +1512,19 @@ button {
   }
 
   .monthly-calendar__header {
+    grid-template-columns: 1fr;
+  }
+
+  .monthly-calendar__header {
+    grid-template-columns: 1fr;
+  }
+
+  .monthly-calendar__actions {
+    justify-self: start;
+  }
+
+  .monthly-calendar__filters,
+  .monthly-calendar__mode {
     grid-template-columns: 1fr;
   }
 
