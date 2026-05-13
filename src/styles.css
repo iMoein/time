@@ -624,6 +624,88 @@ button {
 }
 
 
+
+.monthly-calendars--synced {
+  grid-template-columns: minmax(0, 1fr);
+  width: min(100%, 760px);
+}
+
+.monthly-calendar--synced {
+  gap: 1rem;
+}
+
+.monthly-calendar__mode {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  padding: 0.28rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 999px;
+  background: rgba(248, 250, 252, 0.82);
+}
+
+.monthly-calendar__mode button {
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 0.65rem 0.85rem;
+  background: transparent;
+  color: #475569;
+  font-weight: 950;
+}
+
+.monthly-calendar__mode button.selected,
+.monthly-calendar__mode button:hover,
+.monthly-calendar__mode button:focus-visible {
+  background: #047857;
+  color: #fff;
+  outline: none;
+}
+
+.monthly-calendar--primary-gregorian .monthly-calendar__mode button.selected,
+.monthly-calendar--primary-gregorian .monthly-calendar__mode button:hover,
+.monthly-calendar--primary-gregorian .monthly-calendar__mode button:focus-visible,
+.monthly-calendar--primary-gregorian .monthly-calendar__filter span {
+  background: #2563eb;
+}
+
+.monthly-calendar__days--overlay {
+  gap: 0.45rem;
+}
+
+.monthly-calendar__day--overlay {
+  min-height: 4.55rem;
+  align-content: center;
+  gap: 0.18rem;
+  padding: 0.55rem 0.35rem;
+}
+
+.monthly-calendar__day--overlay strong {
+  color: currentColor;
+  font-size: clamp(1.28rem, 2.2vw, 1.85rem);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.monthly-calendar__day--overlay small {
+  max-width: 100%;
+  overflow: hidden;
+  color: #64748b;
+  font-size: 0.66rem;
+  font-weight: 850;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.monthly-calendar__day--selected small {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.monthly-calendar__day--outside small {
+  color: #94a3b8;
+}
+
 .monthly-calendars--error {
   grid-template-columns: 1fr;
 }
@@ -1224,15 +1306,12 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .monthly-calendar__header {
-    grid-template-columns: 1fr;
-  }
-
   .monthly-calendar__actions {
     justify-self: start;
   }
 
-  .monthly-calendar__filters {
+  .monthly-calendar__filters,
+  .monthly-calendar__mode {
     grid-template-columns: 1fr;
   }
 
