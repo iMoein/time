@@ -1503,7 +1503,8 @@ button {
   }
 
   .hero-meta,
-  .city-tabs {
+  .city-tabs,
+  .weekly-calendar__days {
     grid-template-columns: 1fr;
   }
 
