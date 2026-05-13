@@ -341,6 +341,7 @@ function getPersianWeekNumber(date, timeZone) {
 const dayInMilliseconds = 86400000;
 const gregorianWeekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const persianWeekdays = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+const gregorianMonthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 function addUtcDays(date, days) {
   return new Date(date.getTime() + days * dayInMilliseconds);
@@ -473,6 +474,19 @@ function formatSelectedCalendarDate(date, calendar) {
   }).format(date);
 }
 
+function buildYearOptions(selectedYear) {
+  return Array.from({ length: 21 }, (_, index) => selectedYear - 10 + index);
+}
+
+function getGregorianMonthOffset(cityDate, year, month) {
+  return (year - cityDate.getUTCFullYear()) * 12 + month - 1 - cityDate.getUTCMonth();
+}
+
+function getPersianMonthOffset(cityDate, year, month) {
+  const cityPersianParts = getPersianDatePartsFromUtc(cityDate);
+  return (year - cityPersianParts.year) * 12 + month - cityPersianParts.month;
+}
+
 function getGregorianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
   const monthDate = addUtcMonths(cityDate, monthOffset);
   const monthStart = new Date(Date.UTC(monthDate.getUTCFullYear(), monthDate.getUTCMonth(), 1, 12));
@@ -483,6 +497,10 @@ function getGregorianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
     eyebrow: 'Gregorian monthly calendar',
     title: formatGregorianMonthTitle(monthStart),
     weekdays: gregorianWeekdays,
+    monthValue: monthStart.getUTCMonth() + 1,
+    monthOptions: gregorianMonthNames.map((label, index) => ({ label, value: index + 1 })),
+    yearValue: monthStart.getUTCFullYear(),
+    yearOptions: buildYearOptions(monthStart.getUTCFullYear()),
     selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, 'gregory'),
     days: Array.from({ length: 42 }, (_, index) => {
       const dayDate = addUtcDays(gridStart, index);
@@ -512,6 +530,10 @@ function getPersianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
     eyebrow: 'Solar Hijri monthly calendar',
     title: formatPersianMonthTitle(monthStart),
     weekdays: persianWeekdays,
+    monthValue: targetMonth.month,
+    monthOptions: persianMonthNames.map((label, index) => ({ label, value: index + 1 })),
+    yearValue: targetMonth.year,
+    yearOptions: buildYearOptions(targetMonth.year),
     selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, 'persian'),
     days: Array.from({ length: 42 }, (_, index) => {
       const dayDate = addUtcDays(gridStart, index);
@@ -846,10 +868,14 @@ function MonthlyCalendarCard({ city }) {
     setSelectedDateKeys((dateKeys) => ({ ...dateKeys, [calendarId]: dateKey }));
     setMonthOffsets((offsets) => ({ ...offsets, [calendarId]: getCalendarMonthOffset(calendarId, city.cityDate, selectedDate) }));
   };
-  const moveDay = (calendarId, direction) => {
-    const activeDateKey = selectedDateKeys[calendarId] || todayKey;
-    const nextDate = addUtcDays(new Date(`${activeDateKey}T12:00:00Z`), direction);
-    selectDay(calendarId, getCalendarDateKey(nextDate));
+  const getPickerMonthOffset = (calendar, month, year) => (calendar.id === 'gregorian'
+    ? getGregorianMonthOffset(city.cityDate, year, month)
+    : getPersianMonthOffset(city.cityDate, year, month));
+  const selectMonth = (calendar, month) => {
+    setMonthOffsets((offsets) => ({ ...offsets, [calendar.id]: getPickerMonthOffset(calendar, month, calendar.yearValue) }));
+  };
+  const selectYear = (calendar, year) => {
+    setMonthOffsets((offsets) => ({ ...offsets, [calendar.id]: getPickerMonthOffset(calendar, calendar.monthValue, year) }));
   };
 
   return h(
@@ -873,9 +899,33 @@ function MonthlyCalendarCard({ city }) {
         h('small', null, `Selected: ${calendar.selectedLabel}`),
         h(
           'div',
-          { className: 'monthly-calendar__day-actions', 'aria-label': `${calendar.title} selected day navigation` },
-          h('button', { type: 'button', onClick: () => moveDay(calendar.id, -1) }, 'Previous day'),
-          h('button', { type: 'button', onClick: () => moveDay(calendar.id, 1) }, 'Next day'),
+          { className: 'monthly-calendar__filters', 'aria-label': `${calendar.title} quick filters` },
+          h(
+            'label',
+            { className: 'monthly-calendar__filter' },
+            h('span', null, 'Month'),
+            h(
+              'select',
+              {
+                value: calendar.monthValue,
+                onChange: (event) => selectMonth(calendar, Number(event.target.value)),
+              },
+              calendar.monthOptions.map((option) => h('option', { value: option.value, key: option.value }, `${option.value}. ${option.label}`)),
+            ),
+          ),
+          h(
+            'label',
+            { className: 'monthly-calendar__filter' },
+            h('span', null, 'Year'),
+            h(
+              'select',
+              {
+                value: calendar.yearValue,
+                onChange: (event) => selectYear(calendar, Number(event.target.value)),
+              },
+              calendar.yearOptions.map((year) => h('option', { value: year, key: year }, year)),
+            ),
+          ),
         ),
       ),
       h(

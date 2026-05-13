@@ -472,29 +472,58 @@ button {
   line-height: 1.25;
 }
 
-.monthly-calendar__day-actions {
-  display: flex;
+.monthly-calendar__filters {
+  display: grid;
   grid-column: 1 / -1;
-  gap: 0.45rem;
-  flex-wrap: wrap;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  padding-top: 0.2rem;
 }
 
-.monthly-calendar__day-actions button {
-  cursor: pointer;
-  border: 1px solid rgba(148, 163, 184, 0.28);
-  border-radius: 999px;
-  padding: 0.5rem 0.72rem;
-  background: rgba(255, 255, 255, 0.72);
-  color: #172033;
+.monthly-calendar__filter {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  min-height: 2.8rem;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.34);
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.monthly-calendar__filter span {
+  display: grid;
+  height: 100%;
+  min-width: 5.2rem;
+  place-items: center;
+  background: #047857;
+  color: #fff;
   font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.02em;
+}
+
+.monthly-calendar__filter select {
+  width: 100%;
+  min-width: 0;
+  cursor: pointer;
+  border: 0;
+  padding: 0.72rem 0.85rem;
+  outline: 0;
+  background: transparent;
+  color: #172033;
+  font: inherit;
+  font-size: 0.86rem;
   font-weight: 900;
 }
 
-.monthly-calendar__day-actions button:hover,
-.monthly-calendar__day-actions button:focus-visible {
-  background: #111827;
-  color: #fff;
-  outline: none;
+.monthly-calendar__filter:focus-within {
+  border-color: rgba(4, 120, 87, 0.62);
+  box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.12);
+}
+
+.monthly-calendar--persian .monthly-calendar__filter span {
+  background: #0f766e;
 }
 
 .monthly-calendar__actions {
@@ -1199,12 +1228,12 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .monthly-calendar__header {
-    grid-template-columns: 1fr;
-  }
-
   .monthly-calendar__actions {
     justify-self: start;
+  }
+
+  .monthly-calendar__filters {
+    grid-template-columns: 1fr;
   }
 
   .monthly-calendar__weekdays,
