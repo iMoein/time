@@ -119,7 +119,10 @@ const server = createServer((request, response) => {
     return;
   }
 
-  response.writeHead(200, { 'Content-Type': contentTypes[extname(filePath)] || 'application/octet-stream' });
+  response.writeHead(200, {
+    'Content-Type': contentTypes[extname(filePath)] || 'application/octet-stream',
+    'Cache-Control': 'no-store, max-age=0',
+  });
   createReadStream(filePath).pipe(response);
 });
 
