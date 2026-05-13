@@ -597,16 +597,10 @@ function formatCalendarMonthTitle(date, calendarId) {
   return calendarId === 'gregorian' ? formatGregorianMonthTitle(date) : formatPersianMonthTitle(date);
 }
 
-function formatOverlayDate(date, calendarId) {
-  const parts = getCalendarPartsFromUtc(date, calendarId);
-  const monthLabel = calendarId === 'gregorian'
-    ? gregorianMonthNames[parts.month - 1].slice(0, 3)
-    : persianMonthNames[parts.month - 1];
+function formatCompactCalendarDate(date, calendarId) {
+  const { day, month } = getCalendarPartsFromUtc(date, calendarId);
 
-  return {
-    day: parts.day,
-    month: monthLabel,
-  };
+  return { day, month };
 }
 
 function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey) {
@@ -636,8 +630,8 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
       return {
         id: `synced-${primaryCalendar}-${dateKey}`,
         dateKey,
-        primaryNumber: dayPrimaryParts.day,
-        secondaryDate: formatOverlayDate(dayDate, secondaryCalendar),
+        primaryDate: { day: dayPrimaryParts.day, month: dayPrimaryParts.month },
+        secondaryDate: formatCompactCalendarDate(dayDate, secondaryCalendar),
         isOutsideMonth: dayPrimaryParts.year !== primaryParts.year || dayPrimaryParts.month !== primaryParts.month,
         isToday: isSameUtcDay(dayDate, cityDate),
         isSelected: selectedDateKey === dateKey,
@@ -1054,9 +1048,18 @@ function MonthlyCalendarCard({ city }) {
             'aria-pressed': day.isSelected,
             key: day.id,
           },
-          h('span', { className: 'monthly-calendar__day-month' }, day.secondaryDate.month),
-          h('strong', null, day.primaryNumber),
-          h('small', null, day.secondaryDate.day),
+          h(
+            'strong',
+            null,
+            day.primaryDate.day,
+            h('span', null, `/${day.primaryDate.month}`),
+          ),
+          h(
+            'small',
+            null,
+            day.secondaryDate.day,
+            h('span', null, `/${day.secondaryDate.month}`),
+          ),
         )),
       ),
     ),
