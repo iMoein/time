@@ -504,6 +504,7 @@ const internationalOccasions = [
   { month: 12, day: 18, title: 'International Migrants Day' },
   { month: 12, day: 20, title: 'International Human Solidarity Day' },
   { month: 12, day: 25, title: 'Christmas Day' },
+  { month: 12, day: 27, title: 'International Day of Epidemic Preparedness' },
 ];
 
 const iranOccasions = [
@@ -610,10 +611,48 @@ const iranOccasions = [
   { month: 12, day: 29, title: 'Oil Nationalization Day' },
 ];
 
+const iranIslamicOccasions = [
+  { month: 1, day: 9, title: 'Tasua' },
+  { month: 1, day: 10, title: 'Ashura' },
+  { month: 2, day: 20, title: 'Arbaeen' },
+  { month: 2, day: 28, title: 'Prophet Muhammad passing / Imam Hasan martyrdom' },
+  { month: 2, day: 30, title: 'Imam Reza martyrdom' },
+  { month: 3, day: 17, title: 'Prophet Muhammad and Imam Sadiq birthday' },
+  { month: 6, day: 3, title: 'Fatimah al-Zahra martyrdom' },
+  { month: 7, day: 13, title: 'Imam Ali birthday' },
+  { month: 7, day: 27, title: 'Mab’ath' },
+  { month: 8, day: 15, title: 'Imam Mahdi birthday' },
+  { month: 9, day: 19, title: 'Night of Qadr' },
+  { month: 9, day: 21, title: 'Imam Ali martyrdom / Night of Qadr' },
+  { month: 9, day: 23, title: 'Night of Qadr' },
+  { month: 10, day: 1, title: 'Eid al-Fitr' },
+  { month: 10, day: 2, title: 'Eid al-Fitr holiday' },
+  { month: 11, day: 25, title: 'Imam Sadiq martyrdom' },
+  { month: 12, day: 10, title: 'Eid al-Adha' },
+  { month: 12, day: 18, title: 'Eid al-Ghadir' },
+];
+
 function getPersianDatePartsFromUtc(date) {
   const parts = new Intl.DateTimeFormat('en-US-u-nu-latn', {
     timeZone: 'UTC',
     calendar: 'persian',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.filter((part) => part.type !== 'literal' && part.type !== 'era').map((part) => [part.type, part.value]));
+
+  return {
+    year: Number(values.year),
+    month: Number(values.month),
+    day: Number(values.day),
+  };
+}
+
+function getIslamicDatePartsFromUtc(date) {
+  const parts = new Intl.DateTimeFormat('en-US-u-nu-latn', {
+    timeZone: 'UTC',
+    calendar: 'islamic-umalqura',
     year: 'numeric',
     month: 'numeric',
     day: 'numeric',
@@ -813,14 +852,18 @@ function formatCompactCalendarDate(date, calendarId) {
 function getDateOccasions(date) {
   const gregorianParts = getCalendarPartsFromUtc(date, 'gregorian');
   const persianParts = getCalendarPartsFromUtc(date, 'persian');
+  const islamicParts = getIslamicDatePartsFromUtc(date);
   const internationalEvents = internationalOccasions
     .filter((event) => event.month === gregorianParts.month && event.day === gregorianParts.day)
     .map((event) => ({ ...event, calendar: 'International', dateLabel: `${gregorianParts.day} ${gregorianMonthNames[gregorianParts.month - 1].slice(0, 3)}` }));
   const iranEvents = iranOccasions
     .filter((event) => event.month === persianParts.month && event.day === persianParts.day)
     .map((event) => ({ ...event, calendar: 'Iran', dateLabel: `${persianParts.day} ${persianMonthNames[persianParts.month - 1]}` }));
+  const islamicEvents = iranIslamicOccasions
+    .filter((event) => event.month === islamicParts.month && event.day === islamicParts.day)
+    .map((event) => ({ ...event, calendar: 'Iran Islamic', dateLabel: `${islamicParts.day}/${islamicParts.month} AH` }));
 
-  return [...iranEvents, ...internationalEvents];
+  return [...iranEvents, ...islamicEvents, ...internationalEvents];
 }
 
 function getMonthOccasionGroups(days, primaryCalendar) {
@@ -1311,7 +1354,7 @@ function MonthlyCalendarCard({ city }) {
         null,
         h('span', null, 'Month occasions'),
         h('strong', null, calendar.title),
-        h('small', null, 'Iran + International fixed-date occasions'),
+        h('small', null, `Iran + International + Islamic occasions · ${calendar.occasions.length} days`),
       ),
       calendar.occasions.length > 0
         ? h(
