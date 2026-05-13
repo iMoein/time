@@ -603,7 +603,10 @@ function formatOverlayDate(date, calendarId) {
     ? gregorianMonthNames[parts.month - 1].slice(0, 3)
     : persianMonthNames[parts.month - 1];
 
-  return `${monthLabel} ${parts.day}`;
+  return {
+    day: parts.day,
+    month: monthLabel,
+  };
 }
 
 function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey) {
@@ -634,7 +637,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
         id: `synced-${primaryCalendar}-${dateKey}`,
         dateKey,
         primaryNumber: dayPrimaryParts.day,
-        secondaryText: formatOverlayDate(dayDate, secondaryCalendar),
+        secondaryDate: formatOverlayDate(dayDate, secondaryCalendar),
         isOutsideMonth: dayPrimaryParts.year !== primaryParts.year || dayPrimaryParts.month !== primaryParts.month,
         isToday: isSameUtcDay(dayDate, cityDate),
         isSelected: selectedDateKey === dateKey,
@@ -1051,8 +1054,9 @@ function MonthlyCalendarCard({ city }) {
             'aria-pressed': day.isSelected,
             key: day.id,
           },
+          h('span', { className: 'monthly-calendar__day-month' }, day.secondaryDate.month),
           h('strong', null, day.primaryNumber),
-          h('small', null, day.secondaryText),
+          h('small', null, day.secondaryDate.day),
         )),
       ),
     ),

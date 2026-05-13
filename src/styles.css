@@ -674,34 +674,48 @@ button {
 }
 
 .monthly-calendar__day--overlay {
+  position: relative;
   min-height: 4.55rem;
   align-content: center;
-  gap: 0.18rem;
-  padding: 0.55rem 0.35rem;
+  gap: 0.08rem;
+  padding: 0.74rem 0.35rem 0.42rem;
+}
+
+.monthly-calendar__day-month {
+  position: absolute;
+  top: 0.34rem;
+  right: 0.42rem;
+  max-width: calc(100% - 0.84rem);
+  overflow: hidden;
+  color: #94a3b8;
+  font-size: 0.52rem;
+  font-weight: 950;
+  line-height: 1;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .monthly-calendar__day--overlay strong {
   color: currentColor;
-  font-size: clamp(1.28rem, 2.2vw, 1.85rem);
+  font-size: clamp(1.55rem, 2.8vw, 2.18rem);
+  font-weight: 950;
+  line-height: 0.95;
+}
+
+.monthly-calendar__day--overlay small {
+  color: #64748b;
+  font-size: 0.82rem;
   font-weight: 950;
   line-height: 1;
 }
 
-.monthly-calendar__day--overlay small {
-  max-width: 100%;
-  overflow: hidden;
-  color: #64748b;
-  font-size: 0.66rem;
-  font-weight: 850;
-  line-height: 1.1;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
+.monthly-calendar__day--selected .monthly-calendar__day-month,
 .monthly-calendar__day--selected small {
   color: rgba(255, 255, 255, 0.78);
 }
 
+.monthly-calendar__day--outside .monthly-calendar__day-month,
 .monthly-calendar__day--outside small {
   color: #94a3b8;
 }
@@ -1299,6 +1313,10 @@ button {
   .hero-meta,
   .city-tabs,
   .weekly-calendar__days {
+    grid-template-columns: 1fr;
+  }
+
+  .monthly-calendar__header {
     grid-template-columns: 1fr;
   }
 
