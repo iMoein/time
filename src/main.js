@@ -365,6 +365,44 @@ function getMonthGridStart(date, firstDayOfWeek) {
   return addUtcDays(date, -dayOffset);
 }
 
+function getWeekStartDate(date, firstDayOfWeek) {
+  return getMonthGridStart(date, firstDayOfWeek);
+}
+
+function formatGregorianWeekDate(date) {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: 'UTC',
+    day: 'numeric',
+    month: 'short',
+  }).format(date);
+}
+
+function formatPersianWeekDate(date) {
+  const { month, day } = getPersianDatePartsFromUtc(date);
+  return `${persianMonthNames[month - 1]} ${day}`;
+}
+
+function getWeeklyCalendar(date, timeZone, calendar) {
+  const cityDate = getCityDate(date, timeZone);
+  const startsOnSaturday = calendar === 'persian';
+  const startDate = getWeekStartDate(cityDate, startsOnSaturday ? 6 : 1);
+  const weekdays = startsOnSaturday ? persianWeekdays : gregorianWeekdays;
+  const formatter = startsOnSaturday ? formatPersianWeekDate : formatGregorianWeekDate;
+
+  return weekdays.map((weekday, index) => {
+    const dayDate = addUtcDays(startDate, index);
+
+    return {
+      id: `${calendar}-${getCalendarDateKey(dayDate)}`,
+      weekday,
+      date: formatter(dayDate),
+      isToday: isSameUtcDay(dayDate, cityDate),
+    };
+  });
+}
+
+globalThis.getWeeklyCalendar = getWeeklyCalendar;
+
 function div(number, divisor) {
   return Math.floor(number / divisor);
 }
