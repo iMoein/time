@@ -365,21 +365,108 @@ function getMonthGridStart(date, firstDayOfWeek) {
   return addUtcDays(date, -dayOffset);
 }
 
-function getPersianDatePartsFromUtc(date) {
-  const parts = new Intl.DateTimeFormat('en-US-u-nu-latn', {
-    timeZone: 'UTC',
-    calendar: 'persian',
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-  }).formatToParts(date);
+function div(number, divisor) {
+  return Math.floor(number / divisor);
+}
 
-  const values = Object.fromEntries(parts.filter((part) => part.type !== 'literal' && part.type !== 'era').map((part) => [part.type, part.value]));
-  return {
-    year: Number(values.year),
-    month: Number(values.month),
-    day: Number(values.day),
-  };
+function gregorianToJdn(year, month, day) {
+  let jdn = div((year + div(month - 8, 6) + 100100) * 1461, 4)
+    + div(153 * ((month + 9) % 12) + 2, 5)
+    + day
+    - 34840408;
+  jdn -= div(div(year + 100100 + div(month - 8, 6), 100) * 3, 4);
+  return jdn + 752;
+}
+
+function jdnToGregorian(jdn) {
+  let j = 4 * jdn + 139361631;
+  j += div(div(4 * jdn + 183187720, 146097) * 3, 4) * 4 - 3908;
+  const i = div((j % 1461), 4) * 5 + 308;
+  const day = div((i % 153), 5) + 1;
+  const month = ((div(i, 153) % 12) + 1);
+  const year = div(j, 1461) - 100099 + div(8 - month, 6);
+
+  return { year, month, day };
+}
+
+const jalaliBreaks = [-61, 9, 38, 199, 426, 686, 756, 818, 1111, 1181, 1210, 1635, 2060, 2097, 2192, 2262, 2324, 2394, 2456, 3178];
+const persianMonthNames = ['Farvardin', 'Ordibehesht', 'Khordad', 'Tir', 'Mordad', 'Shahrivar', 'Mehr', 'Aban', 'Azar', 'Dey', 'Bahman', 'Esfand'];
+
+function getJalaliCalendarData(year) {
+  const gregorianYear = year + 621;
+  let leapJ = -14;
+  let previousBreak = jalaliBreaks[0];
+  let jump = 0;
+
+  for (let index = 1; index < jalaliBreaks.length; index += 1) {
+    const currentBreak = jalaliBreaks[index];
+    jump = currentBreak - previousBreak;
+
+    if (year < currentBreak) {
+      break;
+    }
+
+    leapJ += div(jump, 33) * 8 + div((jump % 33), 4);
+    previousBreak = currentBreak;
+  }
+
+  let yearsSinceBreak = year - previousBreak;
+  leapJ += div(yearsSinceBreak, 33) * 8 + div(((yearsSinceBreak % 33) + 3), 4);
+
+  if (jump % 33 === 4 && jump - yearsSinceBreak === 4) {
+    leapJ += 1;
+  }
+
+  const leapG = div(gregorianYear, 4) - div((div(gregorianYear, 100) + 1) * 3, 4) - 150;
+  const march = 20 + leapJ - leapG;
+
+  if (jump - yearsSinceBreak < 6) {
+    yearsSinceBreak = yearsSinceBreak - jump + div(jump + 4, 33) * 33;
+  }
+
+  let leap = (((yearsSinceBreak + 1) % 33) - 1) % 4;
+
+  if (leap === -1) {
+    leap = 4;
+  }
+
+  return { gregorianYear, march, leap };
+}
+
+function jalaliToJdn(year, month, day) {
+  const { gregorianYear, march } = getJalaliCalendarData(year);
+  const monthOffset = (month - 1) * 31 - div(month, 7) * (month - 7);
+  return gregorianToJdn(gregorianYear, 3, march) + monthOffset + day - 1;
+}
+
+function jdnToJalali(jdn) {
+  const { year: gregorianYear } = jdnToGregorian(jdn);
+  let year = gregorianYear - 621;
+  let { gregorianYear: jalaliGregorianYear, march, leap } = getJalaliCalendarData(year);
+  const firstFarvardin = gregorianToJdn(jalaliGregorianYear, 3, march);
+  let dayOfYear = jdn - firstFarvardin;
+
+  if (dayOfYear >= 0) {
+    if (dayOfYear <= 185) {
+      return { year, month: 1 + div(dayOfYear, 31), day: (dayOfYear % 31) + 1 };
+    }
+
+    dayOfYear -= 186;
+  } else {
+    year -= 1;
+    ({ gregorianYear: jalaliGregorianYear, march, leap } = getJalaliCalendarData(year));
+    dayOfYear += 179;
+
+    if (leap === 1) {
+      dayOfYear += 1;
+    }
+  }
+
+  return { year, month: 7 + div(dayOfYear, 30), day: (dayOfYear % 30) + 1 };
+}
+
+function getPersianDatePartsFromUtc(date) {
+  return jdnToJalali(gregorianToJdn(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate()));
 }
 
 function addPersianMonths({ year, month }, monthOffset) {
@@ -391,28 +478,8 @@ function addPersianMonths({ year, month }, monthOffset) {
 }
 
 function findGregorianDateForPersianDate(year, month, day) {
-  const estimatedDayOfYear = month <= 6 ? (month - 1) * 31 + day : 186 + (month - 7) * 30 + day;
-  const estimate = new Date(Date.UTC(year + 621, 2, 15 + estimatedDayOfYear, 12));
-
-  for (let offset = -8; offset <= 8; offset += 1) {
-    const candidate = addUtcDays(estimate, offset);
-    const parts = getPersianDatePartsFromUtc(candidate);
-
-    if (parts.year === year && parts.month === month && parts.day === day) {
-      return candidate;
-    }
-  }
-
-  for (let offset = -370; offset <= 370; offset += 1) {
-    const candidate = addUtcDays(new Date(Date.UTC(year + 621, 2, 20, 12)), offset);
-    const parts = getPersianDatePartsFromUtc(candidate);
-
-    if (parts.year === year && parts.month === month && parts.day === day) {
-      return candidate;
-    }
-  }
-
-  return estimate;
+  const gregorianParts = jdnToGregorian(jalaliToJdn(year, month, day));
+  return new Date(Date.UTC(gregorianParts.year, gregorianParts.month - 1, gregorianParts.day, 12));
 }
 
 function formatGregorianMonthTitle(date) {
@@ -424,12 +491,8 @@ function formatGregorianMonthTitle(date) {
 }
 
 function formatPersianMonthTitle(date) {
-  return new Intl.DateTimeFormat('en-US-u-nu-latn', {
-    timeZone: 'UTC',
-    calendar: 'persian',
-    month: 'long',
-    year: 'numeric',
-  }).format(date);
+  const { year, month } = getPersianDatePartsFromUtc(date);
+  return `${persianMonthNames[month - 1]} ${year}`;
 }
 
 function formatSelectedCalendarDate(date, calendar) {
