@@ -703,7 +703,7 @@ button {
   margin-left: 0.12em;
   overflow: hidden;
   color: #64748b;
-  font-size: 0.34em;
+  font-size: 0.26em;
   font-weight: 950;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -719,7 +719,7 @@ button {
   max-width: 4.2rem;
   margin-left: 0.12em;
   overflow: hidden;
-  font-size: 0.78em;
+  font-size: 0.62em;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
