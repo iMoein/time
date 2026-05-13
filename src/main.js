@@ -847,10 +847,25 @@ function MonthlyCalendarCard({ city }) {
   const todayKey = getCalendarDateKey(city.cityDate);
   const [monthOffsets, setMonthOffsets] = useState({ gregorian: 0, persian: 0 });
   const [selectedDateKeys, setSelectedDateKeys] = useState({ gregorian: todayKey, persian: todayKey });
-  const calendars = [
-    getGregorianMonthCalendar(city.cityDate, monthOffsets.gregorian, selectedDateKeys.gregorian),
-    getPersianMonthCalendar(city.cityDate, monthOffsets.persian, selectedDateKeys.persian),
-  ];
+  let calendars = [];
+
+  try {
+    calendars = [
+      getGregorianMonthCalendar(city.cityDate, monthOffsets.gregorian, selectedDateKeys.gregorian),
+      getPersianMonthCalendar(city.cityDate, monthOffsets.persian, selectedDateKeys.persian),
+    ];
+  } catch (error) {
+    return h(
+      'section',
+      { className: 'monthly-calendars monthly-calendars--error', 'aria-label': 'Calendar loading issue' },
+      h(
+        'article',
+        { className: 'monthly-calendar monthly-calendar--error' },
+        h('strong', null, 'Calendar is temporarily unavailable'),
+        h('p', null, error?.message || 'The clock is still available while the calendar recovers.'),
+      ),
+    );
+  }
   const moveMonth = (calendarId, direction) => {
     setMonthOffsets((offsets) => ({ ...offsets, [calendarId]: offsets[calendarId] + direction }));
   };
@@ -1290,4 +1305,26 @@ function App() {
 }
 
 
-createRoot(document.getElementById('root')).render(h(App));
+function renderFallbackError(error) {
+  const rootElement = document.getElementById('root');
+
+  if (!rootElement) {
+    return;
+  }
+
+  rootElement.innerHTML = `
+    <main class="page-shell page-shell--error">
+      <section class="app-error-panel">
+        <p>Time app could not start.</p>
+        <strong>${error?.message || 'Unknown error'}</strong>
+        <small>Please refresh the page or clear the browser cache.</small>
+      </section>
+    </main>
+  `;
+}
+
+try {
+  createRoot(document.getElementById('root')).render(h(App));
+} catch (error) {
+  renderFallbackError(error);
+}

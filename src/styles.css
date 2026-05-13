@@ -594,6 +594,38 @@ button {
   border-color: rgba(249, 115, 22, 0.75);
 }
 
+
+.monthly-calendars--error {
+  grid-template-columns: 1fr;
+}
+
+.monthly-calendar--error,
+.app-error-panel {
+  display: grid;
+  gap: 0.6rem;
+  width: min(100%, 46rem);
+  margin: 0 auto;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 1px solid rgba(248, 113, 113, 0.28);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.1);
+}
+
+.monthly-calendar--error strong,
+.app-error-panel strong {
+  color: #991b1b;
+  font-size: clamp(1.15rem, 2vw, 1.6rem);
+}
+
+.monthly-calendar--error p,
+.app-error-panel p,
+.app-error-panel small {
+  margin: 0;
+  color: #475569;
+  font-weight: 800;
+}
+
 .section-heading {
   display: flex;
   align-items: baseline;
@@ -1156,6 +1188,10 @@ button {
   .hero-meta,
   .city-tabs,
   .weekly-calendar__days {
+    grid-template-columns: 1fr;
+  }
+
+  .monthly-calendar__header {
     grid-template-columns: 1fr;
   }
 
