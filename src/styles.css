@@ -1199,6 +1199,10 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .monthly-calendar__header {
+    grid-template-columns: 1fr;
+  }
+
   .monthly-calendar__actions {
     justify-self: start;
   }
