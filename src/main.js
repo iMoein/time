@@ -406,6 +406,57 @@ globalThis.getWeeklyCalendar = getWeeklyCalendar;
 
 const persianMonthNames = ['Farvardin', 'Ordibehesht', 'Khordad', 'Tir', 'Mordad', 'Shahrivar', 'Mehr', 'Aban', 'Azar', 'Dey', 'Bahman', 'Esfand'];
 
+const internationalOccasions = [
+  { month: 1, day: 1, title: 'New Year’s Day' },
+  { month: 2, day: 14, title: 'Valentine’s Day' },
+  { month: 3, day: 8, title: 'International Women’s Day' },
+  { month: 3, day: 20, title: 'International Day of Happiness' },
+  { month: 4, day: 7, title: 'World Health Day' },
+  { month: 4, day: 22, title: 'Earth Day' },
+  { month: 5, day: 1, title: 'International Workers’ Day' },
+  { month: 5, day: 15, title: 'International Day of Families' },
+  { month: 6, day: 5, title: 'World Environment Day' },
+  { month: 6, day: 21, title: 'International Yoga Day' },
+  { month: 7, day: 30, title: 'International Day of Friendship' },
+  { month: 8, day: 12, title: 'International Youth Day' },
+  { month: 9, day: 21, title: 'International Day of Peace' },
+  { month: 9, day: 27, title: 'World Tourism Day' },
+  { month: 10, day: 5, title: 'World Teachers’ Day' },
+  { month: 10, day: 24, title: 'United Nations Day' },
+  { month: 11, day: 20, title: 'World Children’s Day' },
+  { month: 12, day: 10, title: 'Human Rights Day' },
+  { month: 12, day: 25, title: 'Christmas Day' },
+];
+
+const iranOccasions = [
+  { month: 1, day: 1, title: 'Nowruz' },
+  { month: 1, day: 2, title: 'Nowruz holiday' },
+  { month: 1, day: 12, title: 'Islamic Republic Day' },
+  { month: 1, day: 13, title: 'Nature Day' },
+  { month: 2, day: 10, title: 'National Persian Gulf Day' },
+  { month: 2, day: 12, title: 'Teacher’s Day in Iran' },
+  { month: 3, day: 14, title: 'Anniversary of Imam Khomeini’s passing' },
+  { month: 3, day: 15, title: '15 Khordad uprising' },
+  { month: 4, day: 14, title: 'Pen Day in Iran' },
+  { month: 5, day: 17, title: 'Journalist Day in Iran' },
+  { month: 6, day: 1, title: 'Avicenna Day / Doctors’ Day' },
+  { month: 6, day: 4, title: 'Government Week' },
+  { month: 6, day: 5, title: 'Razi Day / Pharmacists’ Day' },
+  { month: 6, day: 13, title: 'Abu Rayhan Biruni Day' },
+  { month: 6, day: 27, title: 'Persian Poetry and Literature Day' },
+  { month: 7, day: 7, title: 'Firefighters’ Day in Iran' },
+  { month: 7, day: 13, title: 'Police Day in Iran' },
+  { month: 8, day: 13, title: 'Student Day in Iran' },
+  { month: 9, day: 16, title: 'Student Day' },
+  { month: 10, day: 5, title: 'Safety against Earthquakes Day' },
+  { month: 10, day: 9, title: 'National Day of Insight' },
+  { month: 11, day: 12, title: 'Return of Imam Khomeini to Iran' },
+  { month: 11, day: 22, title: 'Islamic Revolution Victory Day' },
+  { month: 12, day: 5, title: 'Engineer’s Day in Iran' },
+  { month: 12, day: 15, title: 'Tree Planting Day' },
+  { month: 12, day: 29, title: 'Oil Nationalization Day' },
+];
+
 function getPersianDatePartsFromUtc(date) {
   const parts = new Intl.DateTimeFormat('en-US-u-nu-latn', {
     timeZone: 'UTC',
@@ -599,8 +650,39 @@ function formatCalendarMonthTitle(date, calendarId) {
 
 function formatCompactCalendarDate(date, calendarId) {
   const { day, month } = getCalendarPartsFromUtc(date, calendarId);
+  const monthLabel = calendarId === 'gregorian'
+    ? gregorianMonthNames[month - 1].slice(0, 3)
+    : persianMonthNames[month - 1];
 
-  return { day, month };
+  return { day, month: monthLabel };
+}
+
+function getDateOccasions(date) {
+  const gregorianParts = getCalendarPartsFromUtc(date, 'gregorian');
+  const persianParts = getCalendarPartsFromUtc(date, 'persian');
+  const internationalEvents = internationalOccasions
+    .filter((event) => event.month === gregorianParts.month && event.day === gregorianParts.day)
+    .map((event) => ({ ...event, calendar: 'International', dateLabel: `${gregorianParts.day} ${gregorianMonthNames[gregorianParts.month - 1].slice(0, 3)}` }));
+  const iranEvents = iranOccasions
+    .filter((event) => event.month === persianParts.month && event.day === persianParts.day)
+    .map((event) => ({ ...event, calendar: 'Iran', dateLabel: `${persianParts.day} ${persianMonthNames[persianParts.month - 1]}` }));
+
+  return [...iranEvents, ...internationalEvents];
+}
+
+function getMonthOccasionGroups(days, primaryCalendar) {
+  return days
+    .filter((day) => !day.isOutsideMonth && day.events.length > 0)
+    .map((day) => ({
+      id: `occasion-${day.dateKey}`,
+      dateKey: day.dateKey,
+      primaryDate: day.primaryDate,
+      secondaryDate: day.secondaryDate,
+      title: primaryCalendar === 'gregorian'
+        ? `${day.primaryDate.day} ${day.primaryDate.month}`
+        : `${day.primaryDate.day} ${day.primaryDate.month}`,
+      events: day.events,
+    }));
 }
 
 function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey) {
@@ -609,6 +691,24 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
   const primaryParts = getCalendarPartsFromUtc(monthStart, primaryCalendar);
   const firstDayOfWeek = primaryCalendar === 'persian' ? 6 : 1;
   const gridStart = getMonthGridStart(monthStart, firstDayOfWeek);
+
+  const days = Array.from({ length: 42 }, (_, index) => {
+    const dayDate = addUtcDays(gridStart, index);
+    const dateKey = getCalendarDateKey(dayDate);
+    const dayPrimaryParts = getCalendarPartsFromUtc(dayDate, primaryCalendar);
+    const primaryDate = formatCompactCalendarDate(dayDate, primaryCalendar);
+
+    return {
+      id: `synced-${primaryCalendar}-${dateKey}`,
+      dateKey,
+      primaryDate,
+      secondaryDate: formatCompactCalendarDate(dayDate, secondaryCalendar),
+      events: getDateOccasions(dayDate),
+      isOutsideMonth: dayPrimaryParts.year !== primaryParts.year || dayPrimaryParts.month !== primaryParts.month,
+      isToday: isSameUtcDay(dayDate, cityDate),
+      isSelected: selectedDateKey === dateKey,
+    };
+  });
 
   return {
     id: primaryCalendar,
@@ -622,21 +722,8 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     yearValue: primaryParts.year,
     yearOptions: buildYearOptions(primaryParts.year),
     selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, primaryCalendar === 'gregorian' ? 'gregory' : 'persian'),
-    days: Array.from({ length: 42 }, (_, index) => {
-      const dayDate = addUtcDays(gridStart, index);
-      const dateKey = getCalendarDateKey(dayDate);
-      const dayPrimaryParts = getCalendarPartsFromUtc(dayDate, primaryCalendar);
-
-      return {
-        id: `synced-${primaryCalendar}-${dateKey}`,
-        dateKey,
-        primaryDate: { day: dayPrimaryParts.day, month: dayPrimaryParts.month },
-        secondaryDate: formatCompactCalendarDate(dayDate, secondaryCalendar),
-        isOutsideMonth: dayPrimaryParts.year !== primaryParts.year || dayPrimaryParts.month !== primaryParts.month,
-        isToday: isSameUtcDay(dayDate, cityDate),
-        isSelected: selectedDateKey === dateKey,
-      };
-    }),
+    days,
+    occasions: getMonthOccasionGroups(days, primaryCalendar),
   };
 }
 
@@ -1043,7 +1130,7 @@ function MonthlyCalendarCard({ city }) {
           'button',
           {
             type: 'button',
-            className: `monthly-calendar__day monthly-calendar__day--overlay${day.isOutsideMonth ? ' monthly-calendar__day--outside' : ''}${day.isToday ? ' monthly-calendar__day--today' : ''}${day.isSelected ? ' monthly-calendar__day--selected' : ''}`,
+            className: `monthly-calendar__day monthly-calendar__day--overlay${day.events.length ? ' monthly-calendar__day--has-events' : ''}${day.isOutsideMonth ? ' monthly-calendar__day--outside' : ''}${day.isToday ? ' monthly-calendar__day--today' : ''}${day.isSelected ? ' monthly-calendar__day--selected' : ''}`,
             onClick: () => selectDay(day.dateKey),
             'aria-pressed': day.isSelected,
             key: day.id,
@@ -1052,16 +1139,54 @@ function MonthlyCalendarCard({ city }) {
             'strong',
             null,
             day.primaryDate.day,
-            h('span', null, `/${day.primaryDate.month}`),
+            h('span', null, day.primaryDate.month),
           ),
           h(
             'small',
             null,
             day.secondaryDate.day,
-            h('span', null, `/${day.secondaryDate.month}`),
+            h('span', null, day.secondaryDate.month),
           ),
         )),
       ),
+    ),
+    h(
+      'aside',
+      { className: 'monthly-occasions', 'aria-label': `${calendar.title} occasions` },
+      h(
+        'header',
+        null,
+        h('span', null, 'Month occasions'),
+        h('strong', null, calendar.title),
+        h('small', null, 'Iran + International fixed-date occasions'),
+      ),
+      calendar.occasions.length > 0
+        ? h(
+          'div',
+          { className: 'monthly-occasions__list' },
+          calendar.occasions.map((group) => h(
+            'article',
+            { className: 'monthly-occasions__day', key: group.id },
+            h(
+              'div',
+              { className: 'monthly-occasions__date' },
+              h('strong', null, group.primaryDate.day),
+              h('span', null, group.primaryDate.month),
+              h('small', null, `${group.secondaryDate.day} ${group.secondaryDate.month}`),
+            ),
+            h(
+              'ul',
+              null,
+              group.events.map((event) => h(
+                'li',
+                { key: `${group.id}-${event.calendar}-${event.title}` },
+                h('span', null, event.calendar),
+                h('strong', null, event.title),
+              )),
+            ),
+          )),
+        )
+        : h('p', { className: 'monthly-occasions__empty' }, 'No fixed Iran or international occasion is listed for this month.'),
     ),
   );
 }

@@ -626,8 +626,9 @@ button {
 
 
 .monthly-calendars--synced {
-  grid-template-columns: minmax(0, 1fr);
-  width: min(100%, 760px);
+  grid-template-columns: minmax(0, 760px) minmax(18rem, 1fr);
+  align-items: start;
+  width: min(100%, 1180px);
 }
 
 .monthly-calendar--synced {
@@ -674,6 +675,7 @@ button {
 }
 
 .monthly-calendar__day--overlay {
+  position: relative;
   min-height: 4.55rem;
   align-content: center;
   gap: 0.16rem;
@@ -697,10 +699,14 @@ button {
 }
 
 .monthly-calendar__day--overlay strong span {
-  margin-left: 0.05em;
+  max-width: 4.4rem;
+  margin-left: 0.12em;
+  overflow: hidden;
   color: #64748b;
-  font-size: 0.46em;
+  font-size: 0.34em;
   font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .monthly-calendar__day--overlay small {
@@ -710,8 +716,27 @@ button {
 }
 
 .monthly-calendar__day--overlay small span {
-  margin-left: 0.05em;
+  max-width: 4.2rem;
+  margin-left: 0.12em;
+  overflow: hidden;
   font-size: 0.78em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.monthly-calendar__day--has-events::after {
+  position: absolute;
+  right: 0.46rem;
+  bottom: 0.42rem;
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 999px;
+  background: #047857;
+  content: '';
+}
+
+.monthly-calendar__day--selected.monthly-calendar__day--has-events::after {
+  background: #fff;
 }
 
 .monthly-calendar__day--selected strong span,
@@ -722,6 +747,124 @@ button {
 .monthly-calendar__day--outside strong span,
 .monthly-calendar__day--outside small {
   color: #94a3b8;
+}
+
+
+.monthly-occasions {
+  display: grid;
+  gap: 0.85rem;
+  max-height: 46rem;
+  padding: clamp(1rem, 2vw, 1.25rem);
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 1.5rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.82)),
+    radial-gradient(circle at 100% 0%, rgba(4, 120, 87, 0.13), transparent 16rem);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.1);
+  backdrop-filter: blur(18px);
+}
+
+.monthly-occasions header {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.monthly-occasions header span {
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.monthly-occasions header strong {
+  color: #111827;
+  font-size: clamp(1.1rem, 1.6vw, 1.45rem);
+  font-weight: 950;
+}
+
+.monthly-occasions header small,
+.monthly-occasions__empty {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
+.monthly-occasions__list {
+  display: grid;
+  gap: 0.58rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.15rem;
+}
+
+.monthly-occasions__day {
+  display: grid;
+  grid-template-columns: 4.6rem minmax(0, 1fr);
+  gap: 0.7rem;
+  align-items: stretch;
+  padding: 0.62rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1rem;
+  background: rgba(248, 250, 252, 0.72);
+}
+
+.monthly-occasions__date {
+  display: grid;
+  place-items: center;
+  border-radius: 0.8rem;
+  background: rgba(4, 120, 87, 0.08);
+  color: #0f172a;
+  text-align: center;
+}
+
+.monthly-occasions__date strong {
+  font-size: 1.45rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.monthly-occasions__date span,
+.monthly-occasions__date small {
+  max-width: 100%;
+  overflow: hidden;
+  color: #64748b;
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.monthly-occasions__day ul {
+  display: grid;
+  gap: 0.38rem;
+  align-content: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.monthly-occasions__day li {
+  display: grid;
+  gap: 0.14rem;
+}
+
+.monthly-occasions__day li > span {
+  color: #047857;
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.monthly-occasions__day li > strong {
+  color: #172033;
+  font-size: 0.86rem;
+  font-weight: 900;
+  line-height: 1.2;
 }
 
 .monthly-calendars--error {
@@ -1244,8 +1387,13 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .monthly-calendars {
+  .monthly-calendars,
+  .monthly-calendars--synced {
     grid-template-columns: 1fr;
+  }
+
+  .monthly-occasions {
+    max-height: none;
   }
 
   .search-results {
@@ -1317,10 +1465,6 @@ button {
   .hero-meta,
   .city-tabs,
   .weekly-calendar__days {
-    grid-template-columns: 1fr;
-  }
-
-  .monthly-calendar__header {
     grid-template-columns: 1fr;
   }
 
