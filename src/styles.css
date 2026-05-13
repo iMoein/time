@@ -1502,7 +1502,21 @@ button {
   }
 
   .hero-meta,
-  .city-tabs {
+  .city-tabs,
+  .weekly-calendar__days {
+    grid-template-columns: 1fr;
+  }
+
+  .monthly-calendar__header {
+    grid-template-columns: 1fr;
+  }
+
+  .monthly-calendar__actions {
+    justify-self: start;
+  }
+
+  .monthly-calendar__filters,
+  .monthly-calendar__mode {
     grid-template-columns: 1fr;
   }
 
