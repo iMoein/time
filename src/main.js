@@ -1247,18 +1247,52 @@ function MonthlyCalendarCard({ city }) {
         h('strong', null, calendar.title),
         h(
           'div',
-          { className: 'monthly-calendar__actions', 'aria-label': `${calendar.title} navigation` },
-          h('button', { type: 'button', onClick: () => moveMonth(-1), 'aria-label': 'Previous month' }, '‹'),
-          h('button', { type: 'button', onClick: resetMonth }, 'Today'),
-          h('button', { type: 'button', onClick: () => moveMonth(1), 'aria-label': 'Next month' }, '›'),
+          { className: 'monthly-calendar__toolbar' },
+          h(
+            'div',
+            { className: 'monthly-calendar__filters', 'aria-label': `${calendar.title} quick filters` },
+            h(
+              'label',
+              { className: 'monthly-calendar__filter' },
+              h('span', null, 'Month'),
+              h(
+                'select',
+                {
+                  value: calendar.monthValue,
+                  onChange: (event) => selectMonth(Number(event.target.value)),
+                },
+                calendar.monthOptions.map((option) => h('option', { value: option.value, key: option.value }, option.label)),
+              ),
+            ),
+            h(
+              'label',
+              { className: 'monthly-calendar__filter' },
+              h('span', null, 'Year'),
+              h(
+                'select',
+                {
+                  value: calendar.yearValue,
+                  onChange: (event) => selectYear(Number(event.target.value)),
+                },
+                calendar.yearOptions.map((year) => h('option', { value: year, key: year }, year)),
+              ),
+            ),
+          ),
+          h(
+            'div',
+            { className: 'monthly-calendar__actions', 'aria-label': `${calendar.title} navigation` },
+            h('button', { type: 'button', onClick: () => moveMonth(-1), 'aria-label': 'Previous month' }, '‹'),
+            h('button', { type: 'button', onClick: resetMonth }, 'Today'),
+            h('button', { type: 'button', onClick: () => moveMonth(1), 'aria-label': 'Next month' }, '›'),
+          ),
         ),
         h('small', null, `Inside: ${calendar.secondaryTitle} · Selected: ${calendar.selectedLabel}`),
         h(
           'div',
           { className: 'monthly-calendar__mode', 'aria-label': 'Choose primary calendar' },
           [
-            { id: 'persian', label: 'Solar Hijri primary' },
-            { id: 'gregorian', label: 'Gregorian primary' },
+            { id: 'persian', label: 'Solar Hijri', shortLabel: 'Solar' },
+            { id: 'gregorian', label: 'Gregorian', shortLabel: 'Gregorian' },
           ].map((option) => h(
             'button',
             {
@@ -1266,40 +1300,11 @@ function MonthlyCalendarCard({ city }) {
               className: option.id === primaryCalendar ? 'selected' : '',
               onClick: () => switchPrimaryCalendar(option.id),
               'aria-pressed': option.id === primaryCalendar,
+              'aria-label': `${option.label} primary`,
               key: option.id,
             },
-            option.label,
+            option.shortLabel,
           )),
-        ),
-        h(
-          'div',
-          { className: 'monthly-calendar__filters', 'aria-label': `${calendar.title} quick filters` },
-          h(
-            'label',
-            { className: 'monthly-calendar__filter' },
-            h('span', null, 'Month'),
-            h(
-              'select',
-              {
-                value: calendar.monthValue,
-                onChange: (event) => selectMonth(Number(event.target.value)),
-              },
-              calendar.monthOptions.map((option) => h('option', { value: option.value, key: option.value }, option.label)),
-            ),
-          ),
-          h(
-            'label',
-            { className: 'monthly-calendar__filter' },
-            h('span', null, 'Year'),
-            h(
-              'select',
-              {
-                value: calendar.yearValue,
-                onChange: (event) => selectYear(Number(event.target.value)),
-              },
-              calendar.yearOptions.map((year) => h('option', { value: year, key: year }, year)),
-            ),
-          ),
         ),
       ),
       h(
