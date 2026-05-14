@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Time in Tehran</title>
-    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="/src/styles.css?v=monthly-calendar-fix-7" />
     <script type="importmap">
       {
         "imports": {
@@ -16,6 +16,29 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.js"></script>
+    <script>
+      window.getWeeklyCalendar = window.getWeeklyCalendar || function getWeeklyCalendar(date, timeZone, calendar) {
+        const dayMs = 86400000;
+        const weekdays = calendar === 'persian'
+          ? ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+          : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const parts = new Intl.DateTimeFormat('en-CA', {
+          timeZone, year: 'numeric', month: '2-digit', day: '2-digit',
+        }).formatToParts(date);
+        const values = Object.fromEntries(parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]));
+        const cityDate = new Date(Date.UTC(Number(values.year), Number(values.month) - 1, Number(values.day), 12));
+        const firstDay = calendar === 'persian' ? 6 : 1;
+        const startDate = new Date(cityDate.getTime() - ((cityDate.getUTCDay() - firstDay + 7) % 7) * dayMs);
+        const formatter = new Intl.DateTimeFormat('en-US-u-nu-latn', {
+          timeZone: 'UTC', calendar: calendar === 'persian' ? 'persian' : 'gregory', day: '2-digit', month: '2-digit',
+        });
+        return weekdays.map(function mapWeekday(weekday, index) {
+          const dayDate = new Date(startDate.getTime() + index * dayMs);
+          const dateKey = dayDate.toISOString().slice(0, 10);
+          return { id: calendar + '-' + dateKey, weekday, date: formatter.format(dayDate), isToday: dateKey === cityDate.toISOString().slice(0, 10) };
+        });
+      };
+    </script>
+    <script type="module" src="/src/main.js?v=monthly-calendar-fix-7"></script>
   </body>
 </html>
