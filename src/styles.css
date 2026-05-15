@@ -164,7 +164,7 @@ button {
   color: #111827;
   max-width: 100%;
   overflow: hidden;
-  font-size: clamp(5.8rem, 9.8vw, 11.25rem);
+  font-size: clamp(5.8rem, 9.8vw, 10.25rem);
   font-weight: 950;
   letter-spacing: -0.08em;
   line-height: 0.86;
