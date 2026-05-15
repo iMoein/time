@@ -638,8 +638,9 @@ button {
 }
 
 .monthly-calendar--synced {
-  align-content: start;
-  gap: 0.85rem;
+  align-content: stretch;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: clamp(0.95rem, 1.5vw, 1.2rem);
   height: var(--synced-calendar-height);
   padding-bottom: clamp(1.45rem, 2.4vw, 2rem);
 }
@@ -685,16 +686,18 @@ button {
 }
 
 .monthly-calendar__days--overlay {
-  gap: 0.45rem;
-  padding-bottom: 0.55rem;
+  grid-auto-rows: minmax(4.85rem, 1fr);
+  gap: clamp(0.52rem, 0.9vw, 0.72rem);
+  min-height: 0;
+  padding-bottom: 0.25rem;
 }
 
 .monthly-calendar__day--overlay {
   position: relative;
-  min-height: 4.55rem;
+  min-height: 0;
   align-content: center;
-  gap: 0.16rem;
-  padding: 0.54rem 0.35rem 0.48rem;
+  gap: clamp(0.18rem, 0.35vw, 0.28rem);
+  padding: clamp(0.58rem, 0.9vw, 0.82rem) 0.42rem clamp(0.52rem, 0.8vw, 0.72rem);
 }
 
 .monthly-calendar__day--overlay strong,
@@ -1450,6 +1453,10 @@ button {
     max-height: none;
   }
 
+  .monthly-calendar--synced {
+    grid-template-rows: none;
+  }
+
   .search-results {
     width: min(36rem, calc(100vw - 2rem));
   }
@@ -1551,6 +1558,10 @@ button {
   .monthly-calendar__weekdays,
   .monthly-calendar__days {
     gap: 0.25rem;
+  }
+
+  .monthly-calendar__days--overlay {
+    grid-auto-rows: minmax(3.35rem, auto);
   }
 
   .monthly-calendar__day {
