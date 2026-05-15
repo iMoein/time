@@ -1578,3 +1578,378 @@ button {
     min-height: 12rem;
   }
 }
+
+/* Minimal Apple-inspired refinement: calmer system typography, light surfaces, and clear date states. */
+:root {
+  color: #1d1d1f;
+  background: #f5f5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --apple-ink: #1d1d1f;
+  --apple-muted: #6e6e73;
+  --apple-blue: #007aff;
+  --apple-green: #34c759;
+  --apple-orange: #ff9500;
+  --apple-red: #ff3b30;
+  --apple-line: rgba(0, 0, 0, 0.08);
+  --apple-card: rgba(255, 255, 255, 0.78);
+  --apple-card-strong: rgba(255, 255, 255, 0.94);
+  --apple-shadow: 0 18px 48px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  color: var(--apple-ink);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(0, 122, 255, 0.10), transparent 24rem),
+    radial-gradient(circle at 100% 4%, rgba(255, 149, 0, 0.10), transparent 24rem),
+    linear-gradient(180deg, #fbfbfd 0%, #f5f5f7 100%);
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+}
+
+.page-shell {
+  gap: clamp(1rem, 2vw, 1.6rem);
+  padding: clamp(0.85rem, 3vw, 2.25rem);
+}
+
+.hero-panel,
+.day-night-card,
+.switcher-panel,
+.monthly-calendar,
+.monthly-occasions,
+.monthly-calendar--error,
+.app-error-panel {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: clamp(1.25rem, 2.2vw, 1.8rem);
+  background: var(--apple-card);
+  box-shadow: var(--apple-shadow);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+}
+
+.hero-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.72)),
+    radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 18rem);
+}
+
+.eyebrow {
+  color: var(--apple-muted);
+  font-size: clamp(1.05rem, 2vw, 1.75rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.eyebrow strong,
+.info-pill strong,
+.split-pill__item strong,
+.section-heading strong,
+.monthly-calendar__header strong,
+.monthly-occasions header strong {
+  color: var(--apple-ink);
+  font-weight: 760;
+  letter-spacing: -0.035em;
+}
+
+.clock {
+  color: var(--apple-ink);
+  font-size: clamp(5.8rem, 10.8vw, 11.2rem);
+  font-weight: 780;
+  letter-spacing: -0.09em;
+  text-shadow: none;
+}
+
+.info-pill,
+.split-pill,
+.search-box,
+.settings-panel,
+.ntp-status,
+.monthly-calendar__filter,
+.monthly-calendar__actions,
+.monthly-calendar__mode,
+.monthly-calendar__day,
+.monthly-occasions__day,
+.search-result,
+.city-tab {
+  border: 1px solid var(--apple-line);
+  background: var(--apple-card-strong);
+  box-shadow: none;
+}
+
+.info-pill,
+.split-pill,
+.monthly-calendar__day,
+.city-tab,
+.search-result,
+.monthly-occasions__day {
+  border-radius: 1rem;
+}
+
+.info-pill span,
+.split-pill__item small,
+.section-heading span,
+.search-box span,
+.settings-field span,
+.ntp-status strong,
+.monthly-calendar__header span,
+.monthly-occasions header span,
+.day-night-card__row strong {
+  color: var(--apple-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.fullscreen-button,
+.edit-toggle {
+  background: #1d1d1f;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: none;
+}
+
+.secondary-button {
+  background: #fff;
+  color: var(--apple-blue);
+  font-weight: 700;
+  box-shadow: none;
+}
+
+.fullscreen-button:hover:not(:disabled),
+.edit-toggle:hover,
+.secondary-button:hover,
+.search-result:hover,
+.city-tab:hover,
+.city-tab.selected,
+.monthly-calendar__day:hover,
+.monthly-calendar__day:focus-visible,
+.monthly-occasions__day:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+}
+
+.day-night-card {
+  color: #fff;
+  background: linear-gradient(135deg, #0a84ff 0%, #5e5ce6 58%, #1d1d1f 100%);
+}
+
+.day-night-card--night {
+  background: linear-gradient(135deg, #1c1c1e 0%, #2c2c54 62%, #000 100%);
+}
+
+.day-night-card__header p,
+.day-night-card__header div span,
+.day-night-card__row strong,
+.sun-chart__label {
+  color: rgba(255, 255, 255, 0.72);
+  fill: rgba(255, 255, 255, 0.72);
+}
+
+.day-night-card__row {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.monthly-calendar,
+.monthly-occasions {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.monthly-calendar__context {
+  color: var(--apple-muted);
+  font-weight: 700;
+}
+
+.monthly-calendar__filter select,
+.settings-field input,
+.search-box input {
+  border-color: var(--apple-line);
+  background: #fff;
+  color: var(--apple-ink);
+}
+
+.monthly-calendar__filter:focus-within,
+.monthly-calendar--primary-gregorian .monthly-calendar__filter:focus-within,
+.monthly-calendar--persian .monthly-calendar__filter:focus-within,
+.search-box input:focus,
+.settings-field input:focus {
+  border-color: rgba(0, 122, 255, 0.52);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.13);
+}
+
+.monthly-calendar__mode button.selected,
+.monthly-calendar__mode button:hover,
+.monthly-calendar__mode button:focus-visible,
+.monthly-calendar--primary-gregorian .monthly-calendar__mode button.selected,
+.monthly-calendar--primary-gregorian .monthly-calendar__mode button:hover,
+.monthly-calendar--primary-gregorian .monthly-calendar__mode button:focus-visible,
+.monthly-calendar__actions button:hover,
+.monthly-calendar__actions button:focus-visible {
+  background: var(--apple-blue);
+  color: #fff;
+}
+
+.monthly-calendar--primary-persian .monthly-calendar__mode button.selected,
+.monthly-calendar--primary-persian .monthly-calendar__mode button:hover,
+.monthly-calendar--primary-persian .monthly-calendar__mode button:focus-visible,
+.monthly-calendar--persian .monthly-calendar__day--selected,
+.monthly-calendar--primary-persian .monthly-calendar__day--selected {
+  background: var(--apple-green);
+  color: #fff;
+}
+
+.monthly-calendar__day {
+  position: relative;
+  overflow: hidden;
+  color: var(--apple-ink);
+}
+
+.monthly-calendar__day--today {
+  border-color: rgba(0, 122, 255, 0.58);
+  box-shadow: inset 0 0 0 2px rgba(0, 122, 255, 0.16);
+}
+
+.monthly-calendar__day--reference-today {
+  border-color: rgba(255, 149, 0, 0.72);
+  box-shadow: inset 0 0 0 2px rgba(255, 149, 0, 0.18);
+}
+
+.monthly-calendar__day--selected {
+  border-color: rgba(0, 122, 255, 0.50);
+  background: var(--apple-blue);
+  color: #fff;
+}
+
+.monthly-calendar__day--selected small,
+.monthly-calendar__day--selected .monthly-calendar__day-badge {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.monthly-calendar__day-badge {
+  max-width: calc(100% - 0.5rem);
+  overflow: hidden;
+  border-radius: 999px;
+  padding: 0.12rem 0.34rem;
+  color: var(--apple-blue);
+  font-size: clamp(0.46rem, 0.62vw, 0.58rem);
+  font-weight: 800;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.monthly-calendar__day-badge--reference {
+  color: #c46a00;
+}
+
+.monthly-calendar__day--has-events::after,
+.monthly-occasions__day li > span {
+  background: rgba(52, 199, 89, 0.14);
+  color: #248a3d;
+}
+
+.city-tab--dawn,
+.city-tab--morning,
+.city-tab--noon,
+.city-tab--afternoon,
+.city-tab--evening,
+.city-tab--night {
+  --tab-surface: var(--apple-card-strong);
+  --tab-text: var(--apple-ink);
+  --tab-muted: var(--apple-muted);
+  --tab-time: color-mix(in srgb, var(--accent) 72%, #1d1d1f);
+}
+
+.city-tab.selected {
+  border-color: color-mix(in srgb, var(--accent) 45%, rgba(255, 255, 255, 0.8));
+  outline: 3px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  outline-offset: 2px;
+}
+
+.ntp-status--ntp {
+  background: rgba(52, 199, 89, 0.14);
+  color: #248a3d;
+}
+
+.ntp-status--syncing {
+  background: rgba(0, 122, 255, 0.14);
+  color: #0051d5;
+}
+
+.ntp-status--error,
+.ntp-status--offline {
+  background: rgba(255, 59, 48, 0.13);
+  color: #d70015;
+}
+
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .hero-panel {
+    background: rgba(255, 255, 255, 0.86);
+  }
+
+  .city-tab--dawn,
+  .city-tab--morning,
+  .city-tab--noon,
+  .city-tab--afternoon,
+  .city-tab--evening,
+  .city-tab--night {
+    --tab-time: var(--accent);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --apple-ink: #f5f5f7;
+    --apple-muted: #a1a1a6;
+    --apple-line: rgba(255, 255, 255, 0.12);
+    --apple-card: rgba(28, 28, 30, 0.74);
+    --apple-card-strong: rgba(44, 44, 46, 0.88);
+    --apple-shadow: 0 18px 48px rgba(0, 0, 0, 0.38);
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 12% 0%, rgba(10, 132, 255, 0.18), transparent 24rem),
+      radial-gradient(circle at 100% 4%, rgba(255, 159, 10, 0.14), transparent 24rem),
+      linear-gradient(180deg, #101012 0%, #000 100%);
+  }
+
+  .hero-panel,
+  .switcher-panel,
+  .monthly-calendar,
+  .monthly-occasions,
+  .monthly-calendar--error,
+  .app-error-panel,
+  .info-pill,
+  .split-pill,
+  .search-box,
+  .settings-panel,
+  .ntp-status,
+  .monthly-calendar__filter,
+  .monthly-calendar__actions,
+  .monthly-calendar__mode,
+  .monthly-calendar__day,
+  .monthly-occasions__day,
+  .search-result,
+  .city-tab {
+    border-color: var(--apple-line);
+    background: var(--apple-card-strong);
+  }
+
+  .hero-panel,
+  .monthly-calendar,
+  .monthly-occasions {
+    background: var(--apple-card);
+  }
+
+  .secondary-button,
+  .monthly-calendar__filter select,
+  .settings-field input,
+  .search-box input,
+  .search-results {
+    background: rgba(44, 44, 46, 0.92);
+    color: var(--apple-ink);
+  }
+}

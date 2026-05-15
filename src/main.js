@@ -869,7 +869,7 @@ function getMonthOccasionGroups(days, primaryCalendar) {
     }));
 }
 
-function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey) {
+function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey, referenceDateKey) {
   const secondaryCalendar = primaryCalendar === 'gregorian' ? 'persian' : 'gregorian';
   const monthStart = getCalendarMonthStart(cityDate, primaryCalendar, monthOffset);
   const primaryParts = getCalendarPartsFromUtc(monthStart, primaryCalendar);
@@ -881,6 +881,8 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     const dateKey = getCalendarDateKey(dayDate);
     const dayPrimaryParts = getCalendarPartsFromUtc(dayDate, primaryCalendar);
     const primaryDate = formatCompactCalendarDate(dayDate, primaryCalendar);
+    const isCityToday = isSameUtcDay(dayDate, cityDate);
+    const isReferenceToday = Boolean(referenceDateKey && referenceDateKey !== getCalendarDateKey(cityDate) && dateKey === referenceDateKey);
 
     return {
       id: `synced-${primaryCalendar}-${dateKey}`,
@@ -889,7 +891,8 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
       secondaryDate: formatCompactCalendarDate(dayDate, secondaryCalendar),
       events: getDateOccasions(dayDate),
       isOutsideMonth: dayPrimaryParts.year !== primaryParts.year || dayPrimaryParts.month !== primaryParts.month,
-      isToday: isSameUtcDay(dayDate, cityDate),
+      isToday: isCityToday,
+      isReferenceToday,
       isSelected: selectedDateKey === dateKey,
     };
   });
@@ -1178,15 +1181,22 @@ function DayNightCard({ city }) {
 }
 
 
-function MonthlyCalendarCard({ city }) {
+function MonthlyCalendarCard({ city, referenceCity }) {
   const todayKey = getCalendarDateKey(city.cityDate);
+  const referenceDateKey = referenceCity ? getCalendarDateKey(referenceCity.cityDate) : todayKey;
+  const referenceLabel = referenceCity?.label || 'Home';
   const [primaryCalendar, setPrimaryCalendar] = useState('persian');
   const [monthOffset, setMonthOffset] = useState(0);
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
   let calendar = null;
 
+  useEffect(() => {
+    setMonthOffset(0);
+    setSelectedDateKey(todayKey);
+  }, [city.id, todayKey]);
+
   try {
-    calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey);
+    calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, referenceDateKey);
   } catch (error) {
     return h(
       'section',
@@ -1286,7 +1296,13 @@ function MonthlyCalendarCard({ city }) {
             h('button', { type: 'button', onClick: () => moveMonth(1), 'aria-label': 'Next month' }, '›'),
           ),
         ),
-        h('small', null, `Inside: ${calendar.secondaryTitle} · Selected: ${calendar.selectedLabel}`),
+        h(
+          'small',
+          { className: 'monthly-calendar__context' },
+          referenceDateKey !== todayKey
+            ? `Inside: ${calendar.secondaryTitle} · Selected: ${calendar.selectedLabel} · Today: ${city.label} ${todayKey}, ${referenceLabel} ${referenceDateKey}`
+            : `Inside: ${calendar.secondaryTitle} · Selected: ${calendar.selectedLabel}`
+        ),
         h(
           'div',
           { className: 'monthly-calendar__mode', 'aria-label': 'Choose primary calendar' },
@@ -1319,8 +1335,9 @@ function MonthlyCalendarCard({ city }) {
           'button',
           {
             type: 'button',
-            className: `monthly-calendar__day monthly-calendar__day--overlay${day.events.length ? ' monthly-calendar__day--has-events' : ''}${day.isOutsideMonth ? ' monthly-calendar__day--outside' : ''}${day.isToday ? ' monthly-calendar__day--today' : ''}${day.isSelected ? ' monthly-calendar__day--selected' : ''}`,
+            className: `monthly-calendar__day monthly-calendar__day--overlay${day.events.length ? ' monthly-calendar__day--has-events' : ''}${day.isOutsideMonth ? ' monthly-calendar__day--outside' : ''}${day.isReferenceToday ? ' monthly-calendar__day--reference-today' : ''}${day.isToday ? ' monthly-calendar__day--today' : ''}${day.isSelected ? ' monthly-calendar__day--selected' : ''}`,
             onClick: () => selectDay(day.dateKey),
+            'aria-label': `${day.dateKey}${day.isToday ? `, today in ${city.label}` : ''}${day.isReferenceToday ? `, today in ${referenceLabel}` : ''}`,
             'aria-pressed': day.isSelected,
             key: day.id,
           },
@@ -1334,6 +1351,8 @@ function MonthlyCalendarCard({ city }) {
             null,
             `${day.secondaryDate.month}/${formatNumber(day.secondaryDate.day)}`,
           ),
+          day.isToday && h('span', { className: 'monthly-calendar__day-badge monthly-calendar__day-badge--city' }, city.label),
+          day.isReferenceToday && h('span', { className: 'monthly-calendar__day-badge monthly-calendar__day-badge--reference' }, referenceLabel),
         )),
       ),
     ),
@@ -1701,7 +1720,7 @@ function App() {
       ),
     ),
     h(DayNightCard, { city: selectedCity }),
-    h(MonthlyCalendarCard, { city: selectedCity }),
+    h(MonthlyCalendarCard, { city: selectedCity, referenceCity: activeSnapshots.find((city) => city.id === 'tehran') || activeSnapshots[0] }),
     h(
       'section',
       { className: 'switcher-panel', 'aria-label': 'Switch city time' },
