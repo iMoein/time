@@ -1578,3 +1578,562 @@ button {
     min-height: 12rem;
   }
 }
+
+/* Apple-inspired redesign: soft glass surfaces, SF typography, generous spacing, and iOS-like controls. */
+:root {
+  color: #1d1d1f;
+  background: #f5f5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --apple-bg: #f5f5f7;
+  --apple-ink: #1d1d1f;
+  --apple-muted: #6e6e73;
+  --apple-hairline: rgba(0, 0, 0, 0.08);
+  --apple-surface: rgba(255, 255, 255, 0.74);
+  --apple-surface-strong: rgba(255, 255, 255, 0.9);
+  --apple-blue: #007aff;
+  --apple-indigo: #5856d6;
+  --apple-green: #34c759;
+  --apple-orange: #ff9500;
+  --apple-red: #ff3b30;
+  --apple-shadow: 0 24px 70px rgba(0, 0, 0, 0.10);
+  --apple-shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  color: var(--apple-ink);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(0, 122, 255, 0.16), transparent 24rem),
+    radial-gradient(circle at 88% 10%, rgba(255, 149, 0, 0.15), transparent 25rem),
+    radial-gradient(circle at 50% 100%, rgba(88, 86, 214, 0.12), transparent 30rem),
+    linear-gradient(180deg, #fbfbfd 0%, var(--apple-bg) 48%, #ececf1 100%);
+}
+
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.36) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.30) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), transparent 70%);
+  content: '';
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+}
+
+.page-shell {
+  gap: clamp(1rem, 2vw, 1.65rem);
+  padding: clamp(0.9rem, 3vw, 2.4rem);
+}
+
+.hero-panel,
+.day-night-card,
+.switcher-panel,
+.monthly-calendar,
+.monthly-occasions,
+.monthly-calendar--error,
+.app-error-panel {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: clamp(1.45rem, 2.5vw, 2.2rem);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.56));
+  box-shadow: var(--apple-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+  backdrop-filter: blur(26px) saturate(180%);
+}
+
+.hero-panel {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(1.1rem, 3vw, 2.55rem);
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 22rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(255, 255, 255, 0.58));
+}
+
+.hero-panel::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.78), transparent 42%),
+    radial-gradient(circle at 6% 12%, rgba(255, 255, 255, 0.82), transparent 13rem);
+  content: '';
+}
+
+.top-bar {
+  align-items: flex-start;
+}
+
+.eyebrow {
+  max-width: 52rem;
+  color: var(--apple-muted);
+  font-size: clamp(1.1rem, 2.2vw, 2.05rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+}
+
+.eyebrow strong {
+  display: inline-block;
+  color: var(--apple-ink);
+  font-weight: 800;
+}
+
+.fullscreen-button,
+.edit-toggle,
+.secondary-button,
+.monthly-calendar__actions,
+.monthly-calendar__mode,
+.monthly-calendar__filter,
+.search-box,
+.settings-panel,
+.ntp-status {
+  border: 1px solid var(--apple-hairline);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 8px 22px rgba(0, 0, 0, 0.06);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+}
+
+.fullscreen-button,
+.edit-toggle {
+  background: #1d1d1f;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.fullscreen-button {
+  --button-bg: #1d1d1f;
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16);
+}
+
+.fullscreen-button__icon,
+.fullscreen-button__hint {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.hero-content {
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 25rem);
+  align-items: center;
+}
+
+.clock {
+  color: var(--apple-ink);
+  font-size: clamp(6.5rem, 12vw, 12.5rem);
+  font-weight: 800;
+  letter-spacing: -0.095em;
+  line-height: 0.82;
+  text-shadow: none;
+}
+
+.hero-meta {
+  gap: 0.72rem;
+  padding-left: 0;
+}
+
+.info-pill,
+.split-pill,
+.day-night-card__row,
+.monthly-calendar__day,
+.monthly-occasions__day,
+.search-result,
+.city-tab {
+  border: 1px solid var(--apple-hairline);
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92), 0 8px 22px rgba(0, 0, 0, 0.055);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+}
+
+.info-pill,
+.split-pill {
+  min-height: 4.7rem;
+  border-radius: 1.25rem;
+  padding: 0.88rem 1rem;
+}
+
+.info-pill span,
+.split-pill__item small,
+.section-heading span,
+.search-box span,
+.settings-field span,
+.ntp-status strong,
+.monthly-calendar__header span,
+.monthly-occasions header span,
+.day-night-card__row strong {
+  color: var(--apple-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+}
+
+.info-pill strong,
+.split-pill__item strong,
+.section-heading strong,
+.monthly-calendar__header strong,
+.monthly-occasions header strong {
+  color: var(--apple-ink);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.day-night-card {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.22), transparent 16rem),
+    linear-gradient(145deg, #0a84ff 0%, #5e5ce6 48%, #1d1d1f 100%);
+}
+
+.day-night-card--night {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.16), transparent 15rem),
+    linear-gradient(145deg, #1c1c1e 0%, #2c2c54 52%, #000 100%);
+}
+
+.day-night-card__header p,
+.day-night-card__header div span,
+.day-night-card__row strong,
+.sun-chart__label {
+  color: rgba(255, 255, 255, 0.72);
+  fill: rgba(255, 255, 255, 0.72);
+}
+
+.day-night-card__icon {
+  border-radius: 1.2rem;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.day-night-card__details {
+  border-color: rgba(255, 255, 255, 0.14);
+  border-radius: 1.35rem;
+}
+
+.day-night-card__row {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.monthly-calendars--synced {
+  --synced-calendar-height: clamp(44rem, calc(100vh - 3rem), 48rem);
+  grid-template-columns: minmax(0, 770px) minmax(18rem, 1fr);
+}
+
+.monthly-calendar,
+.monthly-calendar--persian,
+.monthly-occasions {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(0, 122, 255, 0.10), transparent 17rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.58));
+}
+
+.monthly-calendar--primary-persian,
+.monthly-calendar--persian {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(52, 199, 89, 0.12), transparent 17rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.58));
+}
+
+.monthly-calendar__filter select,
+.settings-field input,
+.search-box input {
+  border-color: var(--apple-hairline);
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 255, 0.70);
+  color: var(--apple-ink);
+}
+
+.monthly-calendar__filter:focus-within,
+.monthly-calendar--primary-gregorian .monthly-calendar__filter:focus-within,
+.monthly-calendar--persian .monthly-calendar__filter:focus-within,
+.search-box input:focus,
+.settings-field input:focus {
+  border-color: rgba(0, 122, 255, 0.54);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.14);
+}
+
+.monthly-calendar__mode button.selected,
+.monthly-calendar__mode button:hover,
+.monthly-calendar__mode button:focus-visible,
+.monthly-calendar--primary-gregorian .monthly-calendar__mode button.selected,
+.monthly-calendar--primary-gregorian .monthly-calendar__mode button:hover,
+.monthly-calendar--primary-gregorian .monthly-calendar__mode button:focus-visible,
+.monthly-calendar__actions button:hover,
+.monthly-calendar__actions button:focus-visible {
+  background: var(--apple-blue);
+  color: #fff;
+}
+
+.monthly-calendar--primary-persian .monthly-calendar__mode button.selected,
+.monthly-calendar--primary-persian .monthly-calendar__mode button:hover,
+.monthly-calendar--primary-persian .monthly-calendar__mode button:focus-visible {
+  background: var(--apple-green);
+}
+
+.monthly-calendar__day {
+  border-radius: 1.05rem;
+  color: var(--apple-ink);
+}
+
+.monthly-calendar__day:hover,
+.monthly-calendar__day:focus-visible {
+  border-color: rgba(0, 122, 255, 0.28);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12px 24px rgba(0, 122, 255, 0.10);
+}
+
+.monthly-calendar__day--today {
+  border-color: rgba(0, 122, 255, 0.55);
+  box-shadow: inset 0 0 0 2px rgba(0, 122, 255, 0.16), 0 10px 24px rgba(0, 122, 255, 0.10);
+}
+
+.monthly-calendar__day--selected {
+  border-color: rgba(0, 122, 255, 0.42);
+  background: var(--apple-blue);
+  color: #fff;
+}
+
+.monthly-calendar--persian .monthly-calendar__day--selected,
+.monthly-calendar--primary-persian .monthly-calendar__day--selected {
+  border-color: rgba(52, 199, 89, 0.44);
+  background: var(--apple-green);
+}
+
+.monthly-calendar__day--has-events::after,
+.monthly-occasions__day li > span {
+  background: rgba(52, 199, 89, 0.14);
+  color: #248a3d;
+}
+
+.monthly-occasions__list {
+  scrollbar-color: rgba(0, 122, 255, 0.50) rgba(255, 255, 255, 0.45);
+}
+
+.monthly-occasions__list::-webkit-scrollbar-track,
+.monthly-occasions__list::-webkit-scrollbar-thumb {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.monthly-occasions__date {
+  border: 1px solid var(--apple-hairline);
+  background: rgba(0, 122, 255, 0.10);
+}
+
+.switcher-panel {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  padding: clamp(1rem, 2.2vw, 1.45rem);
+}
+
+.secondary-button {
+  color: var(--apple-blue);
+  font-weight: 700;
+}
+
+.edit-toggle:hover,
+.secondary-button:hover,
+.fullscreen-button:hover:not(:disabled),
+.city-tab:hover,
+.city-tab.selected,
+.search-result:hover,
+.monthly-occasions__day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.11);
+}
+
+.city-tabs {
+  gap: 0.72rem;
+}
+
+.city-tab {
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--apple-ink);
+}
+
+.city-tab--dawn,
+.city-tab--morning,
+.city-tab--noon,
+.city-tab--afternoon,
+.city-tab--evening,
+.city-tab--night {
+  --tab-surface: rgba(255, 255, 255, 0.72);
+  --tab-text: var(--apple-ink);
+  --tab-muted: var(--apple-muted);
+  --tab-time: color-mix(in srgb, var(--accent) 76%, #1d1d1f);
+}
+
+.city-tab::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 14% 12%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 5rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.40));
+  content: '';
+}
+
+.city-tab.selected {
+  border-color: color-mix(in srgb, var(--accent) 45%, rgba(255, 255, 255, 0.8));
+  outline: 3px solid color-mix(in srgb, var(--accent) 26%, transparent);
+  outline-offset: 3px;
+}
+
+.city-tab__main {
+  padding: 0.82rem 0.9rem;
+}
+
+.city-tab__name,
+.city-tab__time {
+  font-weight: 800;
+}
+
+.city-tab__date,
+.city-tab__phase,
+.drag-handle {
+  color: var(--apple-muted);
+}
+
+.remove-chip {
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--apple-red);
+}
+
+.ntp-status--ntp {
+  background: rgba(52, 199, 89, 0.14);
+  color: #248a3d;
+}
+
+.ntp-status--syncing {
+  background: rgba(0, 122, 255, 0.14);
+  color: #0051d5;
+}
+
+.ntp-status--error,
+.ntp-status--offline {
+  background: rgba(255, 59, 48, 0.13);
+  color: #d70015;
+}
+
+.search-results {
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 1.35rem;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.14);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+}
+
+.search-result {
+  border-left: 0;
+  border-radius: 1rem;
+}
+
+.search-result strong {
+  color: var(--apple-blue);
+}
+
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .hero-panel {
+    background:
+      radial-gradient(circle at 100% 0%, rgba(0, 122, 255, 0.16), transparent 22rem),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.90), rgba(255, 255, 255, 0.58));
+  }
+
+  .city-tab--dawn,
+  .city-tab--morning,
+  .city-tab--noon,
+  .city-tab--afternoon,
+  .city-tab--evening,
+  .city-tab--night {
+    --tab-time: var(--accent);
+  }
+
+  .city-tab::before {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.40));
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f5f5f7;
+    background: #000;
+    --apple-bg: #000;
+    --apple-ink: #f5f5f7;
+    --apple-muted: #a1a1a6;
+    --apple-hairline: rgba(255, 255, 255, 0.12);
+    --apple-surface: rgba(28, 28, 30, 0.72);
+    --apple-surface-strong: rgba(44, 44, 46, 0.88);
+    --apple-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+    --apple-shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.32);
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 8% 0%, rgba(10, 132, 255, 0.24), transparent 24rem),
+      radial-gradient(circle at 88% 10%, rgba(255, 159, 10, 0.18), transparent 25rem),
+      radial-gradient(circle at 50% 100%, rgba(94, 92, 230, 0.20), transparent 30rem),
+      linear-gradient(180deg, #101012 0%, #000 100%);
+  }
+
+  .hero-panel,
+  .switcher-panel,
+  .monthly-calendar,
+  .monthly-occasions,
+  .monthly-calendar--error,
+  .app-error-panel,
+  .info-pill,
+  .split-pill,
+  .monthly-calendar__day,
+  .monthly-occasions__day,
+  .search-result,
+  .city-tab,
+  .search-box,
+  .settings-panel,
+  .ntp-status,
+  .monthly-calendar__actions,
+  .monthly-calendar__mode,
+  .monthly-calendar__filter {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: linear-gradient(145deg, rgba(44, 44, 46, 0.80), rgba(28, 28, 30, 0.58));
+    box-shadow: var(--apple-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .hero-panel {
+    background:
+      radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 25%, transparent), transparent 22rem),
+      linear-gradient(145deg, rgba(44, 44, 46, 0.88), rgba(28, 28, 30, 0.60));
+  }
+
+  .monthly-calendar,
+  .monthly-calendar--persian,
+  .monthly-occasions {
+    background: linear-gradient(145deg, rgba(44, 44, 46, 0.84), rgba(28, 28, 30, 0.58));
+  }
+
+  .city-tab::before {
+    background:
+      radial-gradient(circle at 14% 12%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 5rem),
+      linear-gradient(145deg, rgba(58, 58, 60, 0.58), rgba(28, 28, 30, 0.24));
+  }
+
+  .monthly-calendar__filter select,
+  .settings-field input,
+  .search-box input,
+  .search-results {
+    background: rgba(44, 44, 46, 0.82);
+    color: var(--apple-ink);
+  }
+}
