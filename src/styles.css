@@ -285,7 +285,7 @@ button {
 
 .timezone-manager {
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
   gap: clamp(0.5rem, 0.9vw, 0.72rem);
   align-self: stretch;
   padding: clamp(0.82rem, 1.5vw, 1.15rem);
@@ -332,7 +332,9 @@ button {
   display: grid;
   gap: var(--timezone-row-gap);
   align-content: start;
-  min-height: 0;
+  height: calc((var(--timezone-row-height) * 5) + (var(--timezone-row-gap) * 4));
+  max-height: calc((var(--timezone-row-height) * 5) + (var(--timezone-row-gap) * 4));
+  min-height: calc((var(--timezone-row-height) * 5) + (var(--timezone-row-gap) * 4));
   overflow-y: auto;
   overscroll-behavior: contain;
   padding-right: 0.22rem;
