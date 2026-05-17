@@ -46,8 +46,8 @@ button {
 
 .hero-panel {
   display: grid;
-  gap: clamp(0.75rem, 1.8vw, 1.35rem);
-  padding: clamp(1.15rem, 2.8vw, 2.35rem);
+  gap: clamp(0.65rem, 1.35vw, 1.05rem);
+  padding: clamp(0.85rem, 1.7vw, 1.25rem);
   overflow: hidden;
   background:
     linear-gradient(110deg, rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.78)),
@@ -1793,6 +1793,11 @@ button {
   .monthly-calendar,
   .switcher-panel {
     border-radius: 1.35rem;
+  }
+
+
+  .timezone-manager {
+    order: -1;
   }
 
   .top-bar,
