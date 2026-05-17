@@ -1176,7 +1176,7 @@ function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, search
         h('button', { type: 'button', className: 'edit-toggle', onClick: onEditToggle }, editMode ? 'Done' : 'Edit'),
       ),
     ),
-    editMode && h(SearchPanel, { query: searchQuery, results: searchResults, onAdd, onQueryChange }),
+    h(SearchPanel, { query: searchQuery, results: searchResults, onAdd, onQueryChange }),
     h(
       'div',
       { className: `timezone-list${editMode ? ' timezone-list--editing' : ''}` },
@@ -1209,6 +1209,7 @@ function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, search
             'aria-pressed': city.id === selectedCityId,
           },
           h('span', { className: 'timezone-row__name' }, city.label),
+          h('span', { className: 'timezone-row__phase' }, city.timeOfDayLabel),
         ),
         editMode && cities.length > 1 && h(
           'button',

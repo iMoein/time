@@ -285,11 +285,11 @@ button {
 
 .timezone-manager {
   display: grid;
-  grid-template-rows: auto auto minmax(0, auto);
-  gap: clamp(0.58rem, 1vw, 0.8rem);
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: clamp(0.5rem, 0.9vw, 0.72rem);
   align-self: stretch;
   padding: clamp(0.82rem, 1.5vw, 1.15rem);
-  overflow: hidden;
+  overflow: visible;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.78)),
     radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.12), transparent 16rem);
@@ -303,18 +303,35 @@ button {
   width: 100%;
 }
 
+.timezone-manager .search-box {
+  gap: 0.24rem;
+  padding: 0.58rem;
+  border-radius: 0.9rem;
+}
+
+.timezone-manager .search-box span {
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+}
+
+.timezone-manager .search-box input {
+  border-radius: 0.75rem;
+  padding: 0.55rem 0.68rem;
+  font-size: 0.82rem;
+}
+
 .timezone-manager .search-results {
   width: 100%;
+  max-height: 13.5rem;
 }
 
 .timezone-list {
-  --timezone-row-height: 2.72rem;
-  --timezone-row-gap: 0.42rem;
+  --timezone-row-height: 2.62rem;
+  --timezone-row-gap: 0.38rem;
 
   display: grid;
   gap: var(--timezone-row-gap);
   align-content: start;
-  max-height: calc((var(--timezone-row-height) * 5) + (var(--timezone-row-gap) * 4));
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -374,7 +391,9 @@ button {
 }
 
 .timezone-row__main {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.48rem;
   align-items: center;
   width: 100%;
   height: 100%;
@@ -393,6 +412,27 @@ button {
   font-weight: 950;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.timezone-row__phase {
+  justify-self: end;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 999px;
+  padding: 0.16rem 0.42rem;
+  background: rgba(255, 255, 255, 0.58);
+  color: #64748b;
+  font-size: 0.58rem;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.timezone-row.selected .timezone-row__phase {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .timezone-row .remove-chip {
