@@ -17,6 +17,15 @@ const defaultCities = [
 const savedCitiesKey = 'time-app-cities';
 const savedNtpHostKey = 'time-app-ntp-host';
 const defaultNtpHost = 'ntp.time.ir';
+const ntpServerOptions = [
+  { host: 'ntp.time.ir', label: 'Iran NTP (ntp.time.ir)' },
+  { host: 'pool.ntp.org', label: 'NTP Pool Project' },
+  { host: 'time.google.com', label: 'Google Public NTP' },
+  { host: 'time.cloudflare.com', label: 'Cloudflare Time Services' },
+  { host: 'time.aws.com', label: 'Amazon Time Sync' },
+  { host: 'time.apple.com', label: 'Apple NTP' },
+  { host: 'time.windows.com', label: 'Microsoft Windows Time' },
+];
 
 function toTitleCase(value) {
   return value
@@ -1090,14 +1099,38 @@ function SearchPanel({ query, results, onAdd, onQueryChange }) {
 }
 
 
-function SettingsPanel({ ntpHostInput, ntpStatus, onHostInputChange, onSave, onSync }) {
+function SettingsPanel({ ntpHostInput, ntpStatus, ntpServerPresets, onHostInputChange, onPresetSelect, onSave, onSync }) {
+  const selectedPreset = ntpServerPresets.find((server) => server.host === ntpHostInput.trim())?.host || 'custom';
+  const delayLabel = typeof ntpStatus.delayMs === 'number' ? `${ntpStatus.delayMs}ms` : ntpStatus.delay || 'Not measured';
+
   return h(
     'form',
-    { className: 'settings-panel', onSubmit: onSave },
+    { className: 'settings-panel ntp-settings-panel', onSubmit: onSave },
+    h(
+      'div',
+      { className: 'settings-panel__header' },
+      h('span', null, 'NTP server settings'),
+      h('strong', null, 'Choose a trusted time source'),
+      h('small', null, 'Pick a global NTP provider or enter a custom hostname, then sync to measure connection status and round-trip delay.'),
+    ),
     h(
       'label',
       { className: 'settings-field' },
-      h('span', null, 'NTP server'),
+      h('span', null, 'Trusted servers'),
+      h(
+        'select',
+        {
+          value: selectedPreset,
+          onChange: (event) => onPresetSelect(event.target.value),
+        },
+        ntpServerPresets.map((server) => h('option', { value: server.host, key: server.host }, server.label)),
+        h('option', { value: 'custom' }, 'Custom NTP server'),
+      ),
+    ),
+    h(
+      'label',
+      { className: 'settings-field' },
+      h('span', null, 'Custom hostname'),
       h('input', {
         type: 'text',
         value: ntpHostInput,
@@ -1112,6 +1145,12 @@ function SettingsPanel({ ntpHostInput, ntpStatus, onHostInputChange, onSave, onS
       { className: `ntp-status ntp-status--${ntpStatus.kind}` },
       h('strong', null, ntpStatus.label),
       h('span', null, ntpStatus.detail),
+      h(
+        'dl',
+        { className: 'ntp-status__metrics' },
+        h('div', null, h('dt', null, 'Server'), h('dd', null, ntpStatus.host || ntpHostInput || defaultNtpHost)),
+        h('div', null, h('dt', null, 'Delay'), h('dd', null, delayLabel)),
+      ),
     ),
     h(
       'div',
@@ -1123,6 +1162,63 @@ function SettingsPanel({ ntpHostInput, ntpStatus, onHostInputChange, onSave, onS
 }
 
 
+function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, searchResults, draggingCityId, onAdd, onDragEnd, onDragStart, onDrop, onEditToggle, onQueryChange, onRemove, onSelect }) {
+  return h(
+    'section',
+    { className: 'timezone-manager', 'aria-label': 'Manage timezones' },
+    h(
+      'div',
+      { className: 'section-heading timezone-manager__heading' },
+      h('span', null, 'Manage timezones'),
+      h(
+        'div',
+        { className: 'heading-actions' },
+        h('button', { type: 'button', className: 'edit-toggle', onClick: onEditToggle }, editMode ? 'Done' : 'Edit'),
+      ),
+    ),
+    editMode && h(SearchPanel, { query: searchQuery, results: searchResults, onAdd, onQueryChange }),
+    h(
+      'div',
+      { className: `timezone-list${editMode ? ' timezone-list--editing' : ''}` },
+      cities.map((city) => h(
+        'article',
+        {
+          className: `timezone-row${city.id === selectedCityId ? ' selected' : ''}${editMode ? ' editable' : ''}${draggingCityId === city.id ? ' dragging' : ''}`,
+          draggable: editMode,
+          onDragEnd,
+          onDragOver: (event) => {
+            if (!editMode) {
+              return;
+            }
+
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+          },
+          onDragStart: (event) => onDragStart(event, city.id),
+          onDrop: (event) => onDrop(event, city.id),
+          style: { '--accent': city.accent },
+          key: city.id,
+        },
+        editMode && h('span', { className: 'drag-handle', 'aria-hidden': 'true' }, '⋮⋮'),
+        h(
+          'button',
+          {
+            type: 'button',
+            className: 'timezone-row__main',
+            onClick: () => onSelect(city.id),
+            'aria-pressed': city.id === selectedCityId,
+          },
+          h('span', { className: 'timezone-row__name' }, city.label),
+        ),
+        editMode && cities.length > 1 && h(
+          'button',
+          { type: 'button', className: 'remove-chip', onClick: () => onRemove(city.id), 'aria-label': `Remove ${city.label}` },
+          '×',
+        ),
+      )),
+    ),
+  );
+}
 
 function DayNightCard({ city }) {
   const timeline = city.dayNight;
@@ -1411,10 +1507,9 @@ function App() {
   const [selectedCityId, setSelectedCityId] = useState(activeCityIds[0] || defaultCityIds[0]);
   const [searchQuery, setSearchQuery] = useState('');
   const [editMode, setEditMode] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [ntpHost, setNtpHost] = useState(getInitialNtpHost);
   const [ntpHostInput, setNtpHostInput] = useState(ntpHost);
-  const [ntpStatus, setNtpStatus] = useState({ kind: 'local', label: 'Local clock', detail: 'Using this device until NTP sync succeeds.' });
+  const [ntpStatus, setNtpStatus] = useState({ kind: 'local', label: 'Local clock', detail: 'Using this device until NTP sync succeeds.', host: ntpHost, delay: 'Not measured' });
   const [ntpSyncRequest, setNtpSyncRequest] = useState(0);
   const [draggingCityId, setDraggingCityId] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
@@ -1453,11 +1548,11 @@ function App() {
     const syncNtp = async () => {
       if (!navigator.onLine) {
         setTimeOffset(0);
-        setNtpStatus({ kind: 'offline', label: 'Offline', detail: 'No internet detected; using this device clock.' });
+        setNtpStatus({ kind: 'offline', label: 'Offline', detail: 'No internet detected; using this device clock.', host: ntpHost, delay: 'Offline' });
         return;
       }
 
-      setNtpStatus({ kind: 'syncing', label: 'Syncing NTP', detail: `Reading ${ntpHost}...` });
+      setNtpStatus({ kind: 'syncing', label: 'Syncing NTP', detail: `Reading ${ntpHost}...`, host: ntpHost, delay: 'Measuring...' });
       const startedAt = Date.now();
 
       try {
@@ -1478,7 +1573,9 @@ function App() {
         setNtpStatus({
           kind: 'ntp',
           label: 'Synced with NTP',
-          detail: `${data.host} · ${Math.round(endedAt - startedAt)}ms round trip`,
+          detail: `${data.host} connected successfully.`,
+          host: data.host,
+          delayMs: Math.round(endedAt - startedAt),
         });
       } catch (error) {
         if (ignore) {
@@ -1490,6 +1587,8 @@ function App() {
           kind: 'error',
           label: 'NTP unavailable',
           detail: `${error.message || 'Could not sync.'} Using this device clock.`,
+          host: ntpHost,
+          delay: 'Failed',
         });
       }
     };
@@ -1605,7 +1704,7 @@ function App() {
     const nextHost = ntpHostInput.trim();
 
     if (!nextHost) {
-      setNtpStatus({ kind: 'error', label: 'NTP host required', detail: 'Enter a hostname like ntp.time.ir.' });
+      setNtpStatus({ kind: 'error', label: 'NTP host required', detail: 'Enter a hostname like ntp.time.ir.', host: ntpHost, delay: 'Not measured' });
       return;
     }
 
@@ -1621,6 +1720,17 @@ function App() {
       return;
     }
 
+    setNtpSyncRequest((requestId) => requestId + 1);
+  };
+
+
+  const selectNtpPreset = (host) => {
+    if (host === 'custom') {
+      return;
+    }
+
+    setNtpHostInput(host);
+    setNtpHost(host);
     setNtpSyncRequest((requestId) => requestId + 1);
   };
 
@@ -1700,48 +1810,40 @@ function App() {
         ),
       ),
     ),
-    h(DayNightCard, { city: selectedCity }),
+    h(
+      'section',
+      { className: 'solar-timezone-grid', 'aria-label': 'Sun status and timezone management' },
+      h(DayNightCard, { city: selectedCity }),
+      h(TimezoneManager, {
+        cities: activeSnapshots,
+        selectedCityId: selectedCity.id,
+        editMode,
+        searchQuery,
+        searchResults,
+        draggingCityId,
+        onAdd: addCity,
+        onDragEnd: () => setDraggingCityId(null),
+        onDragStart: handleDragStart,
+        onDrop: handleDrop,
+        onEditToggle: toggleEditMode,
+        onQueryChange: setSearchQuery,
+        onRemove: removeCity,
+        onSelect: setSelectedCityId,
+      }),
+    ),
     h(MonthlyCalendarCard, { city: selectedCity }),
     h(
       'section',
-      { className: 'switcher-panel', 'aria-label': 'Switch city time' },
-      h(
-        'div',
-        { className: 'section-heading' },
-        h('span', null, 'Manage timezones'),
-        h(
-          'div',
-          { className: 'heading-actions' },
-          h('strong', null, editMode ? 'Search, add, remove, and drag cities' : 'Switch between your saved cities'),
-          h('button', { type: 'button', className: 'secondary-button', onClick: () => setSettingsOpen((isOpen) => !isOpen) }, settingsOpen ? 'Close settings' : 'Settings'),
-          h('button', { type: 'button', className: 'edit-toggle', onClick: toggleEditMode }, editMode ? 'Done' : 'Edit'),
-        ),
-      ),
-      settingsOpen && h(SettingsPanel, {
+      { className: 'switcher-panel ntp-panel', 'aria-label': 'NTP server settings' },
+      h(SettingsPanel, {
         ntpHostInput,
         ntpStatus,
+        ntpServerPresets: ntpServerOptions,
         onHostInputChange: setNtpHostInput,
+        onPresetSelect: selectNtpPreset,
         onSave: saveNtpHost,
         onSync: syncCurrentNtpHost,
       }),
-      editMode && h(SearchPanel, { query: searchQuery, results: searchResults, onAdd: addCity, onQueryChange: setSearchQuery }),
-      h(
-        'div',
-        { className: `city-tabs${editMode ? ' city-tabs--editing' : ''}` },
-        activeSnapshots.map((city) => h(ToggleButton, {
-          city,
-          selected: city.id === selectedCity.id,
-          canRemove: editMode && activeSnapshots.length > 1,
-          editMode,
-          dragging: draggingCityId === city.id,
-          onDragEnd: () => setDraggingCityId(null),
-          onDragStart: handleDragStart,
-          onDrop: handleDrop,
-          onRemove: removeCity,
-          onSelect: setSelectedCityId,
-          key: city.id,
-        })),
-      ),
     ),
   );
 }
