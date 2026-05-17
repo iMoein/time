@@ -34,6 +34,7 @@ button {
 
 .hero-panel,
 .day-night-card,
+.timezone-manager,
 .switcher-panel {
   width: min(100%, 1180px);
   margin: 0 auto;
@@ -264,6 +265,128 @@ button {
   padding: clamp(1rem, 2vw, 1.5rem);
   overflow: visible;
   background: rgba(255, 255, 255, 0.72);
+}
+
+.solar-timezone-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(19rem, 0.72fr);
+  gap: clamp(0.85rem, 1.6vw, 1.2rem);
+  align-items: stretch;
+  width: min(100%, 1180px);
+  margin: 0 auto;
+}
+
+.solar-timezone-grid .day-night-card,
+.solar-timezone-grid .timezone-manager {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.timezone-manager {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 0.85rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  overflow: visible;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.78)),
+    radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.12), transparent 16rem);
+}
+
+.timezone-manager__heading {
+  align-items: start;
+}
+
+.timezone-manager .search-panel {
+  width: 100%;
+}
+
+.timezone-manager .search-results {
+  width: 100%;
+}
+
+.timezone-list {
+  display: grid;
+  gap: 0.55rem;
+  align-content: start;
+  min-height: 0;
+}
+
+.timezone-row {
+  position: relative;
+  min-height: 3.15rem;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-left: 0.35rem solid var(--accent);
+  border-radius: 0.95rem;
+  background: rgba(248, 250, 252, 0.86);
+  color: #172033;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+}
+
+.timezone-row:hover,
+.timezone-row.selected {
+  border-color: rgba(37, 99, 235, 0.34);
+  border-left-color: var(--accent);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.1);
+  transform: translateY(-1px);
+}
+
+.timezone-row.selected {
+  background: #111827;
+  color: #fff;
+}
+
+.timezone-row.editable {
+  cursor: grab;
+}
+
+.timezone-row.dragging {
+  opacity: 0.45;
+  transform: scale(0.98);
+}
+
+.timezone-row__main {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 3.15rem;
+  cursor: pointer;
+  padding: 0.72rem 2.7rem 0.72rem 0.9rem;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.timezone-row__name {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.95rem;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timezone-row .remove-chip {
+  top: 50%;
+  right: 0.65rem;
+  bottom: auto;
+  left: auto;
+  transform: translateY(-50%);
+}
+
+.timezone-row .drag-handle {
+  right: 2.25rem;
+  bottom: 50%;
+  color: #94a3b8;
+  transform: translateY(50%);
+}
+
+.timezone-row.selected .drag-handle {
+  color: rgba(255, 255, 255, 0.68);
 }
 
 .day-night-card {
@@ -1114,13 +1237,50 @@ button {
 
 .settings-panel {
   display: grid;
-  grid-template-columns: minmax(12rem, 1fr) minmax(14rem, 1.2fr) auto;
+  grid-template-columns: minmax(12rem, 1fr) minmax(12rem, 1fr) minmax(16rem, 1.2fr) auto;
   gap: 0.85rem;
   align-items: end;
   padding: 1rem;
   border: 1px solid rgba(148, 163, 184, 0.28);
   border-radius: 1.25rem;
   background: rgba(248, 250, 252, 0.92);
+}
+
+.ntp-panel {
+  overflow: hidden;
+}
+
+.ntp-settings-panel {
+  background:
+    linear-gradient(135deg, rgba(248, 250, 252, 0.96), rgba(255, 255, 255, 0.82)),
+    radial-gradient(circle at 100% 0%, rgba(4, 120, 87, 0.12), transparent 16rem);
+}
+
+.settings-panel__header {
+  display: grid;
+  gap: 0.2rem;
+  align-self: center;
+}
+
+.settings-panel__header span {
+  color: #047857;
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.settings-panel__header strong {
+  color: #111827;
+  font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+  font-weight: 950;
+}
+
+.settings-panel__header small {
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.35;
 }
 
 .settings-field {
@@ -1137,7 +1297,8 @@ button {
   text-transform: uppercase;
 }
 
-.settings-field input {
+.settings-field input,
+.settings-field select {
   width: 100%;
   border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 1rem;
@@ -1149,7 +1310,12 @@ button {
   font-weight: 800;
 }
 
-.settings-field input:focus {
+.settings-field select {
+  cursor: pointer;
+}
+
+.settings-field input:focus,
+.settings-field select:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
@@ -1164,6 +1330,42 @@ button {
   color: #475569;
   font-size: 0.9rem;
   font-weight: 750;
+}
+
+.ntp-status__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin: 0.25rem 0 0;
+}
+
+.ntp-status__metrics div {
+  min-width: 0;
+  border-radius: 0.75rem;
+  padding: 0.45rem 0.55rem;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.ntp-status__metrics dt,
+.ntp-status__metrics dd {
+  margin: 0;
+}
+
+.ntp-status__metrics dt {
+  color: currentColor;
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+  text-transform: uppercase;
+}
+
+.ntp-status__metrics dd {
+  overflow: hidden;
+  color: currentColor;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ntp-status--ntp {
@@ -1424,6 +1626,7 @@ button {
 
 :fullscreen .hero-panel,
 :fullscreen .day-night-card,
+:fullscreen .solar-timezone-grid,
 :fullscreen .monthly-calendars,
 :fullscreen .switcher-panel {
   width: min(100%, 1440px);
@@ -1465,6 +1668,7 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .solar-timezone-grid,
   .monthly-calendars,
   .monthly-calendars--synced {
     grid-template-columns: 1fr;
@@ -1486,6 +1690,10 @@ button {
 
   .settings-panel {
     grid-template-columns: 1fr;
+  }
+
+  .timezone-list {
+    max-height: none;
   }
 
   .day-night-card__header,
@@ -1514,6 +1722,7 @@ button {
 
   .hero-panel,
   .day-night-card,
+  .timezone-manager,
   .monthly-calendar,
   .switcher-panel {
     border-radius: 1.35rem;
