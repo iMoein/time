@@ -269,8 +269,8 @@ button {
 
 .solar-timezone-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.42fr) minmax(16rem, 0.58fr);
-  gap: clamp(0.75rem, 1.35vw, 1.05rem);
+  grid-template-columns: minmax(0, 760px) minmax(18rem, 1fr);
+  gap: clamp(0.85rem, 1.6vw, 1.2rem);
   align-items: stretch;
   width: min(100%, 1180px);
   margin: 0 auto;
