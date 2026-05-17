@@ -44,36 +44,60 @@ function fetchNtpTime(host) {
   return new Promise((resolveNtp, rejectNtp) => {
     const socket = dgram.createSocket('udp4');
     const packet = Buffer.alloc(48);
+    let settled = false;
+    let socketReady = false;
     packet[0] = 0x1b;
 
-    const timeout = setTimeout(() => {
-      socket.close();
-      rejectNtp(new Error('NTP request timed out'));
-    }, ntpTimeoutMs);
-
-    socket.once('error', (error) => {
-      clearTimeout(timeout);
-      socket.close();
-      rejectNtp(error);
-    });
-
-    socket.once('message', (message) => {
-      clearTimeout(timeout);
-      socket.close();
-
-      if (message.length < 48) {
-        rejectNtp(new Error('Invalid NTP response'));
+    const finish = (error, time) => {
+      if (settled) {
         return;
       }
 
-      resolveNtp(readNtpTimestamp(message, 40));
+      settled = true;
+      clearTimeout(timeout);
+      socket.removeAllListeners('error');
+      socket.removeAllListeners('message');
+
+      if (socketReady) {
+        socket.close();
+      }
+
+      if (error) {
+        rejectNtp(error);
+        return;
+      }
+
+      resolveNtp(time);
+    };
+
+    const timeout = setTimeout(() => {
+      finish(new Error('NTP request timed out'));
+    }, ntpTimeoutMs);
+
+    socket.once('listening', () => {
+      socketReady = true;
+    });
+
+    socket.once('close', () => {
+      socketReady = false;
+    });
+
+    socket.once('error', (error) => {
+      finish(error);
+    });
+
+    socket.once('message', (message) => {
+      if (message.length < 48) {
+        finish(new Error('Invalid NTP response'));
+        return;
+      }
+
+      finish(null, readNtpTimestamp(message, 40));
     });
 
     socket.send(packet, 0, packet.length, ntpPort, host, (error) => {
       if (error) {
-        clearTimeout(timeout);
-        socket.close();
-        rejectNtp(error);
+        finish(error);
       }
     });
   });
