@@ -431,6 +431,15 @@ button {
   white-space: nowrap;
 }
 
+.timezone-row.editable .timezone-row__main {
+  grid-template-columns: minmax(0, 1fr);
+  padding-right: 4.35rem;
+}
+
+.timezone-row.editable .timezone-row__phase {
+  display: none;
+}
+
 .timezone-row.selected .timezone-row__phase {
   border-color: rgba(255, 255, 255, 0.16);
   background: rgba(255, 255, 255, 0.12);
@@ -439,15 +448,19 @@ button {
 
 .timezone-row .remove-chip {
   top: 50%;
-  right: 0.65rem;
+  right: 0.62rem;
   bottom: auto;
   left: auto;
   transform: translateY(-50%);
 }
 
 .timezone-row .drag-handle {
-  right: 2rem;
+  right: 2.28rem;
   bottom: 50%;
+  display: grid;
+  width: 1.25rem;
+  height: 1.25rem;
+  place-items: center;
   color: #94a3b8;
   transform: translateY(50%);
 }
