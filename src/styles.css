@@ -34,6 +34,7 @@ button {
 
 .hero-panel,
 .day-night-card,
+.timezone-manager,
 .switcher-panel {
   width: min(100%, 1180px);
   margin: 0 auto;
@@ -266,12 +267,199 @@ button {
   background: rgba(255, 255, 255, 0.72);
 }
 
-.day-night-card {
+.solar-timezone-grid {
   display: grid;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1.42fr) minmax(16rem, 0.58fr);
+  gap: clamp(0.75rem, 1.35vw, 1.05rem);
+  align-items: stretch;
   width: min(100%, 1180px);
   margin: 0 auto;
-  padding: clamp(1rem, 2.2vw, 1.5rem);
+}
+
+.solar-timezone-grid .day-night-card,
+.solar-timezone-grid .timezone-manager {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.timezone-manager {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: clamp(0.5rem, 0.9vw, 0.72rem);
+  align-self: stretch;
+  padding: clamp(0.82rem, 1.5vw, 1.15rem);
+  overflow: visible;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.78)),
+    radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.12), transparent 16rem);
+}
+
+.timezone-manager__heading {
+  align-items: start;
+}
+
+.timezone-manager .search-panel {
+  width: 100%;
+}
+
+.timezone-manager .search-box {
+  gap: 0.24rem;
+  padding: 0.58rem;
+  border-radius: 0.9rem;
+}
+
+.timezone-manager .search-box span {
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+}
+
+.timezone-manager .search-box input {
+  border-radius: 0.75rem;
+  padding: 0.55rem 0.68rem;
+  font-size: 0.82rem;
+}
+
+.timezone-manager .search-results {
+  width: 100%;
+  max-height: 13.5rem;
+}
+
+.timezone-list {
+  --timezone-row-height: 2.62rem;
+  --timezone-row-gap: 0.38rem;
+
+  display: grid;
+  gap: var(--timezone-row-gap);
+  align-content: start;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.22rem;
+  scrollbar-color: rgba(37, 99, 235, 0.48) rgba(226, 232, 240, 0.72);
+  scrollbar-width: thin;
+}
+
+.timezone-list::-webkit-scrollbar {
+  width: 0.48rem;
+}
+
+.timezone-list::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(226, 232, 240, 0.72);
+}
+
+.timezone-list::-webkit-scrollbar-thumb {
+  border: 2px solid rgba(226, 232, 240, 0.72);
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.62);
+}
+
+.timezone-row {
+  position: relative;
+  min-height: var(--timezone-row-height);
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-left: 0.35rem solid var(--accent);
+  border-radius: 0.95rem;
+  background: rgba(248, 250, 252, 0.86);
+  color: #172033;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+}
+
+.timezone-row:hover,
+.timezone-row.selected {
+  border-color: rgba(37, 99, 235, 0.34);
+  border-left-color: var(--accent);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.1);
+  transform: translateY(-1px);
+}
+
+.timezone-row.selected {
+  background: #111827;
+  color: #fff;
+}
+
+.timezone-row.editable {
+  cursor: grab;
+}
+
+.timezone-row.dragging {
+  opacity: 0.45;
+  transform: scale(0.98);
+}
+
+.timezone-row__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.48rem;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: var(--timezone-row-height);
+  cursor: pointer;
+  padding: 0.58rem 2.45rem 0.58rem 0.78rem;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.timezone-row__name {
+  min-width: 0;
+  overflow: hidden;
+  font-size: clamp(0.8rem, 1vw, 0.9rem);
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timezone-row__phase {
+  justify-self: end;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 999px;
+  padding: 0.16rem 0.42rem;
+  background: rgba(255, 255, 255, 0.58);
+  color: #64748b;
+  font-size: 0.58rem;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.timezone-row.selected .timezone-row__phase {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.timezone-row .remove-chip {
+  top: 50%;
+  right: 0.65rem;
+  bottom: auto;
+  left: auto;
+  transform: translateY(-50%);
+}
+
+.timezone-row .drag-handle {
+  right: 2rem;
+  bottom: 50%;
+  color: #94a3b8;
+  transform: translateY(50%);
+}
+
+.timezone-row.selected .drag-handle {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.day-night-card {
+  display: grid;
+  gap: clamp(0.68rem, 1.15vw, 0.95rem);
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  padding: clamp(0.85rem, 1.7vw, 1.25rem);
   overflow: hidden;
   background: #18181b;
   color: #f8fafc;
@@ -280,15 +468,15 @@ button {
 .day-night-card__header {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  gap: 0.85rem;
+  gap: clamp(0.58rem, 1vw, 0.78rem);
   align-items: center;
 }
 
 .day-night-card__icon {
   display: grid;
   place-items: center;
-  width: 3.15rem;
-  height: 3.15rem;
+  width: clamp(2.35rem, 3.6vw, 2.8rem);
+  height: clamp(2.35rem, 3.6vw, 2.8rem);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.06);
@@ -297,7 +485,7 @@ button {
 
 .day-night-card__header div {
   display: flex;
-  gap: 0.7rem;
+  gap: 0.5rem;
   align-items: baseline;
   min-width: 0;
 }
@@ -310,12 +498,12 @@ button {
 
 .day-night-card__header div > span {
   color: #fff;
-  font-size: clamp(1.15rem, 2vw, 1.55rem);
+  font-size: clamp(0.92rem, 1.45vw, 1.25rem);
 }
 
 .day-night-card__header strong {
   color: #fff;
-  font-size: clamp(2.1rem, 4.8vw, 4.6rem);
+  font-size: clamp(1.72rem, 3.9vw, 3.65rem);
   letter-spacing: -0.06em;
   line-height: 0.9;
 }
@@ -323,7 +511,7 @@ button {
 .day-night-card__header p {
   justify-self: end;
   margin: 0;
-  font-size: clamp(0.9rem, 1.35vw, 1.08rem);
+  font-size: clamp(0.78rem, 1.05vw, 0.94rem);
 }
 
 .sun-chart {
@@ -336,7 +524,7 @@ button {
 .sun-chart svg {
   display: block;
   width: 100%;
-  min-height: 15rem;
+  min-height: clamp(11rem, 21vw, 13.5rem);
 }
 
 .sun-chart__grid {
@@ -388,8 +576,8 @@ button {
 
 .day-night-card__row {
   display: grid;
-  gap: 0.35rem;
-  padding: 0.95rem;
+  gap: 0.24rem;
+  padding: clamp(0.62rem, 1vw, 0.78rem);
   background: rgba(255, 255, 255, 0.025);
 }
 
@@ -399,13 +587,13 @@ button {
 
 .day-night-card__row strong {
   color: #fff;
-  font-size: 0.82rem;
+  font-size: clamp(0.66rem, 0.82vw, 0.76rem);
   font-weight: 950;
 }
 
 .day-night-card__row span {
   color: rgba(248, 250, 252, 0.62);
-  font-size: clamp(1.05rem, 1.8vw, 1.42rem);
+  font-size: clamp(0.86rem, 1.35vw, 1.12rem);
   font-weight: 850;
   letter-spacing: -0.03em;
 }
@@ -630,7 +818,7 @@ button {
 
 
 .monthly-calendars--synced {
-  --synced-calendar-height: clamp(44rem, calc(100vh - 3rem), 47rem);
+  --synced-calendar-height: clamp(38rem, calc(100vh - 3rem), 47rem);
 
   grid-template-columns: minmax(0, 760px) minmax(18rem, 1fr);
   align-items: stretch;
@@ -638,10 +826,13 @@ button {
 }
 
 .monthly-calendar--synced {
-  align-content: start;
-  gap: 0.85rem;
+  align-content: stretch;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: clamp(0.8rem, 1.2vw, 1.2rem);
   height: var(--synced-calendar-height);
-  padding-bottom: clamp(1.45rem, 2.4vw, 2rem);
+  min-height: 0;
+  overflow: hidden;
+  padding-bottom: clamp(1rem, 1.8vw, 2rem);
 }
 
 .monthly-calendar__mode {
@@ -685,16 +876,20 @@ button {
 }
 
 .monthly-calendar__days--overlay {
-  gap: 0.45rem;
-  padding-bottom: 0.55rem;
+  grid-template-rows: repeat(6, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: clamp(0.35rem, 0.75vh, 0.72rem);
+  min-height: 0;
+  padding-bottom: 0;
 }
 
 .monthly-calendar__day--overlay {
   position: relative;
-  min-height: 4.55rem;
+  min-height: 0;
   align-content: center;
-  gap: 0.16rem;
-  padding: 0.54rem 0.35rem 0.48rem;
+  gap: clamp(0.12rem, 0.25vh, 0.28rem);
+  overflow: hidden;
+  padding: clamp(0.36rem, 0.75vh, 0.82rem) 0.42rem clamp(0.32rem, 0.68vh, 0.72rem);
 }
 
 .monthly-calendar__day--overlay strong,
@@ -709,7 +904,7 @@ button {
 }
 
 .monthly-calendar__day--overlay strong {
-  font-size: clamp(1.72rem, 3vw, 2.34rem);
+  font-size: clamp(1.42rem, min(3vw, 4.2vh), 2.34rem);
   font-weight: 950;
 }
 
@@ -728,7 +923,7 @@ button {
 
 .monthly-calendar__day--overlay small {
   color: #64748b;
-  font-size: 0.86rem;
+  font-size: clamp(0.68rem, 1.4vh, 0.86rem);
   font-weight: 950;
 }
 
@@ -1107,13 +1302,50 @@ button {
 
 .settings-panel {
   display: grid;
-  grid-template-columns: minmax(12rem, 1fr) minmax(14rem, 1.2fr) auto;
+  grid-template-columns: minmax(12rem, 1fr) minmax(12rem, 1fr) minmax(16rem, 1.2fr) auto;
   gap: 0.85rem;
   align-items: end;
   padding: 1rem;
   border: 1px solid rgba(148, 163, 184, 0.28);
   border-radius: 1.25rem;
   background: rgba(248, 250, 252, 0.92);
+}
+
+.ntp-panel {
+  overflow: hidden;
+}
+
+.ntp-settings-panel {
+  background:
+    linear-gradient(135deg, rgba(248, 250, 252, 0.96), rgba(255, 255, 255, 0.82)),
+    radial-gradient(circle at 100% 0%, rgba(4, 120, 87, 0.12), transparent 16rem);
+}
+
+.settings-panel__header {
+  display: grid;
+  gap: 0.2rem;
+  align-self: center;
+}
+
+.settings-panel__header span {
+  color: #047857;
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.settings-panel__header strong {
+  color: #111827;
+  font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+  font-weight: 950;
+}
+
+.settings-panel__header small {
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.35;
 }
 
 .settings-field {
@@ -1130,7 +1362,8 @@ button {
   text-transform: uppercase;
 }
 
-.settings-field input {
+.settings-field input,
+.settings-field select {
   width: 100%;
   border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 1rem;
@@ -1142,7 +1375,12 @@ button {
   font-weight: 800;
 }
 
-.settings-field input:focus {
+.settings-field select {
+  cursor: pointer;
+}
+
+.settings-field input:focus,
+.settings-field select:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
@@ -1157,6 +1395,42 @@ button {
   color: #475569;
   font-size: 0.9rem;
   font-weight: 750;
+}
+
+.ntp-status__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin: 0.25rem 0 0;
+}
+
+.ntp-status__metrics div {
+  min-width: 0;
+  border-radius: 0.75rem;
+  padding: 0.45rem 0.55rem;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.ntp-status__metrics dt,
+.ntp-status__metrics dd {
+  margin: 0;
+}
+
+.ntp-status__metrics dt {
+  color: currentColor;
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+  text-transform: uppercase;
+}
+
+.ntp-status__metrics dd {
+  overflow: hidden;
+  color: currentColor;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ntp-status--ntp {
@@ -1417,9 +1691,29 @@ button {
 
 :fullscreen .hero-panel,
 :fullscreen .day-night-card,
+:fullscreen .solar-timezone-grid,
 :fullscreen .monthly-calendars,
 :fullscreen .switcher-panel {
   width: min(100%, 1440px);
+}
+
+@media (max-height: 760px) and (min-width: 981px) {
+  .monthly-calendars--synced {
+    --synced-calendar-height: calc(100vh - 2rem);
+  }
+
+  .monthly-calendar--synced {
+    gap: 0.72rem;
+    padding-bottom: 0.9rem;
+  }
+
+  .monthly-calendar__days--overlay {
+    gap: 0.32rem;
+  }
+
+  .monthly-calendar__day--overlay {
+    border-radius: 0.78rem;
+  }
 }
 
 @media (max-width: 980px) {
@@ -1439,6 +1733,7 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .solar-timezone-grid,
   .monthly-calendars,
   .monthly-calendars--synced {
     grid-template-columns: 1fr;
@@ -1448,6 +1743,10 @@ button {
   .monthly-occasions {
     height: auto;
     max-height: none;
+  }
+
+  .monthly-calendar--synced {
+    grid-template-rows: none;
   }
 
   .search-results {
@@ -1484,6 +1783,7 @@ button {
 
   .hero-panel,
   .day-night-card,
+  .timezone-manager,
   .monthly-calendar,
   .switcher-panel {
     border-radius: 1.35rem;
@@ -1551,6 +1851,11 @@ button {
   .monthly-calendar__weekdays,
   .monthly-calendar__days {
     gap: 0.25rem;
+  }
+
+  .monthly-calendar__days--overlay {
+    grid-template-rows: none;
+    grid-auto-rows: minmax(2.95rem, auto);
   }
 
   .monthly-calendar__day {
