@@ -401,7 +401,7 @@ button {
   height: 100%;
   min-height: var(--timezone-row-height);
   cursor: pointer;
-  padding: 0.58rem 2.45rem 0.58rem 0.78rem;
+  padding: 0.58rem 0.62rem 0.58rem 0.78rem;
   background: transparent;
   color: inherit;
   text-align: left;
