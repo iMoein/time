@@ -1173,7 +1173,6 @@ function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, search
       h(
         'div',
         { className: 'heading-actions' },
-        h('strong', null, editMode ? 'Search, add, remove, and drag cities' : 'One city per row'),
         h('button', { type: 'button', className: 'edit-toggle', onClick: onEditToggle }, editMode ? 'Done' : 'Edit'),
       ),
     ),
