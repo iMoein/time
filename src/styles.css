@@ -337,8 +337,9 @@ button {
   min-height: calc((var(--timezone-row-height) * 5) + (var(--timezone-row-gap) * 4));
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding-right: 0.22rem;
+  padding: 0 0.55rem 0 0.18rem;
   scrollbar-color: rgba(37, 99, 235, 0.48) rgba(226, 232, 240, 0.72);
+  scrollbar-gutter: stable;
   scrollbar-width: thin;
 }
 

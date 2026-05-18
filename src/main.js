@@ -807,6 +807,19 @@ function getCalendarMonthOffset(calendarId, cityDate, date) {
   return (datePersianParts.year - cityPersianParts.year) * 12 + datePersianParts.month - cityPersianParts.month;
 }
 
+function getShiftedCalendarMonthOffset(calendarId, cityDate, monthOffset, direction) {
+  if (calendarId === 'gregorian') {
+    const currentMonth = addUtcMonths(cityDate, monthOffset);
+    const shiftedMonth = addUtcMonths(new Date(Date.UTC(currentMonth.getUTCFullYear(), currentMonth.getUTCMonth(), 1, 12)), direction);
+    return getGregorianMonthOffset(cityDate, shiftedMonth.getUTCFullYear(), shiftedMonth.getUTCMonth() + 1);
+  }
+
+  const cityPersianParts = getPersianDatePartsFromUtc(cityDate);
+  const currentMonth = addPersianMonths(cityPersianParts, monthOffset);
+  const shiftedMonth = addPersianMonths(currentMonth, direction);
+  return getPersianMonthOffset(cityDate, shiftedMonth.year, shiftedMonth.month);
+}
+
 function getCalendarPartsFromUtc(date, calendarId) {
   if (calendarId === 'gregorian') {
     return {
@@ -1298,7 +1311,7 @@ function MonthlyCalendarCard({ city }) {
   }
 
   const moveMonth = (direction) => {
-    setMonthOffset((offset) => offset + direction);
+    setMonthOffset((offset) => getShiftedCalendarMonthOffset(primaryCalendar, city.cityDate, offset, direction));
   };
   const resetMonth = () => {
     setMonthOffset(0);
