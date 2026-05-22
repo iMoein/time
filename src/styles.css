@@ -116,6 +116,42 @@ button {
   direction: rtl;
 }
 
+.language-picker {
+  display: grid;
+  gap: 0.25rem;
+  color: #334155;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.language-picker__segmented {
+  display: inline-flex;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  border-radius: 0.75rem;
+  padding: 0.12rem;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.language-picker__segmented button {
+  min-width: 4.25rem;
+  min-height: 2rem;
+  border-radius: 0.6rem;
+  padding: 0.25rem 0.6rem;
+  background: transparent;
+  color: #334155;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.language-picker__segmented button.selected {
+  background: #0f172a;
+  color: #fff;
+}
+
+.page-shell--rtl {
+  direction: rtl;
+}
+
 .eyebrow {
   margin: 0;
   color: #334155;
