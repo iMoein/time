@@ -3,7 +3,7 @@
     "month": 1,
     "day": 9,
     "title_en": "Tasua",
-    "title_fa": "Tasua"
+    "title_fa": "تاسوعا"
   },
   {
     "month": 1,
@@ -21,43 +21,43 @@
     "month": 2,
     "day": 28,
     "title_en": "Prophet Muhammad passing / Imam Hasan martyrdom",
-    "title_fa": "پیامبر Muhammad passing / امام حسن شهادت"
+    "title_fa": "رحلت پیامبر اکرم / شهادت امام حسن مجتبی"
   },
   {
     "month": 2,
     "day": 30,
     "title_en": "Imam Reza martyrdom",
-    "title_fa": "امام رضا شهادت"
+    "title_fa": "شهادت امام رضا"
   },
   {
     "month": 3,
     "day": 17,
     "title_en": "Prophet Muhammad and Imam Sadiq birthday",
-    "title_fa": "پیامبر Muhammad and امام Sadiq birthday"
+    "title_fa": "ولادت پیامبر اکرم و امام جعفر صادق"
   },
   {
     "month": 6,
     "day": 3,
     "title_en": "Fatimah al-Zahra martyrdom",
-    "title_fa": "Fatimah al-Zahra شهادت"
+    "title_fa": "شهادت حضرت فاطمه زهرا"
   },
   {
     "month": 7,
     "day": 13,
     "title_en": "Imam Ali birthday",
-    "title_fa": "امام علی birthday"
+    "title_fa": "ولادت امام علی"
   },
   {
     "month": 7,
     "day": 27,
     "title_en": "Mab’ath",
-    "title_fa": "Mab’ath"
+    "title_fa": "مبعث پیامبر اکرم"
   },
   {
     "month": 8,
     "day": 15,
     "title_en": "Imam Mahdi birthday",
-    "title_fa": "امام Mahdi birthday"
+    "title_fa": "ولادت امام مهدی"
   },
   {
     "month": 9,
@@ -69,7 +69,7 @@
     "month": 9,
     "day": 21,
     "title_en": "Imam Ali martyrdom / Night of Qadr",
-    "title_fa": "امام علی شهادت / شب قدر"
+    "title_fa": "شهادت امام علی / شب قدر"
   },
   {
     "month": 9,
@@ -81,30 +81,30 @@
     "month": 10,
     "day": 1,
     "title_en": "Eid al-Fitr",
-    "title_fa": "عید al-Fitr"
+    "title_fa": "عید فطر"
   },
   {
     "month": 10,
     "day": 2,
     "title_en": "Eid al-Fitr holiday",
-    "title_fa": "عید al-Fitr holiday"
+    "title_fa": "تعطیل عید فطر"
   },
   {
     "month": 11,
     "day": 25,
     "title_en": "Imam Sadiq martyrdom",
-    "title_fa": "امام Sadiq شهادت"
+    "title_fa": "شهادت امام جعفر صادق"
   },
   {
     "month": 12,
     "day": 10,
     "title_en": "Eid al-Adha",
-    "title_fa": "عید al-Adha"
+    "title_fa": "عید قربان"
   },
   {
     "month": 12,
     "day": 18,
     "title_en": "Eid al-Ghadir",
-    "title_fa": "عید al-Ghadir"
+    "title_fa": "عید غدیر"
   }
 ]
