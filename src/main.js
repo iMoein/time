@@ -4,6 +4,7 @@ import iranOccasions from './data/occasions-persian.json' with { type: 'json' };
 import iranIslamicOccasions from './data/occasions-islamic.json' with { type: 'json' };
 import islamicYearStartSync from './data/islamic-year-start-sync.json' with { type: 'json' };
 import i18n from './data/i18n.json' with { type: 'json' };
+import cityTranslationsFa from './data/city-translations-fa.json' with { type: 'json' };
 import { createRoot } from 'react-dom/client';
 
 const { createElement: h } = React;
@@ -60,9 +61,9 @@ function makeCityFromTimeZone(timeZone, index) {
   return {
     id: timeZone.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
     label,
-    localFaLabel: label,
+    localFaLabel: cityTranslationsFa[timeZone]?.fa_city || label,
     country: region,
-    localFaCountry: region,
+    localFaCountry: cityTranslationsFa[timeZone]?.fa_country || region,
     timeZone,
     accent: accentPalette[index % accentPalette.length],
   };
@@ -84,8 +85,6 @@ const allCities = getAllCities();
 const allCityIds = new Set(allCities.map((city) => city.id));
 const defaultCityIds = defaultCities.map((city) => city.id);
 
-const cityTranslations = { tehran: { fa: 'تهران' }, 'los-angeles': { fa: 'لس‌آنجلس' }, london: { fa: 'لندن' }, paris: { fa: 'پاریس' }, tokyo: { fa: 'توکیو' }, dubai: { fa: 'دبی' } };
-const countryTranslations = { Iran: { fa: 'ایران' }, 'United States': { fa: 'ایالات متحده' }, 'United Kingdom': { fa: 'بریتانیا' }, France: { fa: 'فرانسه' }, Japan: { fa: 'ژاپن' }, 'United Arab Emirates': { fa: 'امارات' } };
 const faTimeOfDay = { dawn: 'صبح خیلی زود', morning: 'صبح', noon: 'ظهر', afternoon: 'بعدازظهر', evening: 'عصر', night: 'شب' };
 function getLocalizedWeekdays(calendar, language) { if (language !== 'fa') return calendar === 'persian' ? persianWeekdays : gregorianWeekdays; return calendar === 'persian' ? ['ش','ی','د','س','چ','پ','ج'] : ['د','س','چ','پ','ج','ش','ی']; }
 
@@ -835,8 +834,8 @@ function getCitySnapshot(now, city, language) {
   const { hour } = getTimeParts(now, city.timeZone);
   const timeOfDay = getTimeOfDay(Number(hour));
 
-  const cityLabel = language === 'fa' ? (cityTranslations[city.id]?.fa || city.label) : city.label;
-  const countryLabel = language === 'fa' ? (countryTranslations[city.country]?.fa || city.country) : city.country;
+  const cityLabel = language === 'fa' ? (city.localFaLabel || city.label) : city.label;
+  const countryLabel = language === 'fa' ? (city.localFaCountry || city.country) : city.country;
 
   return {
     ...city,
@@ -1069,7 +1068,7 @@ function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, search
             'aria-pressed': city.id === selectedCityId,
           },
           language === 'fa'
-            ? [h('span', { className: 'timezone-row__name', key: 'name' }, city.label), h('span', { className: 'timezone-row__phase', key: 'phase' }, city.timeOfDayLabel)]
+            ? [h('span', { className: 'timezone-row__phase', key: 'phase' }, city.timeOfDayLabel), h('span', { className: 'timezone-row__name', key: 'name' }, city.label)]
             : [h('span', { className: 'timezone-row__name', key: 'name' }, city.label), h('span', { className: 'timezone-row__phase', key: 'phase' }, city.timeOfDayLabel)],
         ),
         editMode && cities.length > 1 && h(
