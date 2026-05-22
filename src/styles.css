@@ -338,25 +338,24 @@ button {
   overflow-x: clip;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0.08rem 0.75rem 0.08rem 0.75rem;
-  scrollbar-color: rgba(37, 99, 235, 0.48) rgba(226, 232, 240, 0.72);
-  scrollbar-gutter: stable both-edges;
+  padding: 0.08rem 0.32rem 0.08rem 0.08rem;
+  scrollbar-color: rgba(37, 99, 235, 0.52) rgba(226, 232, 240, 0.7);
   scrollbar-width: thin;
 }
 
 .timezone-list::-webkit-scrollbar {
-  width: 0.48rem;
+  width: 0.55rem;
 }
 
 .timezone-list::-webkit-scrollbar-track {
   border-radius: 999px;
-  background: rgba(226, 232, 240, 0.72);
+  background: rgba(226, 232, 240, 0.7);
 }
 
 .timezone-list::-webkit-scrollbar-thumb {
-  border: 2px solid rgba(226, 232, 240, 0.72);
+  border: 2px solid rgba(226, 232, 240, 0.7);
   border-radius: 999px;
-  background: rgba(37, 99, 235, 0.62);
+  background: rgba(37, 99, 235, 0.68);
 }
 
 .timezone-row {
