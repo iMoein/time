@@ -1381,7 +1381,6 @@ function App() {
   const [ntpStatus, setNtpStatus] = useState({ kind: 'local', label: i18n.en.local_clock, detail: i18n.en.using_device_clock, host: ntpHost, delay: i18n.en.not_measured });
   const [ntpSyncRequest, setNtpSyncRequest] = useState(0);
   const [draggingCityId, setDraggingCityId] = useState(null);
-  const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
   const [language, setLanguage] = useState(getInitialLanguage);
   const isFa = language === 'fa';
 
@@ -1411,12 +1410,6 @@ function App() {
       setSelectedCityId(activeCityIds[0] || defaultCityIds[0]);
     }
   }, [activeCityIds, selectedCityId]);
-
-  useEffect(() => {
-    const syncFullscreenState = () => setIsFullscreen(Boolean(document.fullscreenElement));
-    document.addEventListener('fullscreenchange', syncFullscreenState);
-    return () => document.removeEventListener('fullscreenchange', syncFullscreenState);
-  }, []);
 
 
   useEffect(() => {
@@ -1641,22 +1634,6 @@ function App() {
     setNtpSyncRequest((requestId) => requestId + 1);
   };
 
-  const fullscreenSupported = Boolean(document.documentElement.requestFullscreen && document.exitFullscreen);
-  const fullscreenLabel = isFullscreen ? t.exit_fullscreen : t.fullscreen;
-
-  const toggleFullscreen = () => {
-    if (!fullscreenSupported) {
-      return;
-    }
-
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-      return;
-    }
-
-    document.documentElement.requestFullscreen();
-  };
-
   return h(
     'main',
     { className: `page-shell${isFa ? ' page-shell--rtl' : ''}`, 'aria-label': `${t.time_in} ${selectedCityView.label}` },
@@ -1673,21 +1650,6 @@ function App() {
               h('button', { type: 'button', className: language === 'en' ? 'selected' : '', onClick: () => setLanguage('en'), 'aria-pressed': language === 'en' }, t.english),
               h('button', { type: 'button', className: language === 'fa' ? 'selected' : '', onClick: () => setLanguage('fa'), 'aria-pressed': language === 'fa' }, t.persian),
             ),
-          ),
-          h(
-            'button',
-            {
-              type: 'button',
-              className: 'fullscreen-button',
-              onClick: toggleFullscreen,
-              disabled: !fullscreenSupported,
-              'aria-pressed': isFullscreen,
-              title: fullscreenSupported ? fullscreenLabel : t.fullscreen_unsupported,
-              'aria-label': fullscreenSupported ? fullscreenLabel : t.fullscreen_unsupported,
-            },
-            h('span', { className: 'fullscreen-button__icon', 'aria-hidden': 'true' }, isFullscreen ? '↙' : '↗'),
-            h('span', { className: 'fullscreen-button__copy' }, fullscreenLabel),
-            h('span', { className: 'fullscreen-button__hint', 'aria-hidden': 'true' }, isFullscreen ? 'Esc' : 'View'),
           ),
         ),
       ),
