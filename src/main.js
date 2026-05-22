@@ -1067,7 +1067,9 @@ function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, search
             onClick: () => onSelect(city.id),
             'aria-pressed': city.id === selectedCityId,
           },
-          [h('span', { className: 'timezone-row__name', key: 'name' }, city.label), h('span', { className: 'timezone-row__phase', key: 'phase' }, city.timeOfDayLabel)],
+          language === 'fa'
+            ? [h('span', { className: 'timezone-row__phase', key: 'phase' }, city.timeOfDayLabel), h('span', { className: 'timezone-row__name', key: 'name' }, city.label)]
+            : [h('span', { className: 'timezone-row__name', key: 'name' }, city.label), h('span', { className: 'timezone-row__phase', key: 'phase' }, city.timeOfDayLabel)],
         ),
         editMode && cities.length > 1 && h(
           'button',
@@ -1522,9 +1524,19 @@ function App() {
 
     return allCities
       .filter((city) => !activeIdSet.has(city.id))
-      .filter((city) => !query || `${city.label} ${city.country} ${city.timeZone}`.toLowerCase().includes(query))
+      .filter((city) => {
+        if (!query) {
+          return true;
+        }
+
+        const searchableText = language === 'fa'
+          ? `${city.localFaLabel || city.label} ${city.localFaCountry || city.country} ${city.label} ${city.country} ${city.timeZone}`
+          : `${city.label} ${city.country} ${city.timeZone}`;
+
+        return searchableText.toLowerCase().includes(query);
+      })
       .slice(0, 8);
-  }, [activeIdSet, searchQuery]);
+  }, [activeIdSet, language, searchQuery]);
 
   const addCity = (cityId) => {
     setActiveCityIds((currentIds) => (currentIds.includes(cityId) ? currentIds : [...currentIds, cityId]));

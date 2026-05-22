@@ -483,7 +483,6 @@ button {
   justify-self: start;
   margin-inline-start: 0;
   margin-inline-end: 0.6rem;
-  order: -1;
 }
 
 :root[lang="fa"] .timezone-row__name {
