@@ -1324,10 +1324,10 @@ button {
 
 .settings-panel {
   display: grid;
-  grid-template-columns: minmax(12rem, 1fr) minmax(12rem, 1fr) minmax(16rem, 1.2fr) auto;
-  gap: 0.85rem;
-  align-items: end;
-  padding: 1rem;
+  grid-template-columns: minmax(13rem, 1.05fr) minmax(11rem, 1fr) minmax(14rem, 1fr) minmax(17rem, 1.2fr) auto;
+  gap: clamp(0.65rem, 1vw, 0.9rem);
+  align-items: stretch;
+  padding: clamp(0.88rem, 1.4vw, 1.15rem);
   border: 1px solid rgba(148, 163, 184, 0.28);
   border-radius: 1.25rem;
   background: rgba(248, 250, 252, 0.92);
@@ -1345,8 +1345,10 @@ button {
 
 .settings-panel__header {
   display: grid;
-  gap: 0.2rem;
+  gap: 0.18rem;
   align-self: center;
+  align-content: center;
+  padding-right: 0.2rem;
 }
 
 .settings-panel__header span {
@@ -1365,14 +1367,15 @@ button {
 
 .settings-panel__header small {
   color: #64748b;
-  font-size: 0.78rem;
-  font-weight: 800;
-  line-height: 1.35;
+  font-size: 0.76rem;
+  font-weight: 780;
+  line-height: 1.28;
 }
 
 .settings-field {
   display: grid;
-  gap: 0.45rem;
+  gap: 0.34rem;
+  align-content: center;
 }
 
 .settings-field span,
@@ -1389,7 +1392,7 @@ button {
   width: 100%;
   border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 1rem;
-  padding: 0.8rem 0.9rem;
+  padding: 0.72rem 0.84rem;
   outline: none;
   background: #fff;
   color: #172033;
@@ -1409,14 +1412,50 @@ button {
 
 .ntp-status {
   display: grid;
-  gap: 0.35rem;
-  min-height: 4.2rem;
-  padding: 0.78rem 0.9rem;
+  gap: 0.3rem;
+  min-height: 4rem;
+  padding: 0.68rem 0.78rem;
   border-radius: 1rem;
   background: rgba(255, 255, 255, 0.72);
   color: #475569;
-  font-size: 0.9rem;
-  font-weight: 750;
+  font-size: 0.86rem;
+  font-weight: 740;
+}
+
+.ntp-status__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin: 0.25rem 0 0;
+}
+
+.ntp-status__metrics div {
+  min-width: 0;
+  border-radius: 0.75rem;
+  padding: 0.45rem 0.55rem;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.ntp-status__metrics dt,
+.ntp-status__metrics dd {
+  margin: 0;
+}
+
+.ntp-status__metrics dt {
+  color: currentColor;
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+  text-transform: uppercase;
+}
+
+.ntp-status__metrics dd {
+  overflow: hidden;
+  color: currentColor;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ntp-status__metrics {
@@ -1472,9 +1511,18 @@ button {
 }
 
 .settings-actions {
-  display: flex;
-  gap: 0.55rem;
-  justify-content: flex-end;
+  display: grid;
+  gap: 0.46rem;
+  align-content: center;
+}
+
+.settings-actions .edit-toggle,
+.settings-actions .secondary-button {
+  min-width: 6.75rem;
+  min-height: 2.6rem;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.98rem;
+  line-height: 1;
 }
 
 .city-tabs {
@@ -1779,8 +1827,9 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .timezone-list {
-    max-height: none;
+  .settings-actions {
+    grid-template-columns: repeat(2, minmax(0, auto));
+    justify-content: flex-start;
   }
 
   .day-night-card__header,
