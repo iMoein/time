@@ -363,17 +363,23 @@ button {
   min-height: var(--timezone-row-height);
   overflow: hidden;
   border: 1px solid rgba(148, 163, 184, 0.24);
-  border-left: 0.35rem solid var(--accent);
   border-radius: 0.95rem;
   background: rgba(248, 250, 252, 0.86);
   color: #172033;
   transition: transform 180ms ease, border-color 180ms ease, opacity 180ms ease;
 }
 
+.timezone-row::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0.35rem;
+  background: var(--accent);
+  content: "";
+}
+
 .timezone-row:hover,
 .timezone-row.selected {
   border-color: rgba(37, 99, 235, 0.34);
-  border-left-color: var(--accent);
   transform: translateY(-1px);
 }
 
