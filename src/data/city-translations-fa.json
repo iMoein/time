@@ -1,1674 +1,1674 @@
 {
   "Africa/Abidjan": {
-    "fa_city": "Abidjan",
-    "fa_country": "Africa"
+    "fa_city": "آبیجان",
+    "fa_country": "ساحل عاج"
   },
   "Africa/Accra": {
-    "fa_city": "Accra",
-    "fa_country": "Africa"
+    "fa_city": "اکرا",
+    "fa_country": "غنا"
   },
   "Africa/Addis_Ababa": {
-    "fa_city": "Addis Ababa",
-    "fa_country": "Africa"
+    "fa_city": "آدیس آبابا",
+    "fa_country": "اتیوپی"
   },
   "Africa/Algiers": {
-    "fa_city": "Algiers",
-    "fa_country": "Africa"
+    "fa_city": "الجزیره",
+    "fa_country": "الجزایر"
   },
   "Africa/Asmera": {
-    "fa_city": "Asmera",
-    "fa_country": "Africa"
+    "fa_city": "اسمره",
+    "fa_country": "اریتره"
   },
   "Africa/Bamako": {
-    "fa_city": "Bamako",
-    "fa_country": "Africa"
+    "fa_city": "باماکو",
+    "fa_country": "مالی"
   },
   "Africa/Bangui": {
-    "fa_city": "Bangui",
-    "fa_country": "Africa"
+    "fa_city": "بانگی",
+    "fa_country": "جمهوری آفریقای مرکزی"
   },
   "Africa/Banjul": {
-    "fa_city": "Banjul",
-    "fa_country": "Africa"
+    "fa_city": "بانجول",
+    "fa_country": "گامبیا"
   },
   "Africa/Bissau": {
-    "fa_city": "Bissau",
-    "fa_country": "Africa"
+    "fa_city": "بیسائو",
+    "fa_country": "گینه بیسائو"
   },
   "Africa/Blantyre": {
-    "fa_city": "Blantyre",
-    "fa_country": "Africa"
+    "fa_city": "بلانتیره",
+    "fa_country": "مالاوی"
   },
   "Africa/Brazzaville": {
-    "fa_city": "Brazzaville",
-    "fa_country": "Africa"
+    "fa_city": "برازویل",
+    "fa_country": "کنگو - برازویل"
   },
   "Africa/Bujumbura": {
-    "fa_city": "Bujumbura",
-    "fa_country": "Africa"
+    "fa_city": "بوجومبورا",
+    "fa_country": "بوروندی"
   },
   "Africa/Cairo": {
-    "fa_city": "Cairo",
-    "fa_country": "Africa"
+    "fa_city": "قاهره",
+    "fa_country": "مصر"
   },
   "Africa/Casablanca": {
-    "fa_city": "Casablanca",
-    "fa_country": "Africa"
+    "fa_city": "کازابلانکا",
+    "fa_country": "مراکش"
   },
   "Africa/Ceuta": {
-    "fa_city": "Ceuta",
-    "fa_country": "Africa"
+    "fa_city": "سبته",
+    "fa_country": "اسپانیا"
   },
   "Africa/Conakry": {
-    "fa_city": "Conakry",
-    "fa_country": "Africa"
+    "fa_city": "کوناکری",
+    "fa_country": "گینه"
   },
   "Africa/Dakar": {
-    "fa_city": "Dakar",
-    "fa_country": "Africa"
+    "fa_city": "داکار",
+    "fa_country": "سنگال"
   },
   "Africa/Dar_es_Salaam": {
-    "fa_city": "Dar es Salaam",
-    "fa_country": "Africa"
+    "fa_city": "دارالسلام",
+    "fa_country": "تانزانیا"
   },
   "Africa/Djibouti": {
-    "fa_city": "Djibouti",
-    "fa_country": "Africa"
+    "fa_city": "جیبوتی",
+    "fa_country": "جیبوتی"
   },
   "Africa/Douala": {
-    "fa_city": "Douala",
-    "fa_country": "Africa"
+    "fa_city": "دوآلا",
+    "fa_country": "کامرون"
   },
   "Africa/El_Aaiun": {
-    "fa_city": "El Aaiun",
-    "fa_country": "Africa"
+    "fa_city": "العیون",
+    "fa_country": "صحرای غربی"
   },
   "Africa/Freetown": {
-    "fa_city": "Freetown",
-    "fa_country": "Africa"
+    "fa_city": "فری‌تاون",
+    "fa_country": "سیرالئون"
   },
   "Africa/Gaborone": {
-    "fa_city": "Gaborone",
-    "fa_country": "Africa"
+    "fa_city": "گابورون",
+    "fa_country": "بوتسوانا"
   },
   "Africa/Harare": {
-    "fa_city": "Harare",
-    "fa_country": "Africa"
+    "fa_city": "هراره",
+    "fa_country": "زیمبابوه"
   },
   "Africa/Johannesburg": {
-    "fa_city": "Johannesburg",
-    "fa_country": "Africa"
+    "fa_city": "ژوهانسبورگ",
+    "fa_country": "آفریقای جنوبی"
   },
   "Africa/Juba": {
-    "fa_city": "Juba",
-    "fa_country": "Africa"
+    "fa_city": "جوبا",
+    "fa_country": "سودان جنوبی"
   },
   "Africa/Kampala": {
-    "fa_city": "Kampala",
-    "fa_country": "Africa"
+    "fa_city": "کامپالا",
+    "fa_country": "اوگاندا"
   },
   "Africa/Khartoum": {
-    "fa_city": "Khartoum",
-    "fa_country": "Africa"
+    "fa_city": "خارطوم",
+    "fa_country": "سودان"
   },
   "Africa/Kigali": {
-    "fa_city": "Kigali",
-    "fa_country": "Africa"
+    "fa_city": "کیگالی",
+    "fa_country": "رواندا"
   },
   "Africa/Kinshasa": {
-    "fa_city": "Kinshasa",
-    "fa_country": "Africa"
+    "fa_city": "کینشاسا",
+    "fa_country": "کنگو - کینشاسا"
   },
   "Africa/Lagos": {
-    "fa_city": "Lagos",
-    "fa_country": "Africa"
+    "fa_city": "لاگوس",
+    "fa_country": "نیجریه"
   },
   "Africa/Libreville": {
-    "fa_city": "Libreville",
-    "fa_country": "Africa"
+    "fa_city": "لیبرویل",
+    "fa_country": "گابن"
   },
   "Africa/Lome": {
-    "fa_city": "Lome",
-    "fa_country": "Africa"
+    "fa_city": "لومه",
+    "fa_country": "توگو"
   },
   "Africa/Luanda": {
-    "fa_city": "Luanda",
-    "fa_country": "Africa"
+    "fa_city": "لواندا",
+    "fa_country": "آنگولا"
   },
   "Africa/Lubumbashi": {
-    "fa_city": "Lubumbashi",
-    "fa_country": "Africa"
+    "fa_city": "لوبومباشی",
+    "fa_country": "کنگو - کینشاسا"
   },
   "Africa/Lusaka": {
-    "fa_city": "Lusaka",
-    "fa_country": "Africa"
+    "fa_city": "لوزاکا",
+    "fa_country": "زامبیا"
   },
   "Africa/Malabo": {
-    "fa_city": "Malabo",
-    "fa_country": "Africa"
+    "fa_city": "مالابو",
+    "fa_country": "گینهٔ استوایی"
   },
   "Africa/Maputo": {
-    "fa_city": "Maputo",
-    "fa_country": "Africa"
+    "fa_city": "ماپوتو",
+    "fa_country": "موزامبیک"
   },
   "Africa/Maseru": {
-    "fa_city": "Maseru",
-    "fa_country": "Africa"
+    "fa_city": "ماسرو",
+    "fa_country": "لسوتو"
   },
   "Africa/Mbabane": {
-    "fa_city": "Mbabane",
-    "fa_country": "Africa"
+    "fa_city": "مبابانه",
+    "fa_country": "اسواتینی"
   },
   "Africa/Mogadishu": {
-    "fa_city": "Mogadishu",
-    "fa_country": "Africa"
+    "fa_city": "موگادیشو",
+    "fa_country": "سومالی"
   },
   "Africa/Monrovia": {
-    "fa_city": "Monrovia",
-    "fa_country": "Africa"
+    "fa_city": "مونروویا",
+    "fa_country": "لیبریا"
   },
   "Africa/Nairobi": {
-    "fa_city": "Nairobi",
-    "fa_country": "Africa"
+    "fa_city": "نایروبی",
+    "fa_country": "کنیا"
   },
   "Africa/Ndjamena": {
-    "fa_city": "Ndjamena",
-    "fa_country": "Africa"
+    "fa_city": "انجامنا",
+    "fa_country": "چاد"
   },
   "Africa/Niamey": {
-    "fa_city": "Niamey",
-    "fa_country": "Africa"
+    "fa_city": "نیامی",
+    "fa_country": "نیجر"
   },
   "Africa/Nouakchott": {
-    "fa_city": "Nouakchott",
-    "fa_country": "Africa"
+    "fa_city": "نوآکشوت",
+    "fa_country": "موریتانی"
   },
   "Africa/Ouagadougou": {
-    "fa_city": "Ouagadougou",
-    "fa_country": "Africa"
+    "fa_city": "اوآگادوگو",
+    "fa_country": "بورکینافاسو"
   },
   "Africa/Porto-Novo": {
-    "fa_city": "Porto-Novo",
-    "fa_country": "Africa"
+    "fa_city": "پورتو نووو",
+    "fa_country": "بنین"
   },
   "Africa/Sao_Tome": {
-    "fa_city": "Sao Tome",
-    "fa_country": "Africa"
+    "fa_city": "سائوتومه",
+    "fa_country": "سائوتومه و پرنسیپ"
   },
   "Africa/Tripoli": {
-    "fa_city": "Tripoli",
-    "fa_country": "Africa"
+    "fa_city": "طرابلس",
+    "fa_country": "لیبی"
   },
   "Africa/Tunis": {
-    "fa_city": "Tunis",
-    "fa_country": "Africa"
+    "fa_city": "تونس",
+    "fa_country": "تونس"
   },
   "Africa/Windhoek": {
-    "fa_city": "Windhoek",
-    "fa_country": "Africa"
+    "fa_city": "ویندهوک",
+    "fa_country": "نامیبیا"
   },
   "America/Adak": {
-    "fa_city": "Adak",
-    "fa_country": "America"
+    "fa_city": "ایدک",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Anchorage": {
-    "fa_city": "Anchorage",
-    "fa_country": "America"
+    "fa_city": "انکوریج",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Anguilla": {
-    "fa_city": "Anguilla",
-    "fa_country": "America"
+    "fa_city": "آنگوئیلا",
+    "fa_country": "آنگویلا"
   },
   "America/Antigua": {
-    "fa_city": "Antigua",
-    "fa_country": "America"
+    "fa_city": "آنتیگوا",
+    "fa_country": "آنتیگوا و باربودا"
   },
   "America/Araguaina": {
-    "fa_city": "Araguaina",
-    "fa_country": "America"
+    "fa_city": "آراگواینا",
+    "fa_country": "برزیل"
   },
   "America/Argentina/La_Rioja": {
-    "fa_city": "La Rioja",
-    "fa_country": "America"
+    "fa_city": "لاریوخا",
+    "fa_country": "آرژانتین"
   },
   "America/Argentina/Rio_Gallegos": {
-    "fa_city": "Rio Gallegos",
-    "fa_country": "America"
+    "fa_city": "ریوگالگوس",
+    "fa_country": "آرژانتین"
   },
   "America/Argentina/Salta": {
-    "fa_city": "Salta",
-    "fa_country": "America"
+    "fa_city": "سالتا",
+    "fa_country": "آرژانتین"
   },
   "America/Argentina/San_Juan": {
-    "fa_city": "San Juan",
-    "fa_country": "America"
+    "fa_city": "سن‌خوان",
+    "fa_country": "آرژانتین"
   },
   "America/Argentina/San_Luis": {
-    "fa_city": "San Luis",
-    "fa_country": "America"
+    "fa_city": "سن‌لوئیس",
+    "fa_country": "آرژانتین"
   },
   "America/Argentina/Tucuman": {
-    "fa_city": "Tucuman",
-    "fa_country": "America"
+    "fa_city": "توکومن",
+    "fa_country": "آرژانتین"
   },
   "America/Argentina/Ushuaia": {
-    "fa_city": "Ushuaia",
-    "fa_country": "America"
+    "fa_city": "اوشوایا",
+    "fa_country": "آرژانتین"
   },
   "America/Aruba": {
-    "fa_city": "Aruba",
-    "fa_country": "America"
+    "fa_city": "اروبا",
+    "fa_country": "آروبا"
   },
   "America/Asuncion": {
-    "fa_city": "Asuncion",
-    "fa_country": "America"
+    "fa_city": "آسونسیون",
+    "fa_country": "پاراگوئه"
   },
   "America/Bahia": {
-    "fa_city": "Bahia",
-    "fa_country": "America"
+    "fa_city": "بایا",
+    "fa_country": "برزیل"
   },
   "America/Bahia_Banderas": {
-    "fa_city": "Bahia Banderas",
-    "fa_country": "America"
+    "fa_city": "باهیا باندراس",
+    "fa_country": "مکزیک"
   },
   "America/Barbados": {
-    "fa_city": "Barbados",
-    "fa_country": "America"
+    "fa_city": "باربادوس",
+    "fa_country": "باربادوس"
   },
   "America/Belem": {
-    "fa_city": "Belem",
-    "fa_country": "America"
+    "fa_city": "بلم",
+    "fa_country": "برزیل"
   },
   "America/Belize": {
-    "fa_city": "Belize",
-    "fa_country": "America"
+    "fa_city": "بلیز",
+    "fa_country": "بلیز"
   },
   "America/Blanc-Sablon": {
-    "fa_city": "Blanc-Sablon",
-    "fa_country": "America"
+    "fa_city": "بلان‐سابلون",
+    "fa_country": "کانادا"
   },
   "America/Boa_Vista": {
-    "fa_city": "Boa Vista",
-    "fa_country": "America"
+    "fa_city": "بوئاویستا",
+    "fa_country": "برزیل"
   },
   "America/Bogota": {
-    "fa_city": "Bogota",
-    "fa_country": "America"
+    "fa_city": "بوگوتا",
+    "fa_country": "کلمبیا"
   },
   "America/Boise": {
-    "fa_city": "Boise",
-    "fa_country": "America"
+    "fa_city": "بویسی",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Buenos_Aires": {
-    "fa_city": "Buenos Aires",
-    "fa_country": "America"
+    "fa_city": "بوئنوس آیرس",
+    "fa_country": "آرژانتین"
   },
   "America/Cambridge_Bay": {
-    "fa_city": "Cambridge Bay",
-    "fa_country": "America"
+    "fa_city": "کمبریج‌بی",
+    "fa_country": "کانادا"
   },
   "America/Campo_Grande": {
-    "fa_city": "Campo Grande",
-    "fa_country": "America"
+    "fa_city": "کمپو گرانده",
+    "fa_country": "برزیل"
   },
   "America/Cancun": {
-    "fa_city": "Cancun",
-    "fa_country": "America"
+    "fa_city": "کانکون",
+    "fa_country": "مکزیک"
   },
   "America/Caracas": {
-    "fa_city": "Caracas",
-    "fa_country": "America"
+    "fa_city": "کاراکاس",
+    "fa_country": "ونزوئلا"
   },
   "America/Catamarca": {
-    "fa_city": "Catamarca",
-    "fa_country": "America"
+    "fa_city": "کاتامارکا",
+    "fa_country": "آرژانتین"
   },
   "America/Cayenne": {
-    "fa_city": "Cayenne",
-    "fa_country": "America"
+    "fa_city": "کاین",
+    "fa_country": "گویان فرانسه"
   },
   "America/Cayman": {
-    "fa_city": "Cayman",
-    "fa_country": "America"
+    "fa_city": "کیمن",
+    "fa_country": "جزایر کِیمن"
   },
   "America/Chicago": {
-    "fa_city": "Chicago",
-    "fa_country": "America"
+    "fa_city": "شیکاگو",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Chihuahua": {
-    "fa_city": "Chihuahua",
-    "fa_country": "America"
+    "fa_city": "چیواوا",
+    "fa_country": "مکزیک"
   },
   "America/Ciudad_Juarez": {
-    "fa_city": "Ciudad Juarez",
-    "fa_country": "America"
+    "fa_city": "سیوداد خوارز",
+    "fa_country": "مکزیک"
   },
   "America/Coral_Harbour": {
-    "fa_city": "Coral Harbour",
-    "fa_country": "America"
+    "fa_city": "اتیکوکان",
+    "fa_country": "کانادا"
   },
   "America/Cordoba": {
-    "fa_city": "Cordoba",
-    "fa_country": "America"
+    "fa_city": "کوردوبا",
+    "fa_country": "آرژانتین"
   },
   "America/Costa_Rica": {
-    "fa_city": "Costa Rica",
-    "fa_country": "America"
+    "fa_city": "کاستاریکا",
+    "fa_country": "کاستاریکا"
   },
   "America/Coyhaique": {
-    "fa_city": "Coyhaique",
-    "fa_country": "America"
+    "fa_city": "کویهایکه",
+    "fa_country": "شیلی"
   },
   "America/Creston": {
-    "fa_city": "Creston",
-    "fa_country": "America"
+    "fa_city": "کرستون",
+    "fa_country": "کانادا"
   },
   "America/Cuiaba": {
-    "fa_city": "Cuiaba",
-    "fa_country": "America"
+    "fa_city": "کویاوا",
+    "fa_country": "برزیل"
   },
   "America/Curacao": {
-    "fa_city": "Curacao",
-    "fa_country": "America"
+    "fa_city": "کوراسائو",
+    "fa_country": "کوراسائو"
   },
   "America/Danmarkshavn": {
-    "fa_city": "Danmarkshavn",
-    "fa_country": "America"
+    "fa_city": "دانمارکس‌هاون",
+    "fa_country": "گرینلند"
   },
   "America/Dawson": {
-    "fa_city": "Dawson",
-    "fa_country": "America"
+    "fa_city": "داوسن",
+    "fa_country": "کانادا"
   },
   "America/Dawson_Creek": {
-    "fa_city": "Dawson Creek",
-    "fa_country": "America"
+    "fa_city": "داوسن کریک",
+    "fa_country": "کانادا"
   },
   "America/Denver": {
-    "fa_city": "Denver",
-    "fa_country": "America"
+    "fa_city": "دنور",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Detroit": {
-    "fa_city": "Detroit",
-    "fa_country": "America"
+    "fa_city": "دیترویت",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Dominica": {
-    "fa_city": "Dominica",
-    "fa_country": "America"
+    "fa_city": "دومینیکا",
+    "fa_country": "دومینیکا"
   },
   "America/Edmonton": {
-    "fa_city": "Edmonton",
-    "fa_country": "America"
+    "fa_city": "ادمونتون",
+    "fa_country": "کانادا"
   },
   "America/Eirunepe": {
-    "fa_city": "Eirunepe",
-    "fa_country": "America"
+    "fa_city": "ایرونپه",
+    "fa_country": "برزیل"
   },
   "America/El_Salvador": {
-    "fa_city": "El Salvador",
-    "fa_country": "America"
+    "fa_city": "السالوادور",
+    "fa_country": "السالوادور"
   },
   "America/Fort_Nelson": {
-    "fa_city": "Fort Nelson",
-    "fa_country": "America"
+    "fa_city": "فورت نلسون",
+    "fa_country": "کانادا"
   },
   "America/Fortaleza": {
-    "fa_city": "Fortaleza",
-    "fa_country": "America"
+    "fa_city": "فورتالزا",
+    "fa_country": "برزیل"
   },
   "America/Glace_Bay": {
-    "fa_city": "Glace Bay",
-    "fa_country": "America"
+    "fa_city": "گلیس‌بی",
+    "fa_country": "کانادا"
   },
   "America/Godthab": {
-    "fa_city": "Godthab",
-    "fa_country": "America"
+    "fa_city": "نوک",
+    "fa_country": "گرینلند"
   },
   "America/Goose_Bay": {
-    "fa_city": "Goose Bay",
-    "fa_country": "America"
+    "fa_city": "گوس‌بی",
+    "fa_country": "کانادا"
   },
   "America/Grand_Turk": {
-    "fa_city": "Grand Turk",
-    "fa_country": "America"
+    "fa_city": "گراند تورک",
+    "fa_country": "جزایر تورکس و کایکوس"
   },
   "America/Grenada": {
-    "fa_city": "Grenada",
-    "fa_country": "America"
+    "fa_city": "گرنادا",
+    "fa_country": "گرنادا"
   },
   "America/Guadeloupe": {
-    "fa_city": "Guadeloupe",
-    "fa_country": "America"
+    "fa_city": "گوادلوپ",
+    "fa_country": "گوادلوپ"
   },
   "America/Guatemala": {
-    "fa_city": "Guatemala",
-    "fa_country": "America"
+    "fa_city": "گواتمالا",
+    "fa_country": "گواتمالا"
   },
   "America/Guayaquil": {
-    "fa_city": "Guayaquil",
-    "fa_country": "America"
+    "fa_city": "گوایاکیل",
+    "fa_country": "اکوادور"
   },
   "America/Guyana": {
-    "fa_city": "Guyana",
-    "fa_country": "America"
+    "fa_city": "گویان",
+    "fa_country": "گویان"
   },
   "America/Halifax": {
-    "fa_city": "Halifax",
-    "fa_country": "America"
+    "fa_city": "هلیفکس",
+    "fa_country": "کانادا"
   },
   "America/Havana": {
-    "fa_city": "Havana",
-    "fa_country": "America"
+    "fa_city": "هاوانا",
+    "fa_country": "کوبا"
   },
   "America/Hermosillo": {
-    "fa_city": "Hermosillo",
-    "fa_country": "America"
+    "fa_city": "ارموسیو",
+    "fa_country": "مکزیک"
   },
   "America/Indiana/Knox": {
-    "fa_city": "Knox",
-    "fa_country": "America"
+    "fa_city": "ناکس، ایندیانا",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Indiana/Marengo": {
-    "fa_city": "Marengo",
-    "fa_country": "America"
+    "fa_city": "مارنگو، ایندیانا",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Indiana/Petersburg": {
-    "fa_city": "Petersburg",
-    "fa_country": "America"
+    "fa_city": "پیترزبرگ، ایندیانا",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Indiana/Tell_City": {
-    "fa_city": "Tell City",
-    "fa_country": "America"
+    "fa_city": "تل‌سیتی، ایندیانا",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Indiana/Vevay": {
-    "fa_city": "Vevay",
-    "fa_country": "America"
+    "fa_city": "ویوی، ایندیانا",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Indiana/Vincennes": {
-    "fa_city": "Vincennes",
-    "fa_country": "America"
+    "fa_city": "وینسنس، اندیانا",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Indiana/Winamac": {
-    "fa_city": "Winamac",
-    "fa_country": "America"
+    "fa_city": "ویناماک، ایندیانا",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Indianapolis": {
-    "fa_city": "Indianapolis",
-    "fa_country": "America"
+    "fa_city": "ایندیاناپولیس",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Inuvik": {
-    "fa_city": "Inuvik",
-    "fa_country": "America"
+    "fa_city": "اینوویک",
+    "fa_country": "کانادا"
   },
   "America/Iqaluit": {
-    "fa_city": "Iqaluit",
-    "fa_country": "America"
+    "fa_city": "ایکلوئت",
+    "fa_country": "کانادا"
   },
   "America/Jamaica": {
-    "fa_city": "Jamaica",
-    "fa_country": "America"
+    "fa_city": "جامائیکا",
+    "fa_country": "جامائیکا"
   },
   "America/Jujuy": {
-    "fa_city": "Jujuy",
-    "fa_country": "America"
+    "fa_city": "خوخوی",
+    "fa_country": "آرژانتین"
   },
   "America/Juneau": {
-    "fa_city": "Juneau",
-    "fa_country": "America"
+    "fa_city": "جونو",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Kentucky/Monticello": {
-    "fa_city": "Monticello",
-    "fa_country": "America"
+    "fa_city": "مانتیسلو، کنتاکی",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Kralendijk": {
-    "fa_city": "Kralendijk",
-    "fa_country": "America"
+    "fa_city": "کرالندیک",
+    "fa_country": "جزایر کارائیب هلند"
   },
   "America/La_Paz": {
-    "fa_city": "La Paz",
-    "fa_country": "America"
+    "fa_city": "لاپاز",
+    "fa_country": "بولیوی"
   },
   "America/Lima": {
-    "fa_city": "Lima",
-    "fa_country": "America"
+    "fa_city": "لیما",
+    "fa_country": "پرو"
   },
   "America/Los_Angeles": {
-    "fa_city": "لس‌آنجلس",
-    "fa_country": "ایالات متحده"
+    "fa_city": "لوس‌آنجلس",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Louisville": {
-    "fa_city": "Louisville",
-    "fa_country": "America"
+    "fa_city": "لوئی‌ویل",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Lower_Princes": {
-    "fa_city": "Lower Princes",
-    "fa_country": "America"
+    "fa_city": "بخش شاهزاده‌‌نشین پایین",
+    "fa_country": "سنت مارتن"
   },
   "America/Maceio": {
-    "fa_city": "Maceio",
-    "fa_country": "America"
+    "fa_city": "ماسیو",
+    "fa_country": "برزیل"
   },
   "America/Managua": {
-    "fa_city": "Managua",
-    "fa_country": "America"
+    "fa_city": "ماناگوا",
+    "fa_country": "نیکاراگوئه"
   },
   "America/Manaus": {
-    "fa_city": "Manaus",
-    "fa_country": "America"
+    "fa_city": "ماناوس",
+    "fa_country": "برزیل"
   },
   "America/Marigot": {
-    "fa_city": "Marigot",
-    "fa_country": "America"
+    "fa_city": "ماریگات",
+    "fa_country": "سنت مارتین"
   },
   "America/Martinique": {
-    "fa_city": "Martinique",
-    "fa_country": "America"
+    "fa_city": "مارتینیک",
+    "fa_country": "مارتینیک"
   },
   "America/Matamoros": {
-    "fa_city": "Matamoros",
-    "fa_country": "America"
+    "fa_city": "ماتاموروس",
+    "fa_country": "مکزیک"
   },
   "America/Mazatlan": {
-    "fa_city": "Mazatlan",
-    "fa_country": "America"
+    "fa_city": "ماساتلان",
+    "fa_country": "مکزیک"
   },
   "America/Mendoza": {
-    "fa_city": "Mendoza",
-    "fa_country": "America"
+    "fa_city": "مندوسا",
+    "fa_country": "آرژانتین"
   },
   "America/Menominee": {
-    "fa_city": "Menominee",
-    "fa_country": "America"
+    "fa_city": "منامینی",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Merida": {
-    "fa_city": "Merida",
-    "fa_country": "America"
+    "fa_city": "مریدا",
+    "fa_country": "مکزیک"
   },
   "America/Metlakatla": {
-    "fa_city": "Metlakatla",
-    "fa_country": "America"
+    "fa_city": "متالاکاتلا",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Mexico_City": {
-    "fa_city": "Mexico City",
-    "fa_country": "America"
+    "fa_city": "مکزیکوسیتی",
+    "fa_country": "مکزیک"
   },
   "America/Miquelon": {
-    "fa_city": "Miquelon",
-    "fa_country": "America"
+    "fa_city": "میکلون",
+    "fa_country": "سن پیر و میکلن"
   },
   "America/Moncton": {
-    "fa_city": "Moncton",
-    "fa_country": "America"
+    "fa_city": "مانکتون",
+    "fa_country": "کانادا"
   },
   "America/Monterrey": {
-    "fa_city": "Monterrey",
-    "fa_country": "America"
+    "fa_city": "مونتری",
+    "fa_country": "مکزیک"
   },
   "America/Montevideo": {
-    "fa_city": "Montevideo",
-    "fa_country": "America"
+    "fa_city": "مونته‌ویدئو",
+    "fa_country": "اروگوئه"
   },
   "America/Montserrat": {
-    "fa_city": "Montserrat",
-    "fa_country": "America"
+    "fa_city": "مونتسرات",
+    "fa_country": "مونت‌سرات"
   },
   "America/Nassau": {
-    "fa_city": "Nassau",
-    "fa_country": "America"
+    "fa_city": "ناسائو",
+    "fa_country": "باهاما"
   },
   "America/New_York": {
-    "fa_city": "New York",
-    "fa_country": "America"
+    "fa_city": "نیویورک",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Nome": {
-    "fa_city": "Nome",
-    "fa_country": "America"
+    "fa_city": "نوم",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Noronha": {
-    "fa_city": "Noronha",
-    "fa_country": "America"
+    "fa_city": "نورونیا",
+    "fa_country": "برزیل"
   },
   "America/North_Dakota/Beulah": {
-    "fa_city": "Beulah",
-    "fa_country": "America"
+    "fa_city": "بیولا، داکوتای شمالی",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/North_Dakota/Center": {
-    "fa_city": "Center",
-    "fa_country": "America"
+    "fa_city": "سنتر، داکوتای شمالی",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/North_Dakota/New_Salem": {
-    "fa_city": "New Salem",
-    "fa_country": "America"
+    "fa_city": "نیوسالم، داکوتای شمالی",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Ojinaga": {
-    "fa_city": "Ojinaga",
-    "fa_country": "America"
+    "fa_city": "اوجیناگا",
+    "fa_country": "مکزیک"
   },
   "America/Panama": {
-    "fa_city": "Panama",
-    "fa_country": "America"
+    "fa_city": "پاناما",
+    "fa_country": "پاناما"
   },
   "America/Paramaribo": {
-    "fa_city": "Paramaribo",
-    "fa_country": "America"
+    "fa_city": "پاراماریبو",
+    "fa_country": "سورینام"
   },
   "America/Phoenix": {
-    "fa_city": "Phoenix",
-    "fa_country": "America"
+    "fa_city": "فینکس",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/Port-au-Prince": {
-    "fa_city": "Port-au-Prince",
-    "fa_country": "America"
+    "fa_city": "پورتوپرنس",
+    "fa_country": "هائیتی"
   },
   "America/Port_of_Spain": {
-    "fa_city": "Port of Spain",
-    "fa_country": "America"
+    "fa_city": "پورت‌آواسپین",
+    "fa_country": "ترینیداد و توباگو"
   },
   "America/Porto_Velho": {
-    "fa_city": "Porto Velho",
-    "fa_country": "America"
+    "fa_city": "پورتوولیو",
+    "fa_country": "برزیل"
   },
   "America/Puerto_Rico": {
-    "fa_city": "Puerto Rico",
-    "fa_country": "America"
+    "fa_city": "پورتوریکو",
+    "fa_country": "پورتوریکو"
   },
   "America/Punta_Arenas": {
-    "fa_city": "Punta Arenas",
-    "fa_country": "America"
+    "fa_city": "پونتا آرناس",
+    "fa_country": "شیلی"
   },
   "America/Rankin_Inlet": {
-    "fa_city": "Rankin Inlet",
-    "fa_country": "America"
+    "fa_city": "خلیجک رنکین",
+    "fa_country": "کانادا"
   },
   "America/Recife": {
-    "fa_city": "Recife",
-    "fa_country": "America"
+    "fa_city": "ریسیفی",
+    "fa_country": "برزیل"
   },
   "America/Regina": {
-    "fa_city": "Regina",
-    "fa_country": "America"
+    "fa_city": "رجاینا",
+    "fa_country": "کانادا"
   },
   "America/Resolute": {
-    "fa_city": "Resolute",
-    "fa_country": "America"
+    "fa_city": "رزولوت",
+    "fa_country": "کانادا"
   },
   "America/Rio_Branco": {
-    "fa_city": "Rio Branco",
-    "fa_country": "America"
+    "fa_city": "ریوبرانکو",
+    "fa_country": "برزیل"
   },
   "America/Santarem": {
-    "fa_city": "Santarem",
-    "fa_country": "America"
+    "fa_city": "سنتارم",
+    "fa_country": "برزیل"
   },
   "America/Santiago": {
-    "fa_city": "Santiago",
-    "fa_country": "America"
+    "fa_city": "سانتیاگو",
+    "fa_country": "شیلی"
   },
   "America/Santo_Domingo": {
-    "fa_city": "Santo Domingo",
-    "fa_country": "America"
+    "fa_city": "سانتو دومینگو",
+    "fa_country": "جمهوری دومینیکن"
   },
   "America/Sao_Paulo": {
-    "fa_city": "Sao Paulo",
-    "fa_country": "America"
+    "fa_city": "سائوپائولو",
+    "fa_country": "برزیل"
   },
   "America/Scoresbysund": {
-    "fa_city": "Scoresbysund",
-    "fa_country": "America"
+    "fa_city": "اسکورسبیسوند",
+    "fa_country": "گرینلند"
   },
   "America/Sitka": {
-    "fa_city": "Sitka",
-    "fa_country": "America"
+    "fa_city": "سیتکا",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "America/St_Barthelemy": {
-    "fa_city": "St Barthelemy",
-    "fa_country": "America"
+    "fa_city": "سنت بارتلمی",
+    "fa_country": "سن بارتلمی"
   },
   "America/St_Johns": {
-    "fa_city": "St Johns",
-    "fa_country": "America"
+    "fa_city": "سنت جان",
+    "fa_country": "کانادا"
   },
   "America/St_Kitts": {
-    "fa_city": "St Kitts",
-    "fa_country": "America"
+    "fa_city": "سنت کیتس",
+    "fa_country": "سنت کیتس و نویس"
   },
   "America/St_Lucia": {
-    "fa_city": "St Lucia",
-    "fa_country": "America"
+    "fa_city": "سنت لوسیا",
+    "fa_country": "سنت لوسیا"
   },
   "America/St_Thomas": {
-    "fa_city": "St Thomas",
-    "fa_country": "America"
+    "fa_city": "سنت توماس",
+    "fa_country": "جزایر ویرجین ایالات متحده"
   },
   "America/St_Vincent": {
-    "fa_city": "St Vincent",
-    "fa_country": "America"
+    "fa_city": "سنت وینسنت",
+    "fa_country": "سنت وینسنت و گرنادین"
   },
   "America/Swift_Current": {
-    "fa_city": "Swift Current",
-    "fa_country": "America"
+    "fa_city": "سویفت‌کارنت",
+    "fa_country": "کانادا"
   },
   "America/Tegucigalpa": {
-    "fa_city": "Tegucigalpa",
-    "fa_country": "America"
+    "fa_city": "تگوسیگالپا",
+    "fa_country": "هندوراس"
   },
   "America/Thule": {
-    "fa_city": "Thule",
-    "fa_country": "America"
+    "fa_city": "تول",
+    "fa_country": "گرینلند"
   },
   "America/Tijuana": {
-    "fa_city": "Tijuana",
-    "fa_country": "America"
+    "fa_city": "تیخوانا",
+    "fa_country": "مکزیک"
   },
   "America/Toronto": {
-    "fa_city": "Toronto",
-    "fa_country": "America"
+    "fa_city": "تورنتو",
+    "fa_country": "کانادا"
   },
   "America/Tortola": {
-    "fa_city": "Tortola",
-    "fa_country": "America"
+    "fa_city": "تورتولا",
+    "fa_country": "جزایر ویرجین بریتانیا"
   },
   "America/Vancouver": {
-    "fa_city": "Vancouver",
-    "fa_country": "America"
+    "fa_city": "ونکوور",
+    "fa_country": "کانادا"
   },
   "America/Whitehorse": {
-    "fa_city": "Whitehorse",
-    "fa_country": "America"
+    "fa_city": "وایت‌هورس",
+    "fa_country": "کانادا"
   },
   "America/Winnipeg": {
-    "fa_city": "Winnipeg",
-    "fa_country": "America"
+    "fa_city": "وینیپگ",
+    "fa_country": "کانادا"
   },
   "America/Yakutat": {
-    "fa_city": "Yakutat",
-    "fa_country": "America"
+    "fa_city": "یاکوتات",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "Antarctica/Casey": {
-    "fa_city": "Casey",
-    "fa_country": "Antarctica"
+    "fa_city": "کیسی",
+    "fa_country": "جنوبگان"
   },
   "Antarctica/Davis": {
-    "fa_city": "Davis",
-    "fa_country": "Antarctica"
+    "fa_city": "دیویس",
+    "fa_country": "جنوبگان"
   },
   "Antarctica/DumontDUrville": {
-    "fa_city": "DumontDUrville",
-    "fa_country": "Antarctica"
+    "fa_city": "دومون دورویل",
+    "fa_country": "جنوبگان"
   },
   "Antarctica/Macquarie": {
-    "fa_city": "Macquarie",
-    "fa_country": "Antarctica"
+    "fa_city": "مکواری",
+    "fa_country": "استرالیا"
   },
   "Antarctica/Mawson": {
-    "fa_city": "Mawson",
-    "fa_country": "Antarctica"
+    "fa_city": "ماوسون",
+    "fa_country": "جنوبگان"
   },
   "Antarctica/McMurdo": {
-    "fa_city": "McMurdo",
-    "fa_country": "Antarctica"
+    "fa_city": "مک‌موردو",
+    "fa_country": "جنوبگان"
   },
   "Antarctica/Palmer": {
-    "fa_city": "Palmer",
-    "fa_country": "Antarctica"
+    "fa_city": "پالمر",
+    "fa_country": "جنوبگان"
   },
   "Antarctica/Rothera": {
-    "fa_city": "Rothera",
-    "fa_country": "Antarctica"
+    "fa_city": "روترا",
+    "fa_country": "جنوبگان"
   },
   "Antarctica/Syowa": {
-    "fa_city": "Syowa",
-    "fa_country": "Antarctica"
+    "fa_city": "شووا",
+    "fa_country": "جنوبگان"
   },
   "Antarctica/Troll": {
-    "fa_city": "Troll",
-    "fa_country": "Antarctica"
+    "fa_city": "ترول",
+    "fa_country": "جهان"
   },
   "Antarctica/Vostok": {
-    "fa_city": "Vostok",
-    "fa_country": "Antarctica"
+    "fa_city": "وستوک",
+    "fa_country": "جنوبگان"
   },
   "Arctic/Longyearbyen": {
-    "fa_city": "Longyearbyen",
-    "fa_country": "Arctic"
+    "fa_city": "لانگ‌یربین",
+    "fa_country": "سوالبارد و یان ماین"
   },
   "Asia/Aden": {
-    "fa_city": "Aden",
-    "fa_country": "Asia"
+    "fa_city": "عدن",
+    "fa_country": "یمن"
   },
   "Asia/Almaty": {
-    "fa_city": "Almaty",
-    "fa_country": "Asia"
+    "fa_city": "آلماتی",
+    "fa_country": "قزاقستان"
   },
   "Asia/Amman": {
-    "fa_city": "Amman",
-    "fa_country": "Asia"
+    "fa_city": "عَمان",
+    "fa_country": "اردن"
   },
   "Asia/Anadyr": {
-    "fa_city": "Anadyr",
-    "fa_country": "Asia"
+    "fa_city": "آنادیر",
+    "fa_country": "روسیه"
   },
   "Asia/Aqtau": {
-    "fa_city": "Aqtau",
-    "fa_country": "Asia"
+    "fa_city": "آقتاو",
+    "fa_country": "قزاقستان"
   },
   "Asia/Aqtobe": {
-    "fa_city": "Aqtobe",
-    "fa_country": "Asia"
+    "fa_city": "آقتوبه",
+    "fa_country": "قزاقستان"
   },
   "Asia/Ashgabat": {
-    "fa_city": "Ashgabat",
-    "fa_country": "Asia"
+    "fa_city": "عشق‌آباد",
+    "fa_country": "ترکمنستان"
   },
   "Asia/Atyrau": {
-    "fa_city": "Atyrau",
-    "fa_country": "Asia"
+    "fa_city": "آتیراو",
+    "fa_country": "قزاقستان"
   },
   "Asia/Baghdad": {
-    "fa_city": "Baghdad",
-    "fa_country": "Asia"
+    "fa_city": "بغداد",
+    "fa_country": "عراق"
   },
   "Asia/Bahrain": {
-    "fa_city": "Bahrain",
-    "fa_country": "Asia"
+    "fa_city": "بحرین",
+    "fa_country": "بحرین"
   },
   "Asia/Baku": {
-    "fa_city": "Baku",
-    "fa_country": "Asia"
+    "fa_city": "باکو",
+    "fa_country": "جمهوری آذربایجان"
   },
   "Asia/Bangkok": {
-    "fa_city": "Bangkok",
-    "fa_country": "Asia"
+    "fa_city": "بانکوک",
+    "fa_country": "تایلند"
   },
   "Asia/Barnaul": {
-    "fa_city": "Barnaul",
-    "fa_country": "Asia"
+    "fa_city": "بارنائول",
+    "fa_country": "روسیه"
   },
   "Asia/Beirut": {
-    "fa_city": "Beirut",
-    "fa_country": "Asia"
+    "fa_city": "بیروت",
+    "fa_country": "لبنان"
   },
   "Asia/Bishkek": {
-    "fa_city": "Bishkek",
-    "fa_country": "Asia"
+    "fa_city": "بیشکک",
+    "fa_country": "قرقیزستان"
   },
   "Asia/Brunei": {
-    "fa_city": "Brunei",
-    "fa_country": "Asia"
+    "fa_city": "برونئی",
+    "fa_country": "برونئی"
   },
   "Asia/Calcutta": {
-    "fa_city": "Calcutta",
-    "fa_country": "Asia"
+    "fa_city": "کلکته",
+    "fa_country": "هند"
   },
   "Asia/Chita": {
-    "fa_city": "Chita",
-    "fa_country": "Asia"
+    "fa_city": "چیتا",
+    "fa_country": "روسیه"
   },
   "Asia/Colombo": {
-    "fa_city": "Colombo",
-    "fa_country": "Asia"
+    "fa_city": "کلمبو",
+    "fa_country": "سری‌لانکا"
   },
   "Asia/Damascus": {
-    "fa_city": "Damascus",
-    "fa_country": "Asia"
+    "fa_city": "دمشق",
+    "fa_country": "سوریه"
   },
   "Asia/Dhaka": {
-    "fa_city": "Dhaka",
-    "fa_country": "Asia"
+    "fa_city": "داکا",
+    "fa_country": "بنگلادش"
   },
   "Asia/Dili": {
-    "fa_city": "Dili",
-    "fa_country": "Asia"
+    "fa_city": "دیلی",
+    "fa_country": "تیمور-لسته"
   },
   "Asia/Dubai": {
     "fa_city": "دبی",
-    "fa_country": "امارات"
+    "fa_country": "امارات متحده عربی"
   },
   "Asia/Dushanbe": {
-    "fa_city": "Dushanbe",
-    "fa_country": "Asia"
+    "fa_city": "دوشنبه",
+    "fa_country": "تاجیکستان"
   },
   "Asia/Famagusta": {
-    "fa_city": "Famagusta",
-    "fa_country": "Asia"
+    "fa_city": "فاماگوستا",
+    "fa_country": "قبرس"
   },
   "Asia/Gaza": {
-    "fa_city": "Gaza",
-    "fa_country": "Asia"
+    "fa_city": "غزه",
+    "fa_country": "سرزمین‌های فلسطینی"
   },
   "Asia/Hebron": {
-    "fa_city": "Hebron",
-    "fa_country": "Asia"
+    "fa_city": "الخلیل",
+    "fa_country": "سرزمین‌های فلسطینی"
   },
   "Asia/Hong_Kong": {
-    "fa_city": "Hong Kong",
-    "fa_country": "Asia"
+    "fa_city": "هنگ‌کنگ",
+    "fa_country": "هنگ‌کنگ، منطقهٔ ویژهٔ اداری چین"
   },
   "Asia/Hovd": {
-    "fa_city": "Hovd",
-    "fa_country": "Asia"
+    "fa_city": "خوود",
+    "fa_country": "مغولستان"
   },
   "Asia/Irkutsk": {
-    "fa_city": "Irkutsk",
-    "fa_country": "Asia"
+    "fa_city": "ایرکوتسک",
+    "fa_country": "روسیه"
   },
   "Asia/Jakarta": {
-    "fa_city": "Jakarta",
-    "fa_country": "Asia"
+    "fa_city": "جاکارتا",
+    "fa_country": "اندونزی"
   },
   "Asia/Jayapura": {
-    "fa_city": "Jayapura",
-    "fa_country": "Asia"
+    "fa_city": "جایاپورا",
+    "fa_country": "اندونزی"
   },
   "Asia/Jerusalem": {
-    "fa_city": "Jerusalem",
-    "fa_country": "Asia"
+    "fa_city": "اورشلیم",
+    "fa_country": "اسرائیل"
   },
   "Asia/Kabul": {
-    "fa_city": "Kabul",
-    "fa_country": "Asia"
+    "fa_city": "کابل",
+    "fa_country": "افغانستان"
   },
   "Asia/Kamchatka": {
-    "fa_city": "Kamchatka",
-    "fa_country": "Asia"
+    "fa_city": "کامچاتکا",
+    "fa_country": "روسیه"
   },
   "Asia/Karachi": {
-    "fa_city": "Karachi",
-    "fa_country": "Asia"
+    "fa_city": "کراچی",
+    "fa_country": "پاکستان"
   },
   "Asia/Katmandu": {
-    "fa_city": "Katmandu",
-    "fa_country": "Asia"
+    "fa_city": "کاتماندو",
+    "fa_country": "نپال"
   },
   "Asia/Khandyga": {
-    "fa_city": "Khandyga",
-    "fa_country": "Asia"
+    "fa_city": "خاندیگا",
+    "fa_country": "روسیه"
   },
   "Asia/Krasnoyarsk": {
-    "fa_city": "Krasnoyarsk",
-    "fa_country": "Asia"
+    "fa_city": "کراسنویارسک",
+    "fa_country": "روسیه"
   },
   "Asia/Kuala_Lumpur": {
-    "fa_city": "Kuala Lumpur",
-    "fa_country": "Asia"
+    "fa_city": "کوالالامپور",
+    "fa_country": "مالزی"
   },
   "Asia/Kuching": {
-    "fa_city": "Kuching",
-    "fa_country": "Asia"
+    "fa_city": "کوچینگ",
+    "fa_country": "مالزی"
   },
   "Asia/Kuwait": {
-    "fa_city": "Kuwait",
-    "fa_country": "Asia"
+    "fa_city": "کویت",
+    "fa_country": "کویت"
   },
   "Asia/Macau": {
-    "fa_city": "Macau",
-    "fa_country": "Asia"
+    "fa_city": "ماکائو",
+    "fa_country": "ماکائو، منطقهٔ ویژهٔ اداری چین"
   },
   "Asia/Magadan": {
-    "fa_city": "Magadan",
-    "fa_country": "Asia"
+    "fa_city": "ماگادان",
+    "fa_country": "روسیه"
   },
   "Asia/Makassar": {
-    "fa_city": "Makassar",
-    "fa_country": "Asia"
+    "fa_city": "ماکاسار",
+    "fa_country": "اندونزی"
   },
   "Asia/Manila": {
-    "fa_city": "Manila",
-    "fa_country": "Asia"
+    "fa_city": "مانیل",
+    "fa_country": "فیلیپین"
   },
   "Asia/Muscat": {
-    "fa_city": "Muscat",
-    "fa_country": "Asia"
+    "fa_city": "مسقط",
+    "fa_country": "عمان"
   },
   "Asia/Nicosia": {
-    "fa_city": "Nicosia",
-    "fa_country": "Asia"
+    "fa_city": "نیکوزیا",
+    "fa_country": "قبرس"
   },
   "Asia/Novokuznetsk": {
-    "fa_city": "Novokuznetsk",
-    "fa_country": "Asia"
+    "fa_city": "نوووکوزنتسک",
+    "fa_country": "روسیه"
   },
   "Asia/Novosibirsk": {
-    "fa_city": "Novosibirsk",
-    "fa_country": "Asia"
+    "fa_city": "نووسیبیریسک",
+    "fa_country": "روسیه"
   },
   "Asia/Omsk": {
-    "fa_city": "Omsk",
-    "fa_country": "Asia"
+    "fa_city": "اومسک",
+    "fa_country": "روسیه"
   },
   "Asia/Oral": {
-    "fa_city": "Oral",
-    "fa_country": "Asia"
+    "fa_city": "اورال",
+    "fa_country": "قزاقستان"
   },
   "Asia/Phnom_Penh": {
-    "fa_city": "Phnom Penh",
-    "fa_country": "Asia"
+    "fa_city": "پنوم‌پن",
+    "fa_country": "کامبوج"
   },
   "Asia/Pontianak": {
-    "fa_city": "Pontianak",
-    "fa_country": "Asia"
+    "fa_city": "پونتیاناک",
+    "fa_country": "اندونزی"
   },
   "Asia/Pyongyang": {
-    "fa_city": "Pyongyang",
-    "fa_country": "Asia"
+    "fa_city": "پیونگ‌یانگ",
+    "fa_country": "کرهٔ شمالی"
   },
   "Asia/Qatar": {
-    "fa_city": "Qatar",
-    "fa_country": "Asia"
+    "fa_city": "قطر",
+    "fa_country": "قطر"
   },
   "Asia/Qostanay": {
-    "fa_city": "Qostanay",
-    "fa_country": "Asia"
+    "fa_city": "قوستانای",
+    "fa_country": "قزاقستان"
   },
   "Asia/Qyzylorda": {
-    "fa_city": "Qyzylorda",
-    "fa_country": "Asia"
+    "fa_city": "قیزیل‌اوردا",
+    "fa_country": "قزاقستان"
   },
   "Asia/Rangoon": {
-    "fa_city": "Rangoon",
-    "fa_country": "Asia"
+    "fa_city": "یانگون",
+    "fa_country": "میانمار"
   },
   "Asia/Riyadh": {
-    "fa_city": "Riyadh",
-    "fa_country": "Asia"
+    "fa_city": "ریاض",
+    "fa_country": "عربستان سعودی"
   },
   "Asia/Saigon": {
-    "fa_city": "Saigon",
-    "fa_country": "Asia"
+    "fa_city": "هوشی‌مین",
+    "fa_country": "ویتنام"
   },
   "Asia/Sakhalin": {
-    "fa_city": "Sakhalin",
-    "fa_country": "Asia"
+    "fa_city": "ساخالین",
+    "fa_country": "روسیه"
   },
   "Asia/Samarkand": {
-    "fa_city": "Samarkand",
-    "fa_country": "Asia"
+    "fa_city": "سمرقند",
+    "fa_country": "ازبکستان"
   },
   "Asia/Seoul": {
-    "fa_city": "Seoul",
-    "fa_country": "Asia"
+    "fa_city": "سئول",
+    "fa_country": "کرهٔ جنوبی"
   },
   "Asia/Shanghai": {
-    "fa_city": "Shanghai",
-    "fa_country": "Asia"
+    "fa_city": "شانگهای",
+    "fa_country": "چین"
   },
   "Asia/Singapore": {
-    "fa_city": "Singapore",
-    "fa_country": "Asia"
+    "fa_city": "سنگاپور",
+    "fa_country": "سنگاپور"
   },
   "Asia/Srednekolymsk": {
-    "fa_city": "Srednekolymsk",
-    "fa_country": "Asia"
+    "fa_city": "اسردنکولیمسک",
+    "fa_country": "روسیه"
   },
   "Asia/Taipei": {
-    "fa_city": "Taipei",
-    "fa_country": "Asia"
+    "fa_city": "تایپه",
+    "fa_country": "تایوان"
   },
   "Asia/Tashkent": {
-    "fa_city": "Tashkent",
-    "fa_country": "Asia"
+    "fa_city": "تاشکند",
+    "fa_country": "ازبکستان"
   },
   "Asia/Tbilisi": {
-    "fa_city": "Tbilisi",
-    "fa_country": "Asia"
+    "fa_city": "تفلیس",
+    "fa_country": "گرجستان"
   },
   "Asia/Tehran": {
     "fa_city": "تهران",
     "fa_country": "ایران"
   },
   "Asia/Thimphu": {
-    "fa_city": "Thimphu",
-    "fa_country": "Asia"
+    "fa_city": "تیمفو",
+    "fa_country": "بوتان"
   },
   "Asia/Tokyo": {
     "fa_city": "توکیو",
     "fa_country": "ژاپن"
   },
   "Asia/Tomsk": {
-    "fa_city": "Tomsk",
-    "fa_country": "Asia"
+    "fa_city": "تومسک",
+    "fa_country": "روسیه"
   },
   "Asia/Ulaanbaatar": {
-    "fa_city": "Ulaanbaatar",
-    "fa_country": "Asia"
+    "fa_city": "اولان‌باتور",
+    "fa_country": "مغولستان"
   },
   "Asia/Urumqi": {
-    "fa_city": "Urumqi",
-    "fa_country": "Asia"
+    "fa_city": "ارومچی",
+    "fa_country": "چین"
   },
   "Asia/Ust-Nera": {
-    "fa_city": "Ust-Nera",
-    "fa_country": "Asia"
+    "fa_city": "اوست نرا",
+    "fa_country": "روسیه"
   },
   "Asia/Vientiane": {
-    "fa_city": "Vientiane",
-    "fa_country": "Asia"
+    "fa_city": "وینتیان",
+    "fa_country": "لائوس"
   },
   "Asia/Vladivostok": {
-    "fa_city": "Vladivostok",
-    "fa_country": "Asia"
+    "fa_city": "ولادی‌وستوک",
+    "fa_country": "روسیه"
   },
   "Asia/Yakutsk": {
-    "fa_city": "Yakutsk",
-    "fa_country": "Asia"
+    "fa_city": "یاکوتسک",
+    "fa_country": "روسیه"
   },
   "Asia/Yekaterinburg": {
-    "fa_city": "Yekaterinburg",
-    "fa_country": "Asia"
+    "fa_city": "یکاترینبرگ",
+    "fa_country": "روسیه"
   },
   "Asia/Yerevan": {
-    "fa_city": "Yerevan",
-    "fa_country": "Asia"
+    "fa_city": "ایروان",
+    "fa_country": "ارمنستان"
   },
   "Atlantic/Azores": {
-    "fa_city": "Azores",
-    "fa_country": "Atlantic"
+    "fa_city": "آزور",
+    "fa_country": "پرتغال"
   },
   "Atlantic/Bermuda": {
-    "fa_city": "Bermuda",
-    "fa_country": "Atlantic"
+    "fa_city": "برمودا",
+    "fa_country": "برمودا"
   },
   "Atlantic/Canary": {
-    "fa_city": "Canary",
-    "fa_country": "Atlantic"
+    "fa_city": "قناری",
+    "fa_country": "اسپانیا"
   },
   "Atlantic/Cape_Verde": {
-    "fa_city": "Cape Verde",
-    "fa_country": "Atlantic"
+    "fa_city": "کیپ‌ورد",
+    "fa_country": "کیپ‌ورد"
   },
   "Atlantic/Faeroe": {
-    "fa_city": "Faeroe",
-    "fa_country": "Atlantic"
+    "fa_city": "فارو",
+    "fa_country": "جزایر فارو"
   },
   "Atlantic/Madeira": {
-    "fa_city": "Madeira",
-    "fa_country": "Atlantic"
+    "fa_city": "مادیرا",
+    "fa_country": "پرتغال"
   },
   "Atlantic/Reykjavik": {
-    "fa_city": "Reykjavik",
-    "fa_country": "Atlantic"
+    "fa_city": "ریکیاویک",
+    "fa_country": "ایسلند"
   },
   "Atlantic/South_Georgia": {
-    "fa_city": "South Georgia",
-    "fa_country": "Atlantic"
+    "fa_city": "جورجیای جنوبی",
+    "fa_country": "جورجیای جنوبی و جزایر ساندویچ جنوبی"
   },
   "Atlantic/St_Helena": {
-    "fa_city": "St Helena",
-    "fa_country": "Atlantic"
+    "fa_city": "سنت هلنا",
+    "fa_country": "سنت هلن"
   },
   "Atlantic/Stanley": {
-    "fa_city": "Stanley",
-    "fa_country": "Atlantic"
+    "fa_city": "استانلی",
+    "fa_country": "جزایر فالکلند"
   },
   "Australia/Adelaide": {
-    "fa_city": "Adelaide",
-    "fa_country": "Australia"
+    "fa_city": "آدلاید",
+    "fa_country": "استرالیا"
   },
   "Australia/Brisbane": {
-    "fa_city": "Brisbane",
-    "fa_country": "Australia"
+    "fa_city": "بریسبین",
+    "fa_country": "استرالیا"
   },
   "Australia/Broken_Hill": {
-    "fa_city": "Broken Hill",
-    "fa_country": "Australia"
+    "fa_city": "بروکن‌هیل",
+    "fa_country": "استرالیا"
   },
   "Australia/Darwin": {
-    "fa_city": "Darwin",
-    "fa_country": "Australia"
+    "fa_city": "داروین",
+    "fa_country": "استرالیا"
   },
   "Australia/Eucla": {
-    "fa_city": "Eucla",
-    "fa_country": "Australia"
+    "fa_city": "اوکلا",
+    "fa_country": "استرالیا"
   },
   "Australia/Hobart": {
-    "fa_city": "Hobart",
-    "fa_country": "Australia"
+    "fa_city": "هوبارت",
+    "fa_country": "استرالیا"
   },
   "Australia/Lindeman": {
-    "fa_city": "Lindeman",
-    "fa_country": "Australia"
+    "fa_city": "لیندمن",
+    "fa_country": "استرالیا"
   },
   "Australia/Lord_Howe": {
-    "fa_city": "Lord Howe",
-    "fa_country": "Australia"
+    "fa_city": "لردهاو",
+    "fa_country": "استرالیا"
   },
   "Australia/Melbourne": {
-    "fa_city": "Melbourne",
-    "fa_country": "Australia"
+    "fa_city": "ملبورن",
+    "fa_country": "استرالیا"
   },
   "Australia/Perth": {
-    "fa_city": "Perth",
-    "fa_country": "Australia"
+    "fa_city": "پرت",
+    "fa_country": "استرالیا"
   },
   "Australia/Sydney": {
-    "fa_city": "Sydney",
-    "fa_country": "Australia"
+    "fa_city": "سیدنی",
+    "fa_country": "استرالیا"
   },
   "Europe/Amsterdam": {
-    "fa_city": "Amsterdam",
-    "fa_country": "Europe"
+    "fa_city": "آمستردام",
+    "fa_country": "هلند"
   },
   "Europe/Andorra": {
-    "fa_city": "Andorra",
-    "fa_country": "Europe"
+    "fa_city": "آندورا",
+    "fa_country": "آندورا"
   },
   "Europe/Astrakhan": {
-    "fa_city": "Astrakhan",
-    "fa_country": "Europe"
+    "fa_city": "آستراخان",
+    "fa_country": "روسیه"
   },
   "Europe/Athens": {
-    "fa_city": "Athens",
-    "fa_country": "Europe"
+    "fa_city": "آتن",
+    "fa_country": "یونان"
   },
   "Europe/Belgrade": {
-    "fa_city": "Belgrade",
-    "fa_country": "Europe"
+    "fa_city": "بلگراد",
+    "fa_country": "صربستان"
   },
   "Europe/Berlin": {
-    "fa_city": "Berlin",
-    "fa_country": "Europe"
+    "fa_city": "برلین",
+    "fa_country": "آلمان"
   },
   "Europe/Bratislava": {
-    "fa_city": "Bratislava",
-    "fa_country": "Europe"
+    "fa_city": "براتیسلاوا",
+    "fa_country": "اسلواکی"
   },
   "Europe/Brussels": {
-    "fa_city": "Brussels",
-    "fa_country": "Europe"
+    "fa_city": "بروکسل",
+    "fa_country": "بلژیک"
   },
   "Europe/Bucharest": {
-    "fa_city": "Bucharest",
-    "fa_country": "Europe"
+    "fa_city": "بخارست",
+    "fa_country": "رومانی"
   },
   "Europe/Budapest": {
-    "fa_city": "Budapest",
-    "fa_country": "Europe"
+    "fa_city": "بوداپست",
+    "fa_country": "مجارستان"
   },
   "Europe/Busingen": {
-    "fa_city": "Busingen",
-    "fa_country": "Europe"
+    "fa_city": "بازنگن",
+    "fa_country": "آلمان"
   },
   "Europe/Chisinau": {
-    "fa_city": "Chisinau",
-    "fa_country": "Europe"
+    "fa_city": "کیشیناو",
+    "fa_country": "مولداوی"
   },
   "Europe/Copenhagen": {
-    "fa_city": "Copenhagen",
-    "fa_country": "Europe"
+    "fa_city": "کپنهاگ",
+    "fa_country": "دانمارک"
   },
   "Europe/Dublin": {
-    "fa_city": "Dublin",
-    "fa_country": "Europe"
+    "fa_city": "دوبلین",
+    "fa_country": "ایرلند"
   },
   "Europe/Gibraltar": {
-    "fa_city": "Gibraltar",
-    "fa_country": "Europe"
+    "fa_city": "جبل‌الطارق",
+    "fa_country": "جبل‌الطارق"
   },
   "Europe/Guernsey": {
-    "fa_city": "Guernsey",
-    "fa_country": "Europe"
+    "fa_city": "گرنزی",
+    "fa_country": "گرنزی"
   },
   "Europe/Helsinki": {
-    "fa_city": "Helsinki",
-    "fa_country": "Europe"
+    "fa_city": "هلسینکی",
+    "fa_country": "فنلاند"
   },
   "Europe/Isle_of_Man": {
-    "fa_city": "Isle of Man",
-    "fa_country": "Europe"
+    "fa_city": "جزیرهٔ من",
+    "fa_country": "جزیرهٔ من"
   },
   "Europe/Istanbul": {
-    "fa_city": "Istanbul",
-    "fa_country": "Europe"
+    "fa_city": "استانبول",
+    "fa_country": "ترکیه"
   },
   "Europe/Jersey": {
-    "fa_city": "Jersey",
-    "fa_country": "Europe"
+    "fa_city": "جرزی",
+    "fa_country": "جرزی"
   },
   "Europe/Kaliningrad": {
-    "fa_city": "Kaliningrad",
-    "fa_country": "Europe"
+    "fa_city": "کالینینگراد",
+    "fa_country": "روسیه"
   },
   "Europe/Kiev": {
-    "fa_city": "Kiev",
-    "fa_country": "Europe"
+    "fa_city": "کی‌یف",
+    "fa_country": "اوکراین"
   },
   "Europe/Kirov": {
-    "fa_city": "Kirov",
-    "fa_country": "Europe"
+    "fa_city": "کیروف",
+    "fa_country": "روسیه"
   },
   "Europe/Lisbon": {
-    "fa_city": "Lisbon",
-    "fa_country": "Europe"
+    "fa_city": "لیسبون",
+    "fa_country": "پرتغال"
   },
   "Europe/Ljubljana": {
-    "fa_city": "Ljubljana",
-    "fa_country": "Europe"
+    "fa_city": "لیوبلیانا",
+    "fa_country": "اسلوونی"
   },
   "Europe/London": {
     "fa_city": "لندن",
     "fa_country": "بریتانیا"
   },
   "Europe/Luxembourg": {
-    "fa_city": "Luxembourg",
-    "fa_country": "Europe"
+    "fa_city": "لوکزامبورگ",
+    "fa_country": "لوکزامبورگ"
   },
   "Europe/Madrid": {
-    "fa_city": "Madrid",
-    "fa_country": "Europe"
+    "fa_city": "مادرید",
+    "fa_country": "اسپانیا"
   },
   "Europe/Malta": {
-    "fa_city": "Malta",
-    "fa_country": "Europe"
+    "fa_city": "مالت",
+    "fa_country": "مالت"
   },
   "Europe/Mariehamn": {
-    "fa_city": "Mariehamn",
-    "fa_country": "Europe"
+    "fa_city": "ماریه‌هامن",
+    "fa_country": "جزایر آلاند"
   },
   "Europe/Minsk": {
-    "fa_city": "Minsk",
-    "fa_country": "Europe"
+    "fa_city": "مینسک",
+    "fa_country": "بلاروس"
   },
   "Europe/Monaco": {
-    "fa_city": "Monaco",
-    "fa_country": "Europe"
+    "fa_city": "موناکو",
+    "fa_country": "موناکو"
   },
   "Europe/Moscow": {
-    "fa_city": "Moscow",
-    "fa_country": "Europe"
+    "fa_city": "مسکو",
+    "fa_country": "روسیه"
   },
   "Europe/Oslo": {
-    "fa_city": "Oslo",
-    "fa_country": "Europe"
+    "fa_city": "اسلو",
+    "fa_country": "نروژ"
   },
   "Europe/Paris": {
     "fa_city": "پاریس",
     "fa_country": "فرانسه"
   },
   "Europe/Podgorica": {
-    "fa_city": "Podgorica",
-    "fa_country": "Europe"
+    "fa_city": "پادگاریتسا",
+    "fa_country": "مونته‌نگرو"
   },
   "Europe/Prague": {
-    "fa_city": "Prague",
-    "fa_country": "Europe"
+    "fa_city": "پراگ",
+    "fa_country": "چک"
   },
   "Europe/Riga": {
-    "fa_city": "Riga",
-    "fa_country": "Europe"
+    "fa_city": "ریگا",
+    "fa_country": "لتونی"
   },
   "Europe/Rome": {
-    "fa_city": "Rome",
-    "fa_country": "Europe"
+    "fa_city": "رم",
+    "fa_country": "ایتالیا"
   },
   "Europe/Samara": {
-    "fa_city": "Samara",
-    "fa_country": "Europe"
+    "fa_city": "سامارا",
+    "fa_country": "روسیه"
   },
   "Europe/San_Marino": {
-    "fa_city": "San Marino",
-    "fa_country": "Europe"
+    "fa_city": "سان‌مارینو",
+    "fa_country": "سان‌مارینو"
   },
   "Europe/Sarajevo": {
-    "fa_city": "Sarajevo",
-    "fa_country": "Europe"
+    "fa_city": "سارایوو",
+    "fa_country": "بوسنی و هرزگوین"
   },
   "Europe/Saratov": {
-    "fa_city": "Saratov",
-    "fa_country": "Europe"
+    "fa_city": "ساراتوف",
+    "fa_country": "روسیه"
   },
   "Europe/Simferopol": {
-    "fa_city": "Simferopol",
-    "fa_country": "Europe"
+    "fa_city": "سیمفروپل",
+    "fa_country": "اوکراین"
   },
   "Europe/Skopje": {
-    "fa_city": "Skopje",
-    "fa_country": "Europe"
+    "fa_city": "اسکوپیه",
+    "fa_country": "مقدونیهٔ شمالی"
   },
   "Europe/Sofia": {
-    "fa_city": "Sofia",
-    "fa_country": "Europe"
+    "fa_city": "صوفیه",
+    "fa_country": "بلغارستان"
   },
   "Europe/Stockholm": {
-    "fa_city": "Stockholm",
-    "fa_country": "Europe"
+    "fa_city": "استکهلم",
+    "fa_country": "سوئد"
   },
   "Europe/Tallinn": {
-    "fa_city": "Tallinn",
-    "fa_country": "Europe"
+    "fa_city": "تالین",
+    "fa_country": "استونی"
   },
   "Europe/Tirane": {
-    "fa_city": "Tirane",
-    "fa_country": "Europe"
+    "fa_city": "تیرانا",
+    "fa_country": "آلبانی"
   },
   "Europe/Ulyanovsk": {
-    "fa_city": "Ulyanovsk",
-    "fa_country": "Europe"
+    "fa_city": "اولیانوفسک",
+    "fa_country": "روسیه"
   },
   "Europe/Vaduz": {
-    "fa_city": "Vaduz",
-    "fa_country": "Europe"
+    "fa_city": "فادوتس",
+    "fa_country": "لیختن‌اشتاین"
   },
   "Europe/Vatican": {
-    "fa_city": "Vatican",
-    "fa_country": "Europe"
+    "fa_city": "واتیکان",
+    "fa_country": "واتیکان"
   },
   "Europe/Vienna": {
-    "fa_city": "Vienna",
-    "fa_country": "Europe"
+    "fa_city": "وین",
+    "fa_country": "اتریش"
   },
   "Europe/Vilnius": {
-    "fa_city": "Vilnius",
-    "fa_country": "Europe"
+    "fa_city": "ویلنیوس",
+    "fa_country": "لیتوانی"
   },
   "Europe/Volgograd": {
-    "fa_city": "Volgograd",
-    "fa_country": "Europe"
+    "fa_city": "ولگاگراد",
+    "fa_country": "روسیه"
   },
   "Europe/Warsaw": {
-    "fa_city": "Warsaw",
-    "fa_country": "Europe"
+    "fa_city": "ورشو",
+    "fa_country": "لهستان"
   },
   "Europe/Zagreb": {
-    "fa_city": "Zagreb",
-    "fa_country": "Europe"
+    "fa_city": "زاگرب",
+    "fa_country": "کرواسی"
   },
   "Europe/Zurich": {
-    "fa_city": "Zurich",
-    "fa_country": "Europe"
+    "fa_city": "زوریخ",
+    "fa_country": "سوئیس"
   },
   "Indian/Antananarivo": {
-    "fa_city": "Antananarivo",
-    "fa_country": "Indian"
+    "fa_city": "آنتاناناریوو",
+    "fa_country": "ماداگاسکار"
   },
   "Indian/Chagos": {
-    "fa_city": "Chagos",
-    "fa_country": "Indian"
+    "fa_city": "شاگوس",
+    "fa_country": "قلمرو بریتانیا در اقیانوس هند"
   },
   "Indian/Christmas": {
-    "fa_city": "Christmas",
-    "fa_country": "Indian"
+    "fa_city": "کریسمس",
+    "fa_country": "جزیرهٔ کریسمس"
   },
   "Indian/Cocos": {
-    "fa_city": "Cocos",
-    "fa_country": "Indian"
+    "fa_city": "کوکوس",
+    "fa_country": "جزایر کوکوس"
   },
   "Indian/Comoro": {
-    "fa_city": "Comoro",
-    "fa_country": "Indian"
+    "fa_city": "کومورو",
+    "fa_country": "کومور"
   },
   "Indian/Kerguelen": {
-    "fa_city": "Kerguelen",
-    "fa_country": "Indian"
+    "fa_city": "کرگولن",
+    "fa_country": "سرزمین‌های جنوبی فرانسه"
   },
   "Indian/Mahe": {
-    "fa_city": "Mahe",
-    "fa_country": "Indian"
+    "fa_city": "ماهه",
+    "fa_country": "سیشل"
   },
   "Indian/Maldives": {
-    "fa_city": "Maldives",
-    "fa_country": "Indian"
+    "fa_city": "مالدیو",
+    "fa_country": "مالدیو"
   },
   "Indian/Mauritius": {
-    "fa_city": "Mauritius",
-    "fa_country": "Indian"
+    "fa_city": "موریس",
+    "fa_country": "موریس"
   },
   "Indian/Mayotte": {
-    "fa_city": "Mayotte",
-    "fa_country": "Indian"
+    "fa_city": "مایوت",
+    "fa_country": "مایوت"
   },
   "Indian/Reunion": {
-    "fa_city": "Reunion",
-    "fa_country": "Indian"
+    "fa_city": "رئونیون",
+    "fa_country": "رئونیون"
   },
   "Pacific/Apia": {
-    "fa_city": "Apia",
-    "fa_country": "Pacific"
+    "fa_city": "آپیا",
+    "fa_country": "ساموآ"
   },
   "Pacific/Auckland": {
-    "fa_city": "Auckland",
-    "fa_country": "Pacific"
+    "fa_city": "اوکلند",
+    "fa_country": "نیوزیلند"
   },
   "Pacific/Bougainville": {
-    "fa_city": "Bougainville",
-    "fa_country": "Pacific"
+    "fa_city": "بوگنویل",
+    "fa_country": "پاپوا گینهٔ نو"
   },
   "Pacific/Chatham": {
-    "fa_city": "Chatham",
-    "fa_country": "Pacific"
+    "fa_city": "چت‌هام",
+    "fa_country": "نیوزیلند"
   },
   "Pacific/Easter": {
-    "fa_city": "Easter",
-    "fa_country": "Pacific"
+    "fa_city": "ایستر",
+    "fa_country": "شیلی"
   },
   "Pacific/Efate": {
-    "fa_city": "Efate",
-    "fa_country": "Pacific"
+    "fa_city": "افاته",
+    "fa_country": "وانواتو"
   },
   "Pacific/Enderbury": {
-    "fa_city": "Enderbury",
-    "fa_country": "Pacific"
+    "fa_city": "کانتون",
+    "fa_country": "کیریباتی"
   },
   "Pacific/Fakaofo": {
-    "fa_city": "Fakaofo",
-    "fa_country": "Pacific"
+    "fa_city": "فاکائوفو",
+    "fa_country": "توکلائو"
   },
   "Pacific/Fiji": {
-    "fa_city": "Fiji",
-    "fa_country": "Pacific"
+    "fa_city": "فیجی",
+    "fa_country": "فیجی"
   },
   "Pacific/Funafuti": {
-    "fa_city": "Funafuti",
-    "fa_country": "Pacific"
+    "fa_city": "فونافوتی",
+    "fa_country": "تووالو"
   },
   "Pacific/Galapagos": {
-    "fa_city": "Galapagos",
-    "fa_country": "Pacific"
+    "fa_city": "گالاپاگوس",
+    "fa_country": "اکوادور"
   },
   "Pacific/Gambier": {
-    "fa_city": "Gambier",
-    "fa_country": "Pacific"
+    "fa_city": "گامبیر",
+    "fa_country": "پلی‌نزی فرانسه"
   },
   "Pacific/Guadalcanal": {
-    "fa_city": "Guadalcanal",
-    "fa_country": "Pacific"
+    "fa_city": "گوادال‌کانال",
+    "fa_country": "جزایر سلیمان"
   },
   "Pacific/Guam": {
-    "fa_city": "Guam",
-    "fa_country": "Pacific"
+    "fa_city": "گوام",
+    "fa_country": "گوام"
   },
   "Pacific/Honolulu": {
-    "fa_city": "Honolulu",
-    "fa_country": "Pacific"
+    "fa_city": "هونولولو",
+    "fa_country": "ایالات متحده آمریکا"
   },
   "Pacific/Kiritimati": {
-    "fa_city": "Kiritimati",
-    "fa_country": "Pacific"
+    "fa_city": "کریتیماتی",
+    "fa_country": "کیریباتی"
   },
   "Pacific/Kosrae": {
-    "fa_city": "Kosrae",
-    "fa_country": "Pacific"
+    "fa_city": "کوسرای",
+    "fa_country": "میکرونزی"
   },
   "Pacific/Kwajalein": {
-    "fa_city": "Kwajalein",
-    "fa_country": "Pacific"
+    "fa_city": "کواجیلین",
+    "fa_country": "جزایر مارشال"
   },
   "Pacific/Majuro": {
-    "fa_city": "Majuro",
-    "fa_country": "Pacific"
+    "fa_city": "ماجورو",
+    "fa_country": "جزایر مارشال"
   },
   "Pacific/Marquesas": {
-    "fa_city": "Marquesas",
-    "fa_country": "Pacific"
+    "fa_city": "مارکوزه",
+    "fa_country": "پلی‌نزی فرانسه"
   },
   "Pacific/Midway": {
-    "fa_city": "Midway",
-    "fa_country": "Pacific"
+    "fa_city": "میدوی",
+    "fa_country": "جزایر دورافتادهٔ ایالات متحده"
   },
   "Pacific/Nauru": {
-    "fa_city": "Nauru",
-    "fa_country": "Pacific"
+    "fa_city": "نائورو",
+    "fa_country": "نائورو"
   },
   "Pacific/Niue": {
-    "fa_city": "Niue",
-    "fa_country": "Pacific"
+    "fa_city": "نیوئه",
+    "fa_country": "نیوئه"
   },
   "Pacific/Norfolk": {
-    "fa_city": "Norfolk",
-    "fa_country": "Pacific"
+    "fa_city": "نورفولک",
+    "fa_country": "جزیرهٔ نورفولک"
   },
   "Pacific/Noumea": {
-    "fa_city": "Noumea",
-    "fa_country": "Pacific"
+    "fa_city": "نومئا",
+    "fa_country": "کالدونیای جدید"
   },
   "Pacific/Pago_Pago": {
-    "fa_city": "Pago Pago",
-    "fa_country": "Pacific"
+    "fa_city": "پاگوپاگو",
+    "fa_country": "ساموآی امریکا"
   },
   "Pacific/Palau": {
-    "fa_city": "Palau",
-    "fa_country": "Pacific"
+    "fa_city": "پالائو",
+    "fa_country": "پالائو"
   },
   "Pacific/Pitcairn": {
-    "fa_city": "Pitcairn",
-    "fa_country": "Pacific"
+    "fa_city": "پیت‌کرن",
+    "fa_country": "جزایر پیت‌کرن"
   },
   "Pacific/Ponape": {
-    "fa_city": "Ponape",
-    "fa_country": "Pacific"
+    "fa_city": "پوناپی",
+    "fa_country": "میکرونزی"
   },
   "Pacific/Port_Moresby": {
-    "fa_city": "Port Moresby",
-    "fa_country": "Pacific"
+    "fa_city": "پورت‌مورزبی",
+    "fa_country": "پاپوا گینهٔ نو"
   },
   "Pacific/Rarotonga": {
-    "fa_city": "Rarotonga",
-    "fa_country": "Pacific"
+    "fa_city": "راروتونگا",
+    "fa_country": "جزایر کوک"
   },
   "Pacific/Saipan": {
-    "fa_city": "Saipan",
-    "fa_country": "Pacific"
+    "fa_city": "سایپان",
+    "fa_country": "جزایر ماریانای شمالی"
   },
   "Pacific/Tahiti": {
-    "fa_city": "Tahiti",
-    "fa_country": "Pacific"
+    "fa_city": "تاهیتی",
+    "fa_country": "پلی‌نزی فرانسه"
   },
   "Pacific/Tarawa": {
-    "fa_city": "Tarawa",
-    "fa_country": "Pacific"
+    "fa_city": "تاراوا",
+    "fa_country": "کیریباتی"
   },
   "Pacific/Tongatapu": {
-    "fa_city": "Tongatapu",
-    "fa_country": "Pacific"
+    "fa_city": "تونگاتاپو",
+    "fa_country": "تونگا"
   },
   "Pacific/Truk": {
-    "fa_city": "Truk",
-    "fa_country": "Pacific"
+    "fa_city": "چوک",
+    "fa_country": "میکرونزی"
   },
   "Pacific/Wake": {
-    "fa_city": "Wake",
-    "fa_country": "Pacific"
+    "fa_city": "ویک",
+    "fa_country": "جزایر دورافتادهٔ ایالات متحده"
   },
   "Pacific/Wallis": {
-    "fa_city": "Wallis",
-    "fa_country": "Pacific"
+    "fa_city": "والیس",
+    "fa_country": "والیس و فوتونا"
   }
 }
