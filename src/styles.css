@@ -335,11 +335,12 @@ button {
   height: calc((var(--timezone-row-height) * 5) + (var(--timezone-row-gap) * 4));
   max-height: calc((var(--timezone-row-height) * 5) + (var(--timezone-row-gap) * 4));
   min-height: calc((var(--timezone-row-height) * 5) + (var(--timezone-row-gap) * 4));
+  overflow-x: clip;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0.08rem 0.55rem 0.08rem 0.55rem;
+  padding: 0.08rem 0.75rem 0.08rem 0.75rem;
   scrollbar-color: rgba(37, 99, 235, 0.48) rgba(226, 232, 240, 0.72);
-  scrollbar-gutter: stable;
+  scrollbar-gutter: stable both-edges;
   scrollbar-width: thin;
 }
 
@@ -1029,6 +1030,7 @@ button {
   display: grid;
   gap: 0.58rem;
   min-height: 0;
+  overflow-x: clip;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding-right: 0.32rem;
@@ -1258,6 +1260,7 @@ button {
   max-height: 21rem;
   gap: 0.45rem;
   padding: 0.45rem;
+  overflow-x: clip;
   overflow-y: auto;
   border: 1px solid rgba(148, 163, 184, 0.28);
   border-radius: 1.15rem;
