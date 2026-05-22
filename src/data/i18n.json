@@ -81,7 +81,9 @@
     "twilight": "Twilight",
     "calendar_iran": "Iran",
     "calendar_islamic": "Iran Islamic",
-    "calendar_international": "International"
+    "calendar_international": "International",
+    "add_city": "Add city",
+    "translation_pending": "(translation pending)"
   },
   "fa": {
     "language": "زبان",
@@ -165,6 +167,8 @@
     "twilight": "گرگ‌ومیش",
     "calendar_iran": "ایران",
     "calendar_islamic": "اسلامی ایران",
-    "calendar_international": "جهانی"
+    "calendar_international": "جهانی",
+    "add_city": "افزودن شهر",
+    "translation_pending": "(نیازمند ترجمه)"
   }
 }

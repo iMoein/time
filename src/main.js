@@ -11,12 +11,12 @@ const { createElement: h } = React;
 const accentPalette = ['#f97316', '#7c3aed', '#2563eb', '#db2777', '#059669', '#0891b2', '#ea580c', '#4f46e5'];
 
 const defaultCities = [
-  { id: 'tehran', label: 'Tehran', country: 'Iran', timeZone: 'Asia/Tehran', latitude: 35.6892, longitude: 51.3890, accent: accentPalette[0] },
-  { id: 'los-angeles', label: 'Los Angeles', country: 'United States', timeZone: 'America/Los_Angeles', latitude: 34.0522, longitude: -118.2437, accent: accentPalette[1] },
-  { id: 'london', label: 'London', country: 'United Kingdom', timeZone: 'Europe/London', latitude: 51.5072, longitude: -0.1276, accent: accentPalette[2] },
-  { id: 'paris', label: 'Paris', country: 'France', timeZone: 'Europe/Paris', latitude: 48.8566, longitude: 2.3522, accent: accentPalette[3] },
-  { id: 'tokyo', label: 'Tokyo', country: 'Japan', timeZone: 'Asia/Tokyo', latitude: 35.6762, longitude: 139.6503, accent: accentPalette[4] },
-  { id: 'dubai', label: 'Dubai', country: 'United Arab Emirates', timeZone: 'Asia/Dubai', latitude: 25.2048, longitude: 55.2708, accent: accentPalette[5] },
+  { id: 'tehran', label: 'Tehran', localFaLabel: 'تهران', country: 'Iran', localFaCountry: 'ایران', timeZone: 'Asia/Tehran', latitude: 35.6892, longitude: 51.3890, accent: accentPalette[0] },
+  { id: 'los-angeles', label: 'Los Angeles', localFaLabel: 'لس‌آنجلس', country: 'United States', localFaCountry: 'ایالات متحده', timeZone: 'America/Los_Angeles', latitude: 34.0522, longitude: -118.2437, accent: accentPalette[1] },
+  { id: 'london', label: 'London', localFaLabel: 'لندن', country: 'United Kingdom', localFaCountry: 'بریتانیا', timeZone: 'Europe/London', latitude: 51.5072, longitude: -0.1276, accent: accentPalette[2] },
+  { id: 'paris', label: 'Paris', localFaLabel: 'پاریس', country: 'France', localFaCountry: 'فرانسه', timeZone: 'Europe/Paris', latitude: 48.8566, longitude: 2.3522, accent: accentPalette[3] },
+  { id: 'tokyo', label: 'Tokyo', localFaLabel: 'توکیو', country: 'Japan', localFaCountry: 'ژاپن', timeZone: 'Asia/Tokyo', latitude: 35.6762, longitude: 139.6503, accent: accentPalette[4] },
+  { id: 'dubai', label: 'Dubai', localFaLabel: 'دبی', country: 'United Arab Emirates', localFaCountry: 'امارات', timeZone: 'Asia/Dubai', latitude: 25.2048, longitude: 55.2708, accent: accentPalette[5] },
 ];
 
 const savedCitiesKey = 'time-app-cities';
@@ -44,15 +44,25 @@ function toTitleCase(value) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function toPersianLikeLabel(value) {
+  return value
+    .replace(/_/g, ' ')
+    .replace(/St/g, 'Saint')
+    .replace(/Mt/g, 'Mount');
+}
+
 function makeCityFromTimeZone(timeZone, index) {
   const pieces = timeZone.split('/');
   const rawLabel = pieces[pieces.length - 1] || timeZone;
   const region = pieces.length > 1 ? toTitleCase(pieces[0]) : 'World';
 
+  const label = toTitleCase(rawLabel);
   return {
     id: timeZone.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
-    label: toTitleCase(rawLabel),
+    label,
+    localFaLabel: label,
     country: region,
+    localFaCountry: region,
     timeZone,
     accent: accentPalette[index % accentPalette.length],
   };
@@ -900,7 +910,7 @@ function ToggleButton({ city, selected, canRemove, editMode, dragging, onDragEnd
   );
 }
 
-function SearchPanel({ query, results, onAdd, onQueryChange, t }) {
+function SearchPanel({ query, results, onAdd, onQueryChange, t, language }) {
   const [isOpen, setIsOpen] = useState(false);
   const hasQuery = query.trim().length > 0;
   const showResults = isOpen || hasQuery;
@@ -939,8 +949,8 @@ function SearchPanel({ query, results, onAdd, onQueryChange, t }) {
             key: city.id,
             style: { '--accent': city.accent },
           },
-          h('span', null, city.label),
-          h('small', null, `${city.country} · ${city.timeZone}`),
+          h('span', null, language === 'fa' ? (city.localFaLabel || city.label) : city.label),
+          h('small', null, `${language === 'fa' ? (city.localFaCountry || city.country) : city.country} · ${city.timeZone}`),
           h('strong', null, t.add),
         ))
         : h('p', { className: 'search-empty' }, t.no_city_found),
@@ -1012,7 +1022,7 @@ function SettingsPanel({ ntpHostInput, ntpStatus, ntpServerPresets, onHostInputC
 }
 
 
-function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, searchResults, draggingCityId, onAdd, onDragEnd, onDragStart, onDrop, onEditToggle, onQueryChange, onRemove, onSelect, t }) {
+function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, searchResults, draggingCityId, onAdd, onDragEnd, onDragStart, onDrop, onEditToggle, onQueryChange, onRemove, onSelect, t, language }) {
   return h(
     'section',
     { className: 'timezone-manager', 'aria-label': t.manage_timezones },
@@ -1026,7 +1036,7 @@ function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, search
         h('button', { type: 'button', className: 'edit-toggle', onClick: onEditToggle }, editMode ? t.done : t.edit),
       ),
     ),
-    h(SearchPanel, { query: searchQuery, results: searchResults, onAdd, onQueryChange, t }),
+    h(SearchPanel, { query: searchQuery, results: searchResults, onAdd, onQueryChange, t, language }),
     h(
       'div',
       { className: `timezone-list${editMode ? ' timezone-list--editing' : ''}` },
@@ -1058,8 +1068,9 @@ function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, search
             onClick: () => onSelect(city.id),
             'aria-pressed': city.id === selectedCityId,
           },
-          h('span', { className: 'timezone-row__name' }, city.label),
-          h('span', { className: 'timezone-row__phase' }, city.timeOfDayLabel),
+          language === 'fa'
+            ? [h('span', { className: 'timezone-row__name', key: 'name' }, city.label), h('span', { className: 'timezone-row__phase', key: 'phase' }, city.timeOfDayLabel)]
+            : [h('span', { className: 'timezone-row__name', key: 'name' }, city.label), h('span', { className: 'timezone-row__phase', key: 'phase' }, city.timeOfDayLabel)],
         ),
         editMode && cities.length > 1 && h(
           'button',
@@ -1725,6 +1736,7 @@ function App() {
         onRemove: removeCity,
         t,
         onSelect: setSelectedCityId,
+        language,
       }),
     ),
     h(MonthlyCalendarCard, { city: selectedCityView, t, language }),
