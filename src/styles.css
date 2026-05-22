@@ -414,9 +414,9 @@ button {
 }
 
 :root[lang="fa"] .timezone-row__phase {
-  justify-self: start;
+  justify-self: left;
   margin-inline-start: 0;
-  margin-inline-end: 0.6rem;
+  margin-inline-end: 0;
 }
 
 :root[lang="fa"] .timezone-row__name {
