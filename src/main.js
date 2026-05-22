@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import internationalOccasions from './data/occasions-gregorian.json' with { type: 'json' };
 import iranOccasions from './data/occasions-persian.json' with { type: 'json' };
 import iranIslamicOccasions from './data/occasions-islamic.json' with { type: 'json' };
+import islamicYearStartSync from './data/islamic-year-start-sync.json' with { type: 'json' };
 import { createRoot } from 'react-dom/client';
 
 const { createElement: h } = React;
@@ -435,7 +436,7 @@ function getPersianDatePartsFromUtc(date) {
   };
 }
 
-function getIslamicDatePartsFromUtc(date) {
+function getIslamicRawDatePartsFromUtc(date) {
   const parts = new Intl.DateTimeFormat('en-US-u-nu-latn', {
     timeZone: 'UTC',
     calendar: 'islamic-umalqura',
@@ -450,6 +451,34 @@ function getIslamicDatePartsFromUtc(date) {
     month: Number(values.month),
     day: Number(values.day),
   };
+}
+
+function resolveIslamicYearOffsetDays(anchor) {
+  const expectedDate = new Date(`${anchor.gregorianDate}T12:00:00Z`);
+
+  for (let offset = -3; offset <= 3; offset += 1) {
+    const candidate = addUtcDays(expectedDate, offset);
+    const parts = getIslamicRawDatePartsFromUtc(candidate);
+
+    if (parts.year === anchor.islamicYear && parts.month === 1 && parts.day === 1) {
+      return Math.round((expectedDate.getTime() - candidate.getTime()) / dayInMilliseconds);
+    }
+  }
+
+  return 0;
+}
+
+const islamicYearOffsetDays = new Map(islamicYearStartSync.map((anchor) => [anchor.islamicYear, resolveIslamicYearOffsetDays(anchor)]));
+
+function getIslamicDatePartsFromUtc(date) {
+  const rawParts = getIslamicRawDatePartsFromUtc(date);
+  const offsetDays = islamicYearOffsetDays.get(rawParts.year) || 0;
+
+  if (!offsetDays) {
+    return rawParts;
+  }
+
+  return getIslamicRawDatePartsFromUtc(addUtcDays(date, -offsetDays));
 }
 
 function addPersianMonths({ year, month }, monthOffset) {
