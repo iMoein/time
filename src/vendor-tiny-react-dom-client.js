@@ -71,6 +71,12 @@ function setAttribute(dom, name, value) {
   dom.setAttribute(name, value);
 }
 
+function syncDeferredFormValue(dom, props = {}) {
+  if (dom.tagName === 'SELECT' && props.value !== null && props.value !== undefined && dom.value !== String(props.value)) {
+    dom.value = props.value;
+  }
+}
+
 function updateProps(dom, previousProps = {}, nextProps = {}) {
   dom.__listeners ||= {};
 
@@ -171,6 +177,7 @@ function createDom(vNode, path, isSvg = false) {
 
     dom.appendChild(childDom);
   });
+  syncDeferredFormValue(dom, vNode.props);
   return dom;
 }
 
@@ -245,6 +252,7 @@ function reconcile(parent, previousVNode, nextVNode, index, path) {
   }
 
   nextVNode.children = nextChildren;
+  syncDeferredFormValue(dom, nextVNode.props);
   return nextVNode;
 }
 
