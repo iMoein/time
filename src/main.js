@@ -20,6 +20,7 @@ const defaultCities = [
 
 const savedCitiesKey = 'time-app-cities';
 const savedNtpHostKey = 'time-app-ntp-host';
+const savedLanguageKey = 'time-app-language';
 const defaultNtpHost = 'ntp.time.ir';
 const ntpServerOptions = [
   { host: 'ntp.time.ir', label: 'Iran NTP (ntp.time.ir)' },
@@ -30,6 +31,24 @@ const ntpServerOptions = [
   { host: 'time.apple.com', label: 'Apple NTP' },
   { host: 'time.windows.com', label: 'Microsoft Windows Time' },
 ];
+
+const i18n = {
+  en: {
+    language: 'Language',
+    english: 'English',
+    persian: 'فارسی',
+  },
+  fa: {
+    language: 'زبان',
+    english: 'English',
+    persian: 'فارسی',
+  },
+};
+
+function getInitialLanguage() {
+  const saved = localStorage.getItem(savedLanguageKey);
+  return saved === 'fa' ? 'fa' : 'en';
+}
 
 function toTitleCase(value) {
   return value
@@ -1339,6 +1358,8 @@ function App() {
   const [ntpSyncRequest, setNtpSyncRequest] = useState(0);
   const [draggingCityId, setDraggingCityId] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
+  const [language, setLanguage] = useState(getInitialLanguage);
+  const isFa = language === 'fa';
 
   useEffect(() => {
     const updateClock = () => setNow(new Date(Date.now() + timeOffset));
@@ -1354,6 +1375,12 @@ function App() {
   useEffect(() => {
     localStorage.setItem(savedNtpHostKey, ntpHost);
   }, [ntpHost]);
+
+  useEffect(() => {
+    localStorage.setItem(savedLanguageKey, language);
+    document.documentElement.lang = language;
+    document.documentElement.dir = isFa ? 'rtl' : 'ltr';
+  }, [isFa, language]);
 
   useEffect(() => {
     if (!activeCityIds.includes(selectedCityId)) {
@@ -1446,6 +1473,26 @@ function App() {
 
     document.title = `${selectedCity.label} · ${selectedCity.time}`;
   }, [selectedCity]);
+
+  const numberLocale = isFa ? 'fa-IR-u-nu-arabext' : 'en-US';
+  const formatLocaleNumber = (value) => new Intl.NumberFormat(numberLocale).format(value);
+  const t = i18n[language];
+  const selectedCityView = selectedCity
+    ? {
+      ...selectedCity,
+      time: new Intl.DateTimeFormat(numberLocale, {
+        timeZone: selectedCity.timeZone,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hourCycle: 'h23',
+      }).format(now),
+      gregorianYear: formatLocaleNumber(selectedCity.gregorianYear),
+      persianYear: formatLocaleNumber(selectedCity.persianYear),
+      gregorianWeek: formatLocaleNumber(selectedCity.gregorianWeek),
+      jalaliWeek: formatLocaleNumber(selectedCity.jalaliWeek),
+    }
+    : selectedCity;
 
   const activeIdSet = useMemo(() => new Set(activeCityIds), [activeCityIds]);
   const searchResults = useMemo(() => {
@@ -1578,14 +1625,28 @@ function App() {
 
   return h(
     'main',
-    { className: 'page-shell', 'aria-label': `Current time in ${selectedCity.label}` },
+    { className: `page-shell${isFa ? ' page-shell--rtl' : ''}`, 'aria-label': `Current time in ${selectedCityView.label}` },
     h(
       'section',
-      { className: 'hero-panel', style: { '--accent': selectedCity.accent } },
+      { className: 'hero-panel', style: { '--accent': selectedCityView.accent } },
       h(
         'div',
         { className: 'top-bar' },
-        h('p', { className: 'eyebrow' }, 'Time in ', h('strong', null, selectedCity.label), `, ${selectedCity.country} now`),
+        h('p', { className: 'eyebrow' }, 'Time in ', h('strong', null, selectedCityView.label), `, ${selectedCityView.country} now`),
+        h(
+          'label',
+          { className: 'language-picker' },
+          h('span', null, t.language),
+          h(
+            'select',
+            {
+              value: language,
+              onChange: (event) => setLanguage(event.target.value),
+            },
+            h('option', { value: 'en' }, t.english),
+            h('option', { value: 'fa' }, t.persian),
+          ),
+        ),
         h(
           'button',
           {
@@ -1605,16 +1666,16 @@ function App() {
       h(
         'div',
         { className: 'hero-content' },
-        h('h1', { className: 'clock', 'aria-live': 'polite' }, selectedCity.time),
+        h('h1', { className: 'clock', 'aria-live': 'polite' }, selectedCityView.time),
         h(
           'div',
           { className: 'hero-meta', 'aria-label': 'Calendar details' },
-          h(InfoPill, { label: 'Weekday', value: selectedCity.weekday }),
+          h(InfoPill, { label: 'Weekday', value: selectedCityView.weekday }),
           h(SplitPill, {
             label: 'Years',
             items: [
-              { label: 'Gregorian', value: selectedCity.gregorianYear },
-              { label: 'Solar Hijri', value: selectedCity.persianYear },
+              { label: 'Gregorian', value: selectedCityView.gregorianYear },
+              { label: 'Solar Hijri', value: selectedCityView.persianYear },
             ],
           }),
           h(SplitPill, {
@@ -1629,8 +1690,8 @@ function App() {
             label: 'Week of year',
             wide: true,
             items: [
-              { label: 'Gregorian', value: `Week ${selectedCity.gregorianWeek}` },
-              { label: 'Solar Hijri', value: `Week ${selectedCity.jalaliWeek}` },
+              { label: 'Gregorian', value: `Week ${selectedCityView.gregorianWeek}` },
+              { label: 'Solar Hijri', value: `Week ${selectedCityView.jalaliWeek}` },
             ],
           }),
         ),
@@ -1639,10 +1700,10 @@ function App() {
     h(
       'section',
       { className: 'solar-timezone-grid', 'aria-label': 'Sun status and timezone management' },
-      h(DayNightCard, { city: selectedCity }),
+      h(DayNightCard, { city: selectedCityView }),
       h(TimezoneManager, {
         cities: activeSnapshots,
-        selectedCityId: selectedCity.id,
+        selectedCityId: selectedCityView.id,
         editMode,
         searchQuery,
         searchResults,
@@ -1657,7 +1718,7 @@ function App() {
         onSelect: setSelectedCityId,
       }),
     ),
-    h(MonthlyCalendarCard, { city: selectedCity }),
+    h(MonthlyCalendarCard, { city: selectedCityView }),
     h(
       'section',
       { className: 'switcher-panel ntp-panel', 'aria-label': 'NTP server settings' },
