@@ -1458,42 +1458,6 @@ button {
   white-space: nowrap;
 }
 
-.ntp-status__metrics {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.4rem;
-  margin: 0.25rem 0 0;
-}
-
-.ntp-status__metrics div {
-  min-width: 0;
-  border-radius: 0.75rem;
-  padding: 0.45rem 0.55rem;
-  background: rgba(255, 255, 255, 0.58);
-}
-
-.ntp-status__metrics dt,
-.ntp-status__metrics dd {
-  margin: 0;
-}
-
-.ntp-status__metrics dt {
-  color: currentColor;
-  font-size: 0.62rem;
-  font-weight: 950;
-  letter-spacing: 0.08em;
-  opacity: 0.72;
-  text-transform: uppercase;
-}
-
-.ntp-status__metrics dd {
-  overflow: hidden;
-  color: currentColor;
-  font-weight: 950;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .ntp-status--ntp {
   background: rgba(220, 252, 231, 0.9);
   color: #166534;
@@ -1511,9 +1475,12 @@ button {
 }
 
 .settings-actions {
-  display: grid;
+  display: flex;
+  grid-column: 1 / -1;
   gap: 0.46rem;
-  align-content: center;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 0.18rem;
 }
 
 .settings-actions .edit-toggle,
@@ -1828,7 +1795,7 @@ button {
   }
 
   .settings-actions {
-    grid-template-columns: repeat(2, minmax(0, auto));
+    grid-template-columns: none;
     justify-content: flex-start;
   }
 
