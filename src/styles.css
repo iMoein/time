@@ -165,7 +165,7 @@ button {
   color: #111827;
   max-width: 100%;
   overflow: hidden;
-  font-size: clamp(5.8rem, 9.8vw, 11.25rem);
+  font-size: clamp(5.8rem, 9.8vw, 10.25rem);
   font-weight: 950;
   letter-spacing: -0.08em;
   line-height: 0.86;
@@ -1420,6 +1420,42 @@ button {
   color: #475569;
   font-size: 0.86rem;
   font-weight: 740;
+}
+
+.ntp-status__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin: 0.25rem 0 0;
+}
+
+.ntp-status__metrics div {
+  min-width: 0;
+  border-radius: 0.75rem;
+  padding: 0.45rem 0.55rem;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.ntp-status__metrics dt,
+.ntp-status__metrics dd {
+  margin: 0;
+}
+
+.ntp-status__metrics dt {
+  color: currentColor;
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+  text-transform: uppercase;
+}
+
+.ntp-status__metrics dd {
+  overflow: hidden;
+  color: currentColor;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ntp-status__metrics {
