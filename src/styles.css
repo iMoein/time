@@ -367,15 +367,13 @@ button {
   border-radius: 0.95rem;
   background: rgba(248, 250, 252, 0.86);
   color: #172033;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+  transition: transform 180ms ease, border-color 180ms ease, opacity 180ms ease;
 }
 
 .timezone-row:hover,
 .timezone-row.selected {
   border-color: rgba(37, 99, 235, 0.34);
   border-left-color: var(--accent);
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.1);
   transform: translateY(-1px);
 }
 
