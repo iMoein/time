@@ -539,9 +539,10 @@ function formatNumericCalendarTitle(date, calendarId) {
   return `${year} / ${formatNumber(month)}`;
 }
 
-function formatSelectedCalendarDate(date, calendarId) {
+function formatSelectedCalendarDate(date, calendarId, language = 'en') {
   const { year, month, day } = getCalendarPartsFromUtc(date, calendarId);
-  const weekday = new Intl.DateTimeFormat('en-US-u-nu-latn', {
+  const locale = language === 'fa' ? 'fa-IR-u-nu-latn' : 'en-US-u-nu-latn';
+  const weekday = new Intl.DateTimeFormat(locale, {
     timeZone: 'UTC',
     calendar: calendarId === 'gregorian' ? 'gregory' : 'persian',
     weekday: 'long',
@@ -768,7 +769,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     monthOptions: getCalendarMonthOptions(primaryCalendar),
     yearValue: primaryParts.year,
     yearOptions: buildYearOptions(primaryParts.year),
-    selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, primaryCalendar),
+    selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, primaryCalendar, language),
     days,
     occasions: getMonthOccasionGroups(days, primaryCalendar),
   };
@@ -1254,8 +1255,8 @@ function MonthlyCalendarCard({ city, t, language }) {
           'div',
           { className: 'monthly-calendar__mode', 'aria-label': t.choose_primary_calendar },
           [
-            { id: 'persian', label: 'Solar Hijri', shortLabel: 'Solar' },
-            { id: 'gregorian', label: 'Gregorian', shortLabel: 'Gregorian' },
+            { id: 'persian', label: t.solar_hijri, shortLabel: t.solar_hijri },
+            { id: 'gregorian', label: t.gregorian, shortLabel: t.gregorian },
           ].map((option) => h(
             'button',
             {
