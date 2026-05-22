@@ -1,4 +1,16 @@
 :root {
+  --font-fa: "IRANSansXFaNum";
+}
+
+@font-face {
+  font-family: "IRANSansXFaNum";
+  src: url("/src/IRANSansXFaNum-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
   color: #162033;
   background: #eef3fb;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -66,20 +78,35 @@ button {
 }
 
 .language-picker {
-  display: inline-grid;
+  display: grid;
   gap: 0.25rem;
   color: #334155;
   font-size: 0.75rem;
   font-weight: 700;
 }
 
-.language-picker select {
-  min-height: 2rem;
+.language-picker__segmented {
+  display: inline-flex;
   border: 1px solid rgba(148, 163, 184, 0.5);
+  border-radius: 0.75rem;
+  padding: 0.12rem;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.language-picker__segmented button {
+  min-width: 4.25rem;
+  min-height: 2rem;
   border-radius: 0.6rem;
-  padding: 0.2rem 0.5rem;
-  background: rgba(255, 255, 255, 0.8);
-  color: #0f172a;
+  padding: 0.25rem 0.6rem;
+  background: transparent;
+  color: #334155;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.language-picker__segmented button.selected {
+  background: #0f172a;
+  color: #fff;
 }
 
 .page-shell--rtl {

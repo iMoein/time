@@ -738,7 +738,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
   return {
     id: primaryCalendar,
     secondaryId: secondaryCalendar,
-    eyebrow: 'Synced monthly calendar',
+    eyebrow: t.synced_monthly_calendar,
     title: formatCalendarMonthTitle(monthStart, primaryCalendar),
     secondaryTitle: formatCalendarMonthTitle(monthStart, secondaryCalendar),
     weekdays: primaryCalendar === 'persian' ? persianWeekdays : gregorianWeekdays,
@@ -1107,7 +1107,7 @@ function DayNightCard({ city, t }) {
 }
 
 
-function MonthlyCalendarCard({ city }) {
+function MonthlyCalendarCard({ city, t }) {
   const todayKey = getCalendarDateKey(city.cityDate);
   const [primaryCalendar, setPrimaryCalendar] = useState('persian');
   const [monthOffset, setMonthOffset] = useState(0);
@@ -1119,12 +1119,12 @@ function MonthlyCalendarCard({ city }) {
   } catch (error) {
     return h(
       'section',
-      { className: 'monthly-calendars monthly-calendars--error', 'aria-label': 'Calendar loading issue' },
+      { className: 'monthly-calendars monthly-calendars--error', 'aria-label': t.calendar_loading_issue },
       h(
         'article',
         { className: 'monthly-calendar monthly-calendar--error' },
-        h('strong', null, 'Calendar is temporarily unavailable'),
-        h('p', null, error?.message || 'The clock is still available while the calendar recovers.'),
+        h('strong', null, t.calendar_unavailable),
+        h('p', null, error?.message || t.calendar_recovery),
       ),
     );
   }
@@ -1183,7 +1183,7 @@ function MonthlyCalendarCard({ city }) {
             h(
               'label',
               { className: 'monthly-calendar__filter' },
-              h('span', null, 'Month'),
+              h('span', null, t.month),
               h(
                 'select',
                 {
@@ -1196,7 +1196,7 @@ function MonthlyCalendarCard({ city }) {
             h(
               'label',
               { className: 'monthly-calendar__filter' },
-              h('span', null, 'Year'),
+              h('span', null, t.year),
               h(
                 'select',
                 {
@@ -1210,15 +1210,15 @@ function MonthlyCalendarCard({ city }) {
           h(
             'div',
             { className: 'monthly-calendar__actions', 'aria-label': `${calendar.title} navigation` },
-            h('button', { type: 'button', onClick: () => moveMonth(-1), 'aria-label': 'Previous month' }, '‹'),
-            h('button', { type: 'button', onClick: resetMonth }, 'Today'),
-            h('button', { type: 'button', onClick: () => moveMonth(1), 'aria-label': 'Next month' }, '›'),
+            h('button', { type: 'button', onClick: () => moveMonth(-1), 'aria-label': t.previous_month }, '‹'),
+            h('button', { type: 'button', onClick: resetMonth }, t.today),
+            h('button', { type: 'button', onClick: () => moveMonth(1), 'aria-label': t.next_month }, '›'),
           ),
         ),
-        h('small', null, `Inside: ${calendar.secondaryTitle} · Selected: ${calendar.selectedLabel}`),
+        h('small', null, `${t.inside}: ${calendar.secondaryTitle} · ${t.selected}: ${calendar.selectedLabel}`),
         h(
           'div',
-          { className: 'monthly-calendar__mode', 'aria-label': 'Choose primary calendar' },
+          { className: 'monthly-calendar__mode', 'aria-label': t.choose_primary_calendar },
           [
             { id: 'persian', label: 'Solar Hijri', shortLabel: 'Solar' },
             { id: 'gregorian', label: 'Gregorian', shortLabel: 'Gregorian' },
@@ -1272,9 +1272,9 @@ function MonthlyCalendarCard({ city }) {
       h(
         'header',
         null,
-        h('span', null, 'Month occasions'),
+        h('span', null, t.month_occasions),
         h('strong', null, calendar.title),
-        h('small', null, `Iran + International + Islamic occasions · ${calendar.occasions.length} days`),
+        h('small', null, `${t.occasions_summary} · ${calendar.occasions.length} ${t.days}`),
       ),
       calendar.occasions.length > 0
         ? h(
@@ -1301,7 +1301,7 @@ function MonthlyCalendarCard({ city }) {
             ),
           )),
         )
-        : h('p', { className: 'monthly-occasions__empty' }, 'No fixed Iran or international occasion is listed for this month.'),
+        : h('p', { className: 'monthly-occasions__empty' }, t.no_occasions),
     ),
   );
 }
@@ -1342,7 +1342,7 @@ function App() {
   const [editMode, setEditMode] = useState(false);
   const [ntpHost, setNtpHost] = useState(getInitialNtpHost);
   const [ntpHostInput, setNtpHostInput] = useState(ntpHost);
-  const [ntpStatus, setNtpStatus] = useState({ kind: 'local', label: 'Local clock', detail: 'Using this device until NTP sync succeeds.', host: ntpHost, delay: 'Not measured' });
+  const [ntpStatus, setNtpStatus] = useState({ kind: 'local', label: i18n.en.local_clock, detail: i18n.en.using_device_clock, host: ntpHost, delay: i18n.en.not_measured });
   const [ntpSyncRequest, setNtpSyncRequest] = useState(0);
   const [draggingCityId, setDraggingCityId] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
@@ -1389,11 +1389,11 @@ function App() {
     const syncNtp = async () => {
       if (!navigator.onLine) {
         setTimeOffset(0);
-        setNtpStatus({ kind: 'offline', label: 'Offline', detail: 'No internet detected; using this device clock.', host: ntpHost, delay: 'Offline' });
+        setNtpStatus({ kind: 'offline', label: t.offline, detail: t.no_internet, host: ntpHost, delay: t.offline });
         return;
       }
 
-      setNtpStatus({ kind: 'syncing', label: 'Syncing NTP', detail: `Reading ${ntpHost}...`, host: ntpHost, delay: 'Measuring...' });
+      setNtpStatus({ kind: 'syncing', label: t.syncing_ntp, detail: `${t.reading} ${ntpHost}...`, host: ntpHost, delay: t.measuring });
       const startedAt = Date.now();
 
       try {
@@ -1402,7 +1402,7 @@ function App() {
         const endedAt = Date.now();
 
         if (!response.ok) {
-          throw new Error(data.error || 'NTP sync failed.');
+          throw new Error(data.error || t.ntp_sync_failed);
         }
 
         if (ignore) {
@@ -1413,8 +1413,8 @@ function App() {
         setTimeOffset(data.time - midpoint);
         setNtpStatus({
           kind: 'ntp',
-          label: 'Synced with NTP',
-          detail: `${data.host} connected successfully.`,
+          label: t.synced_with_ntp,
+          detail: `${data.host} ${t.connected_successfully}` ,
           host: data.host,
           delayMs: Math.round(endedAt - startedAt),
         });
@@ -1426,8 +1426,8 @@ function App() {
         setTimeOffset(0);
         setNtpStatus({
           kind: 'error',
-          label: 'NTP unavailable',
-          detail: `${error.message || 'Could not sync.'} Using this device clock.`,
+          label: t.ntp_unavailable,
+          detail: `${error.message || t.could_not_sync} ${t.using_device_clock_fallback}` ,
           host: ntpHost,
           delay: 'Failed',
         });
@@ -1565,7 +1565,7 @@ function App() {
     const nextHost = ntpHostInput.trim();
 
     if (!nextHost) {
-      setNtpStatus({ kind: 'error', label: 'NTP host required', detail: 'Enter a hostname like ntp.time.ir.', host: ntpHost, delay: 'Not measured' });
+      setNtpStatus({ kind: 'error', label: t.ntp_host_required, detail: t.enter_hostname, host: ntpHost, delay: t.not_measured });
       return;
     }
 
@@ -1621,18 +1621,11 @@ function App() {
         'div',
         { className: 'top-bar' },
         h('p', { className: 'eyebrow' }, `${t.time_in} `, h('strong', null, selectedCityView.label), `، ${selectedCityView.country} ${t.now_suffix}`),
-        h(
-          'label',
-          { className: 'language-picker' },
+        h('div', { className: 'language-picker', role: 'group', 'aria-label': t.language },
           h('span', null, t.language),
-          h(
-            'select',
-            {
-              value: language,
-              onChange: (event) => setLanguage(event.target.value),
-            },
-            h('option', { value: 'en' }, t.english),
-            h('option', { value: 'fa' }, t.persian),
+          h('div', { className: 'language-picker__segmented' },
+            h('button', { type: 'button', className: language === 'en' ? 'selected' : '', onClick: () => setLanguage('en'), 'aria-pressed': language === 'en' }, t.english),
+            h('button', { type: 'button', className: language === 'fa' ? 'selected' : '', onClick: () => setLanguage('fa'), 'aria-pressed': language === 'fa' }, t.persian),
           ),
         ),
         h(
@@ -1657,7 +1650,7 @@ function App() {
         h('h1', { className: 'clock', 'aria-live': 'polite' }, selectedCityView.time),
         h(
           'div',
-          { className: 'hero-meta', 'aria-label': 'Calendar details' },
+          { className: 'hero-meta', 'aria-label': t.calendar_details },
           h(InfoPill, { label: t.weekday, value: selectedCityView.weekday }),
           h(SplitPill, {
             label: t.years,
@@ -1687,7 +1680,7 @@ function App() {
     ),
     h(
       'section',
-      { className: 'solar-timezone-grid', 'aria-label': 'Sun status and timezone management' },
+      { className: 'solar-timezone-grid', 'aria-label': t.sun_status_timezone },
       h(DayNightCard, { city: selectedCityView, t }),
       h(TimezoneManager, {
         cities: activeSnapshots,
@@ -1707,7 +1700,7 @@ function App() {
         onSelect: setSelectedCityId,
       }),
     ),
-    h(MonthlyCalendarCard, { city: selectedCityView }),
+    h(MonthlyCalendarCard, { city: selectedCityView, t }),
     h(
       'section',
       { className: 'switcher-panel ntp-panel', 'aria-label': t.ntp_settings },
@@ -1726,7 +1719,7 @@ function App() {
 }
 
 
-function renderFallbackError(error) {
+function renderFallbackError(error, t = i18n.en) {
   const rootElement = document.getElementById('root');
 
   if (!rootElement) {
@@ -1736,9 +1729,9 @@ function renderFallbackError(error) {
   rootElement.innerHTML = `
     <main class="page-shell page-shell--error">
       <section class="app-error-panel">
-        <p>Time app could not start.</p>
+        <p>${t.app_start_failed}</p>
         <strong>${error?.message || 'Unknown error'}</strong>
-        <small>Please refresh the page or clear the browser cache.</small>
+        <small>${t.refresh_or_clear_cache}</small>
       </section>
     </main>
   `;
@@ -1747,5 +1740,5 @@ function renderFallbackError(error) {
 try {
   createRoot(document.getElementById('root')).render(h(App));
 } catch (error) {
-  renderFallbackError(error);
+  renderFallbackError(error, i18n[(localStorage.getItem(savedLanguageKey) === 'fa' ? 'fa' : 'en')] || i18n.en);
 }
