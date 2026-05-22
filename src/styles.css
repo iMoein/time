@@ -137,6 +137,10 @@ button {
   font-weight: 950;
 }
 
+:root[lang="fa"] .eyebrow strong {
+  font-weight: 980;
+}
+
 .hero-content {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(20rem, 24rem);
@@ -156,6 +160,10 @@ button {
   line-height: 0.86;
   text-shadow: 0.035em 0.035em 0 rgba(148, 163, 184, 0.15);
   white-space: nowrap;
+}
+
+:root[lang="fa"] .clock {
+  font-weight: 980;
 }
 
 .hero-meta {
@@ -618,15 +626,16 @@ button {
 
 .day-night-card__row strong {
   color: #fff;
-  font-size: clamp(0.66rem, 0.82vw, 0.76rem);
+  font-size: clamp(0.62rem, 0.74vw, 0.7rem);
   font-weight: 950;
 }
 
 .day-night-card__row span {
   color: rgba(248, 250, 252, 0.62);
-  font-size: clamp(0.86rem, 1.35vw, 1.12rem);
+  font-size: clamp(0.76rem, 1.05vw, 0.92rem);
   font-weight: 850;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 
 
