@@ -290,9 +290,9 @@ button {
 }
 
 .split-pill__item + .split-pill__item {
-  margin-left: 0.55rem;
-  padding-left: 0.55rem;
-  border-left: 1px solid rgba(148, 163, 184, 0.28);
+  margin-inline-start: 0.55rem;
+  padding-inline-start: 0.55rem;
+  border-inline-start: 1px solid rgba(148, 163, 184, 0.28);
 }
 
 .split-pill__item small {
@@ -306,8 +306,8 @@ button {
 }
 
 .split-pill:not(.split-pill--wide) .split-pill__item + .split-pill__item {
-  margin-left: 0.42rem;
-  padding-left: 0.42rem;
+  margin-inline-start: 0.42rem;
+  padding-inline-start: 0.42rem;
 }
 
 .split-pill:not(.split-pill--wide) .split-pill__item small {
