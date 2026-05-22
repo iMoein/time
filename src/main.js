@@ -686,19 +686,26 @@ function formatCompactCalendarDate(date, calendarId) {
   return { day, month: formatNumber(month) };
 }
 
-function getDateOccasions(date) {
+function getLocalizedOccasionTitle(event, language) {
+  if (language === 'fa') {
+    return event.title_fa || event.fa || event.title;
+  }
+  return event.title_en || event.en || event.title;
+}
+
+function getDateOccasions(date, language, t) {
   const gregorianParts = getCalendarPartsFromUtc(date, 'gregorian');
   const persianParts = getCalendarPartsFromUtc(date, 'persian');
   const islamicParts = getIslamicDatePartsFromUtc(date);
   const internationalEvents = internationalOccasions
     .filter((event) => event.month === gregorianParts.month && event.day === gregorianParts.day)
-    .map((event) => ({ ...event, calendar: 'International', dateLabel: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` }));
+    .map((event) => ({ ...event, title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_international, dateLabel: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` }));
   const iranEvents = iranOccasions
     .filter((event) => event.month === persianParts.month && event.day === persianParts.day)
-    .map((event) => ({ ...event, calendar: 'Iran', dateLabel: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` }));
+    .map((event) => ({ ...event, title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_iran, dateLabel: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` }));
   const islamicEvents = iranIslamicOccasions
     .filter((event) => event.month === islamicParts.month && event.day === islamicParts.day)
-    .map((event) => ({ ...event, calendar: 'Iran Islamic', dateLabel: `${islamicParts.day}/${islamicParts.month} AH` }));
+    .map((event) => ({ ...event, title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_islamic, dateLabel: `${islamicParts.day}/${islamicParts.month} AH` }));
 
   return [...iranEvents, ...islamicEvents, ...internationalEvents];
 }
@@ -734,7 +741,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
       dateKey,
       primaryDate,
       secondaryDate: formatCompactCalendarDate(dayDate, secondaryCalendar),
-      events: getDateOccasions(dayDate),
+      events: getDateOccasions(dayDate, language, t),
       isOutsideMonth: dayPrimaryParts.year !== primaryParts.year || dayPrimaryParts.month !== primaryParts.month,
       isToday: isSameUtcDay(dayDate, cityDate),
       isSelected: selectedDateKey === dateKey,
@@ -1066,6 +1073,14 @@ function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, search
 
 function DayNightCard({ city, t }) {
   const timeline = city.dayNight;
+  const localizedStatus = timeline.status === 'Twilight'
+    ? t.twilight
+    : timeline.status === 'Night remaining'
+      ? t.night_remaining
+      : timeline.status === 'Daylight remaining'
+        ? t.daylight_remaining
+        : timeline.status;
+  const localizedEventLabel = timeline.eventLabel === 'Sunrise' ? t.sunrise : timeline.eventLabel === 'Sunset' ? t.sunset : timeline.eventLabel;
 
   return h(
     'section',
@@ -1074,8 +1089,8 @@ function DayNightCard({ city, t }) {
       'div',
       { className: 'day-night-card__header' },
       h('span', { className: 'day-night-card__icon', 'aria-hidden': 'true' }, timeline.isDaylight ? '☀️' : timeline.isTwilight ? '🌅' : '🌙'),
-      h('div', null, h('span', null, timeline.eventLabel), h('strong', null, timeline.eventTime)),
-      h('p', null, `${timeline.status}: ${timeline.remaining}${timeline.isEstimated ? ` · ${t.estimated}` : ''}`),
+      h('div', null, h('span', null, localizedEventLabel), h('strong', null, timeline.eventTime)),
+      h('p', null, `${localizedStatus}: ${timeline.remaining}${timeline.isEstimated ? ` · ${t.estimated}` : ''}`),
     ),
     h(
       'div',
@@ -1632,27 +1647,28 @@ function App() {
         'div',
         { className: 'top-bar' },
         h('p', { className: 'eyebrow' }, language === 'fa' ? `${t.time_in} ${selectedCityView.country}، ` : `${t.time_in} `, h('strong', null, selectedCityView.label), language === 'fa' ? ` ${t.now_suffix}` : `, ${selectedCityView.country} ${t.now_suffix}`),
-        h('div', { className: 'language-picker', role: 'group', 'aria-label': t.language },
-          h('span', null, t.language),
-          h('div', { className: 'language-picker__segmented' },
-            h('button', { type: 'button', className: language === 'en' ? 'selected' : '', onClick: () => setLanguage('en'), 'aria-pressed': language === 'en' }, t.english),
-            h('button', { type: 'button', className: language === 'fa' ? 'selected' : '', onClick: () => setLanguage('fa'), 'aria-pressed': language === 'fa' }, t.persian),
+        h('div', { className: 'top-bar__controls' },
+          h('div', { className: 'language-picker', role: 'group', 'aria-label': t.language },
+            h('div', { className: 'language-picker__segmented' },
+              h('button', { type: 'button', className: language === 'en' ? 'selected' : '', onClick: () => setLanguage('en'), 'aria-pressed': language === 'en' }, t.english),
+              h('button', { type: 'button', className: language === 'fa' ? 'selected' : '', onClick: () => setLanguage('fa'), 'aria-pressed': language === 'fa' }, t.persian),
+            ),
           ),
-        ),
-        h(
-          'button',
-          {
-            type: 'button',
-            className: 'fullscreen-button',
-            onClick: toggleFullscreen,
-            disabled: !fullscreenSupported,
-            'aria-pressed': isFullscreen,
-            title: fullscreenSupported ? fullscreenLabel : t.fullscreen_unsupported,
-            'aria-label': fullscreenSupported ? fullscreenLabel : t.fullscreen_unsupported,
-          },
-          h('span', { className: 'fullscreen-button__icon', 'aria-hidden': 'true' }, isFullscreen ? '↙' : '↗'),
-          h('span', { className: 'fullscreen-button__copy' }, fullscreenLabel),
-          h('span', { className: 'fullscreen-button__hint', 'aria-hidden': 'true' }, isFullscreen ? 'Esc' : 'View'),
+          h(
+            'button',
+            {
+              type: 'button',
+              className: 'fullscreen-button',
+              onClick: toggleFullscreen,
+              disabled: !fullscreenSupported,
+              'aria-pressed': isFullscreen,
+              title: fullscreenSupported ? fullscreenLabel : t.fullscreen_unsupported,
+              'aria-label': fullscreenSupported ? fullscreenLabel : t.fullscreen_unsupported,
+            },
+            h('span', { className: 'fullscreen-button__icon', 'aria-hidden': 'true' }, isFullscreen ? '↙' : '↗'),
+            h('span', { className: 'fullscreen-button__copy' }, fullscreenLabel),
+            h('span', { className: 'fullscreen-button__hint', 'aria-hidden': 'true' }, isFullscreen ? 'Esc' : 'View'),
+          ),
         ),
       ),
       h(

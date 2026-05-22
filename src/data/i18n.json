@@ -75,7 +75,13 @@
     "ntp_host_required": "NTP host required",
     "enter_hostname": "Enter a hostname like ntp.time.ir.",
     "app_start_failed": "Time app could not start.",
-    "refresh_or_clear_cache": "Please refresh the page or clear the browser cache."
+    "refresh_or_clear_cache": "Please refresh the page or clear the browser cache.",
+    "night_remaining": "Night remaining",
+    "daylight_remaining": "Daylight remaining",
+    "twilight": "Twilight",
+    "calendar_iran": "Iran",
+    "calendar_islamic": "Iran Islamic",
+    "calendar_international": "International"
   },
   "fa": {
     "language": "زبان",
@@ -153,6 +159,12 @@
     "ntp_host_required": "نام میزبان NTP لازم است",
     "enter_hostname": "یک hostname مثل ntp.time.ir وارد کنید.",
     "app_start_failed": "برنامه زمان اجرا نشد.",
-    "refresh_or_clear_cache": "لطفاً صفحه را نوسازی کنید یا کش مرورگر را پاک کنید."
+    "refresh_or_clear_cache": "لطفاً صفحه را نوسازی کنید یا کش مرورگر را پاک کنید.",
+    "night_remaining": "باقی‌مانده شب",
+    "daylight_remaining": "باقی‌مانده روز",
+    "twilight": "گرگ‌ومیش",
+    "calendar_iran": "ایران",
+    "calendar_islamic": "اسلامی ایران",
+    "calendar_international": "جهانی"
   }
 }
