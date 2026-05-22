@@ -74,6 +74,12 @@ const allCities = getAllCities();
 const allCityIds = new Set(allCities.map((city) => city.id));
 const defaultCityIds = defaultCities.map((city) => city.id);
 
+const cityTranslations = { tehran: { fa: 'تهران' }, 'los-angeles': { fa: 'لس‌آنجلس' }, london: { fa: 'لندن' }, paris: { fa: 'پاریس' }, tokyo: { fa: 'توکیو' }, dubai: { fa: 'دبی' } };
+const countryTranslations = { Iran: { fa: 'ایران' }, 'United States': { fa: 'ایالات متحده' }, 'United Kingdom': { fa: 'بریتانیا' }, France: { fa: 'فرانسه' }, Japan: { fa: 'ژاپن' }, 'United Arab Emirates': { fa: 'امارات' } };
+const faTimeOfDay = { dawn: 'صبح خیلی زود', morning: 'صبح', noon: 'ظهر', afternoon: 'بعدازظهر', evening: 'عصر', night: 'شب' };
+function getLocalizedWeekdays(calendar, language) { if (language !== 'fa') return calendar === 'persian' ? persianWeekdays : gregorianWeekdays; return calendar === 'persian' ? ['ش','ی','د','س','چ','پ','ج'] : ['د','س','چ','پ','ج','ش','ی']; }
+
+
 function getInitialNtpHost() {
   return localStorage.getItem(savedNtpHostKey) || defaultNtpHost;
 }
@@ -710,7 +716,7 @@ function getMonthOccasionGroups(days, primaryCalendar) {
     }));
 }
 
-function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey, t) {
+function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language) {
   const secondaryCalendar = primaryCalendar === 'gregorian' ? 'persian' : 'gregorian';
   const monthStart = getCalendarMonthStart(cityDate, primaryCalendar, monthOffset);
   const primaryParts = getCalendarPartsFromUtc(monthStart, primaryCalendar);
@@ -741,7 +747,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     eyebrow: t.synced_monthly_calendar,
     title: formatCalendarMonthTitle(monthStart, primaryCalendar),
     secondaryTitle: formatCalendarMonthTitle(monthStart, secondaryCalendar),
-    weekdays: primaryCalendar === 'persian' ? persianWeekdays : gregorianWeekdays,
+    weekdays: getLocalizedWeekdays(primaryCalendar === 'persian' ? 'persian' : 'gregorian', language),
     monthValue: primaryParts.month,
     monthOptions: getCalendarMonthOptions(primaryCalendar),
     yearValue: primaryParts.year,
@@ -803,17 +809,22 @@ function getTimeOfDay(numericHour) {
   return { id: 'night', label: 'Night' };
 }
 
-function getCitySnapshot(now, city) {
+function getCitySnapshot(now, city, language) {
   const cityDate = getCityDate(now, city.timeZone);
   const gregorianParts = getZonedDateParts(now, city.timeZone);
   const persianParts = getPersianDateParts(now, city.timeZone);
-  const gregorianDate = formatMonthDay(now, city.timeZone);
-  const persianDate = formatMonthDay(now, city.timeZone, 'en-US-u-nu-latn', 'persian');
+  const gregorianDate = formatMonthDay(now, city.timeZone, language === 'fa' ? 'fa-IR' : 'en-US');
+  const persianDate = formatMonthDay(now, city.timeZone, language === 'fa' ? 'fa-IR' : 'en-US-u-nu-latn', 'persian');
   const { hour } = getTimeParts(now, city.timeZone);
   const timeOfDay = getTimeOfDay(Number(hour));
 
+  const cityLabel = language === 'fa' ? (cityTranslations[city.id]?.fa || city.label) : city.label;
+  const countryLabel = language === 'fa' ? (countryTranslations[city.country]?.fa || city.country) : city.country;
+
   return {
     ...city,
+    label: cityLabel,
+    country: countryLabel,
     time: formatTime(now, city.timeZone),
     shortTime: formatTime(now, city.timeZone, false),
     shortDate: new Intl.DateTimeFormat('en-US', {
@@ -825,14 +836,14 @@ function getCitySnapshot(now, city) {
     persianDate,
     gregorianYear: gregorianParts.year,
     persianYear: persianParts.year,
-    weekday: formatWeekday(now, city.timeZone),
+    weekday: new Intl.DateTimeFormat(language === 'fa' ? 'fa-IR' : 'en-US', { timeZone: city.timeZone, weekday: 'long' }).format(now),
     cityDate,
     gregorianWeek: getWeekNumber(cityDate),
     gregorianWeekDays: getWeeklyCalendar(now, city.timeZone, 'gregorian'),
     jalaliWeek: getPersianWeekNumber(now, city.timeZone),
     persianWeekDays: getWeeklyCalendar(now, city.timeZone, 'persian'),
     timeOfDay: timeOfDay.id,
-    timeOfDayLabel: timeOfDay.label,
+    timeOfDayLabel: language === 'fa' ? (faTimeOfDay[timeOfDay.id] || timeOfDay.label) : timeOfDay.label,
     dayNight: getDayNightData(now, city),
   };
 }
@@ -1107,7 +1118,7 @@ function DayNightCard({ city, t }) {
 }
 
 
-function MonthlyCalendarCard({ city, t }) {
+function MonthlyCalendarCard({ city, t, language }) {
   const todayKey = getCalendarDateKey(city.cityDate);
   const [primaryCalendar, setPrimaryCalendar] = useState('persian');
   const [monthOffset, setMonthOffset] = useState(0);
@@ -1115,7 +1126,7 @@ function MonthlyCalendarCard({ city, t }) {
   let calendar = null;
 
   try {
-    calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t);
+    calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language);
   } catch (error) {
     return h(
       'section',
@@ -1451,7 +1462,7 @@ function App() {
     () => activeCityIds.map((id) => allCities.find((city) => city.id === id)).filter(Boolean),
     [activeCityIds],
   );
-  const activeSnapshots = useMemo(() => activeCities.map((city) => getCitySnapshot(now, city)), [activeCities, now]);
+  const activeSnapshots = useMemo(() => activeCities.map((city) => getCitySnapshot(now, city, language)), [activeCities, now, language]);
   const selectedCity = activeSnapshots.find((city) => city.id === selectedCityId) || activeSnapshots[0];
 
   useEffect(() => {
@@ -1620,7 +1631,7 @@ function App() {
       h(
         'div',
         { className: 'top-bar' },
-        h('p', { className: 'eyebrow' }, `${t.time_in} `, h('strong', null, selectedCityView.label), `، ${selectedCityView.country} ${t.now_suffix}`),
+        h('p', { className: 'eyebrow' }, language === 'fa' ? `${t.time_in} ${selectedCityView.country}، ` : `${t.time_in} `, h('strong', null, selectedCityView.label), language === 'fa' ? ` ${t.now_suffix}` : `, ${selectedCityView.country} ${t.now_suffix}`),
         h('div', { className: 'language-picker', role: 'group', 'aria-label': t.language },
           h('span', null, t.language),
           h('div', { className: 'language-picker__segmented' },
@@ -1700,7 +1711,7 @@ function App() {
         onSelect: setSelectedCityId,
       }),
     ),
-    h(MonthlyCalendarCard, { city: selectedCityView, t }),
+    h(MonthlyCalendarCard, { city: selectedCityView, t, language }),
     h(
       'section',
       { className: 'switcher-panel ntp-panel', 'aria-label': t.ntp_settings },
