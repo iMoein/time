@@ -710,7 +710,7 @@ function getMonthOccasionGroups(days, primaryCalendar) {
     }));
 }
 
-function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey) {
+function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey, t) {
   const secondaryCalendar = primaryCalendar === 'gregorian' ? 'persian' : 'gregorian';
   const monthStart = getCalendarMonthStart(cityDate, primaryCalendar, monthOffset);
   const primaryParts = getCalendarPartsFromUtc(monthStart, primaryCalendar);
@@ -1115,7 +1115,7 @@ function MonthlyCalendarCard({ city, t }) {
   let calendar = null;
 
   try {
-    calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey);
+    calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t);
   } catch (error) {
     return h(
       'section',
