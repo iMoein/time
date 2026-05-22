@@ -3,6 +3,7 @@ import internationalOccasions from './data/occasions-gregorian.json' with { type
 import iranOccasions from './data/occasions-persian.json' with { type: 'json' };
 import iranIslamicOccasions from './data/occasions-islamic.json' with { type: 'json' };
 import islamicYearStartSync from './data/islamic-year-start-sync.json' with { type: 'json' };
+import i18n from './data/i18n.json' with { type: 'json' };
 import { createRoot } from 'react-dom/client';
 
 const { createElement: h } = React;
@@ -31,19 +32,6 @@ const ntpServerOptions = [
   { host: 'time.apple.com', label: 'Apple NTP' },
   { host: 'time.windows.com', label: 'Microsoft Windows Time' },
 ];
-
-const i18n = {
-  en: {
-    language: 'Language',
-    english: 'English',
-    persian: 'فارسی',
-  },
-  fa: {
-    language: 'زبان',
-    english: 'English',
-    persian: 'فارسی',
-  },
-};
 
 function getInitialLanguage() {
   const saved = localStorage.getItem(savedLanguageKey);
@@ -894,7 +882,7 @@ function ToggleButton({ city, selected, canRemove, editMode, dragging, onDragEnd
   );
 }
 
-function SearchPanel({ query, results, onAdd, onQueryChange }) {
+function SearchPanel({ query, results, onAdd, onQueryChange, t }) {
   const [isOpen, setIsOpen] = useState(false);
   const hasQuery = query.trim().length > 0;
   const showResults = isOpen || hasQuery;
@@ -906,7 +894,7 @@ function SearchPanel({ query, results, onAdd, onQueryChange }) {
     h(
       'label',
       { className: 'search-box' },
-      h('span', null, 'Search and add a city'),
+      h('span', null, t.search_add_city),
       h('input', {
         type: 'search',
         value: query,
@@ -914,7 +902,7 @@ function SearchPanel({ query, results, onAdd, onQueryChange }) {
         onChange: updateQuery,
         onFocus: () => setIsOpen(true),
         onBlur: () => setTimeout(() => setIsOpen(false), 120),
-        placeholder: 'Try New York, Berlin, Istanbul, Sydney...',
+        placeholder: t.search_placeholder,
         autoComplete: 'off',
         'aria-expanded': String(showResults),
       }),
@@ -935,15 +923,15 @@ function SearchPanel({ query, results, onAdd, onQueryChange }) {
           },
           h('span', null, city.label),
           h('small', null, `${city.country} · ${city.timeZone}`),
-          h('strong', null, '+ Add'),
+          h('strong', null, t.add),
         ))
-        : h('p', { className: 'search-empty' }, 'No city found, try another city or timezone name.'),
+        : h('p', { className: 'search-empty' }, t.no_city_found),
     ),
   );
 }
 
 
-function SettingsPanel({ ntpHostInput, ntpStatus, ntpServerPresets, onHostInputChange, onPresetSelect, onSave, onSync }) {
+function SettingsPanel({ ntpHostInput, ntpStatus, ntpServerPresets, onHostInputChange, onPresetSelect, onSave, onSync, t }) {
   const selectedPreset = ntpServerPresets.find((server) => server.host === ntpHostInput.trim())?.host || 'custom';
   const delayLabel = typeof ntpStatus.delayMs === 'number' ? `${ntpStatus.delayMs}ms` : ntpStatus.delay || 'Not measured';
 
@@ -953,14 +941,14 @@ function SettingsPanel({ ntpHostInput, ntpStatus, ntpServerPresets, onHostInputC
     h(
       'div',
       { className: 'settings-panel__header' },
-      h('span', null, 'NTP server settings'),
-      h('strong', null, 'Choose a trusted time source'),
-      h('small', null, 'Pick a global NTP provider or enter a custom hostname, then sync to measure connection status and round-trip delay.'),
+      h('span', null, t.ntp_settings),
+      h('strong', null, t.trusted_time_source),
+      h('small', null, t.ntp_help),
     ),
     h(
       'label',
       { className: 'settings-field' },
-      h('span', null, 'Trusted servers'),
+      h('span', null, t.trusted_servers),
       h(
         'select',
         {
@@ -968,13 +956,13 @@ function SettingsPanel({ ntpHostInput, ntpStatus, ntpServerPresets, onHostInputC
           onChange: (event) => onPresetSelect(event.target.value),
         },
         ntpServerPresets.map((server) => h('option', { value: server.host, key: server.host }, server.label)),
-        h('option', { value: 'custom' }, 'Custom NTP server'),
+        h('option', { value: 'custom' }, t.custom_ntp),
       ),
     ),
     h(
       'label',
       { className: 'settings-field' },
-      h('span', null, 'Custom hostname'),
+      h('span', null, t.custom_hostname),
       h('input', {
         type: 'text',
         value: ntpHostInput,
@@ -992,35 +980,35 @@ function SettingsPanel({ ntpHostInput, ntpStatus, ntpServerPresets, onHostInputC
       h(
         'dl',
         { className: 'ntp-status__metrics' },
-        h('div', null, h('dt', null, 'Server'), h('dd', null, ntpStatus.host || ntpHostInput || defaultNtpHost)),
-        h('div', null, h('dt', null, 'Delay'), h('dd', null, delayLabel)),
+        h('div', null, h('dt', null, t.server), h('dd', null, ntpStatus.host || ntpHostInput || defaultNtpHost)),
+        h('div', null, h('dt', null, t.delay), h('dd', null, delayLabel)),
       ),
     ),
     h(
       'div',
       { className: 'settings-actions' },
-      h('button', { type: 'submit', className: 'edit-toggle' }, 'Save NTP'),
-      h('button', { type: 'button', className: 'secondary-button', onClick: onSync }, 'Sync now'),
+      h('button', { type: 'submit', className: 'edit-toggle' }, t.save_ntp),
+      h('button', { type: 'button', className: 'secondary-button', onClick: onSync }, t.sync_now),
     ),
   );
 }
 
 
-function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, searchResults, draggingCityId, onAdd, onDragEnd, onDragStart, onDrop, onEditToggle, onQueryChange, onRemove, onSelect }) {
+function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, searchResults, draggingCityId, onAdd, onDragEnd, onDragStart, onDrop, onEditToggle, onQueryChange, onRemove, onSelect, t }) {
   return h(
     'section',
-    { className: 'timezone-manager', 'aria-label': 'Manage timezones' },
+    { className: 'timezone-manager', 'aria-label': t.manage_timezones },
     h(
       'div',
       { className: 'section-heading timezone-manager__heading' },
-      h('span', null, 'Manage timezones'),
+      h('span', null, t.manage_timezones),
       h(
         'div',
         { className: 'heading-actions' },
-        h('button', { type: 'button', className: 'edit-toggle', onClick: onEditToggle }, editMode ? 'Done' : 'Edit'),
+        h('button', { type: 'button', className: 'edit-toggle', onClick: onEditToggle }, editMode ? t.done : t.edit),
       ),
     ),
-    h(SearchPanel, { query: searchQuery, results: searchResults, onAdd, onQueryChange }),
+    h(SearchPanel, { query: searchQuery, results: searchResults, onAdd, onQueryChange, t }),
     h(
       'div',
       { className: `timezone-list${editMode ? ' timezone-list--editing' : ''}` },
@@ -1057,7 +1045,7 @@ function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, search
         ),
         editMode && cities.length > 1 && h(
           'button',
-          { type: 'button', className: 'remove-chip', onClick: () => onRemove(city.id), 'aria-label': `Remove ${city.label}` },
+          { type: 'button', className: 'remove-chip', onClick: () => onRemove(city.id), 'aria-label': `${t.remove} ${city.label}` },
           '×',
         ),
       )),
@@ -1065,7 +1053,7 @@ function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, search
   );
 }
 
-function DayNightCard({ city }) {
+function DayNightCard({ city, t }) {
   const timeline = city.dayNight;
 
   return h(
@@ -1076,7 +1064,7 @@ function DayNightCard({ city }) {
       { className: 'day-night-card__header' },
       h('span', { className: 'day-night-card__icon', 'aria-hidden': 'true' }, timeline.isDaylight ? '☀️' : timeline.isTwilight ? '🌅' : '🌙'),
       h('div', null, h('span', null, timeline.eventLabel), h('strong', null, timeline.eventTime)),
-      h('p', null, `${timeline.status}: ${timeline.remaining}${timeline.isEstimated ? ' · estimated' : ''}`),
+      h('p', null, `${timeline.status}: ${timeline.remaining}${timeline.isEstimated ? ` · ${t.estimated}` : ''}`),
     ),
     h(
       'div',
@@ -1108,11 +1096,11 @@ function DayNightCard({ city }) {
       'div',
       { className: 'day-night-card__details' },
       [
-        ['First Light', timeline.firstLight],
-        ['Sunrise', timeline.sunrise],
-        ['Sunset', timeline.sunset],
-        ['Last Light', timeline.lastLight],
-        ['Total Daylight', timeline.totalDaylight],
+        [t.first_light, timeline.firstLight],
+        [t.sunrise, timeline.sunrise],
+        [t.sunset, timeline.sunset],
+        [t.last_light, timeline.lastLight],
+        [t.total_daylight, timeline.totalDaylight],
       ].map(([label, value]) => h('div', { className: 'day-night-card__row', key: label }, h('strong', null, label), h('span', null, value))),
     ),
   );
@@ -1476,7 +1464,7 @@ function App() {
 
   const numberLocale = isFa ? 'fa-IR-u-nu-arabext' : 'en-US';
   const formatLocaleNumber = (value) => new Intl.NumberFormat(numberLocale).format(value);
-  const t = i18n[language];
+  const t = i18n[language] || i18n.en;
   const selectedCityView = selectedCity
     ? {
       ...selectedCity,
@@ -1608,7 +1596,7 @@ function App() {
   };
 
   const fullscreenSupported = Boolean(document.documentElement.requestFullscreen && document.exitFullscreen);
-  const fullscreenLabel = isFullscreen ? 'Exit fullscreen' : 'Fullscreen';
+  const fullscreenLabel = isFullscreen ? t.exit_fullscreen : t.fullscreen;
 
   const toggleFullscreen = () => {
     if (!fullscreenSupported) {
@@ -1625,14 +1613,14 @@ function App() {
 
   return h(
     'main',
-    { className: `page-shell${isFa ? ' page-shell--rtl' : ''}`, 'aria-label': `Current time in ${selectedCityView.label}` },
+    { className: `page-shell${isFa ? ' page-shell--rtl' : ''}`, 'aria-label': `${t.time_in} ${selectedCityView.label}` },
     h(
       'section',
       { className: 'hero-panel', style: { '--accent': selectedCityView.accent } },
       h(
         'div',
         { className: 'top-bar' },
-        h('p', { className: 'eyebrow' }, 'Time in ', h('strong', null, selectedCityView.label), `, ${selectedCityView.country} now`),
+        h('p', { className: 'eyebrow' }, `${t.time_in} `, h('strong', null, selectedCityView.label), `، ${selectedCityView.country} ${t.now_suffix}`),
         h(
           'label',
           { className: 'language-picker' },
@@ -1655,8 +1643,8 @@ function App() {
             onClick: toggleFullscreen,
             disabled: !fullscreenSupported,
             'aria-pressed': isFullscreen,
-            title: fullscreenSupported ? fullscreenLabel : 'Fullscreen is not supported on this device',
-            'aria-label': fullscreenSupported ? fullscreenLabel : 'Fullscreen is not supported on this device',
+            title: fullscreenSupported ? fullscreenLabel : t.fullscreen_unsupported,
+            'aria-label': fullscreenSupported ? fullscreenLabel : t.fullscreen_unsupported,
           },
           h('span', { className: 'fullscreen-button__icon', 'aria-hidden': 'true' }, isFullscreen ? '↙' : '↗'),
           h('span', { className: 'fullscreen-button__copy' }, fullscreenLabel),
@@ -1670,28 +1658,28 @@ function App() {
         h(
           'div',
           { className: 'hero-meta', 'aria-label': 'Calendar details' },
-          h(InfoPill, { label: 'Weekday', value: selectedCityView.weekday }),
+          h(InfoPill, { label: t.weekday, value: selectedCityView.weekday }),
           h(SplitPill, {
-            label: 'Years',
+            label: t.years,
             items: [
-              { label: 'Gregorian', value: selectedCityView.gregorianYear },
-              { label: 'Solar Hijri', value: selectedCityView.persianYear },
+              { label: t.gregorian, value: selectedCityView.gregorianYear },
+              { label: t.solar_hijri, value: selectedCityView.persianYear },
             ],
           }),
           h(SplitPill, {
-            label: 'Dates',
+            label: t.dates,
             wide: true,
             items: [
-              { label: 'Gregorian', value: selectedCity.gregorianDate },
-              { label: 'Solar Hijri', value: selectedCity.persianDate },
+              { label: t.gregorian, value: selectedCity.gregorianDate },
+              { label: t.solar_hijri, value: selectedCity.persianDate },
             ],
           }),
           h(SplitPill, {
-            label: 'Week of year',
+            label: t.week_of_year,
             wide: true,
             items: [
-              { label: 'Gregorian', value: `Week ${selectedCityView.gregorianWeek}` },
-              { label: 'Solar Hijri', value: `Week ${selectedCityView.jalaliWeek}` },
+              { label: t.gregorian, value: `${t.week} ${selectedCityView.gregorianWeek}` },
+              { label: t.solar_hijri, value: `${t.week} ${selectedCityView.jalaliWeek}` },
             ],
           }),
         ),
@@ -1700,7 +1688,7 @@ function App() {
     h(
       'section',
       { className: 'solar-timezone-grid', 'aria-label': 'Sun status and timezone management' },
-      h(DayNightCard, { city: selectedCityView }),
+      h(DayNightCard, { city: selectedCityView, t }),
       h(TimezoneManager, {
         cities: activeSnapshots,
         selectedCityId: selectedCityView.id,
@@ -1715,13 +1703,14 @@ function App() {
         onEditToggle: toggleEditMode,
         onQueryChange: setSearchQuery,
         onRemove: removeCity,
+        t,
         onSelect: setSelectedCityId,
       }),
     ),
     h(MonthlyCalendarCard, { city: selectedCityView }),
     h(
       'section',
-      { className: 'switcher-panel ntp-panel', 'aria-label': 'NTP server settings' },
+      { className: 'switcher-panel ntp-panel', 'aria-label': t.ntp_settings },
       h(SettingsPanel, {
         ntpHostInput,
         ntpStatus,
@@ -1730,6 +1719,7 @@ function App() {
         onPresetSelect: selectNtpPreset,
         onSave: saveNtpHost,
         onSync: syncCurrentNtpHost,
+        t,
       }),
     ),
   );

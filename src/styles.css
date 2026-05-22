@@ -7,7 +7,7 @@
 }
 
 :root[lang="fa"] body {
-  font-family: Vazirmatn, "Noto Sans Arabic", Tahoma, Inter, ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-fa, Vazirmatn), "Noto Sans Arabic", Tahoma, Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
 * {
