@@ -130,20 +130,20 @@ function formatMinutesAsTime(totalMinutes) {
   return `${padClockPart(hours)}:${padClockPart(minutes)}`;
 }
 
-function formatDuration(totalMinutes) {
+function formatDuration(totalMinutes, language = 'en') {
   const roundedMinutes = Math.max(0, Math.round(totalMinutes));
   const hours = Math.floor(roundedMinutes / 60);
   const minutes = roundedMinutes % 60;
 
   if (hours === 0) {
-    return `${minutes}min`;
+    return language === 'fa' ? `${minutes} دقیقه` : `${minutes}min`;
   }
 
   if (minutes === 0) {
-    return `${hours}hr`;
+    return language === 'fa' ? `${hours} ساعت` : `${hours}hr`;
   }
 
-  return `${hours}hr ${minutes}min`;
+  return language === 'fa' ? `${hours} ساعت ${minutes} دقیقه` : `${hours}hr ${minutes}min`;
 }
 
 function getMinuteOfDay(date, timeZone) {
@@ -270,7 +270,7 @@ function getSolarSchedule(date, city) {
   };
 }
 
-function getDayNightData(date, city) {
+function getDayNightData(date, city, language = 'en') {
   const currentMinute = getMinuteOfDay(date, city.timeZone);
   const { firstLight, sunrise, sunset, lastLight, estimated } = getSolarSchedule(date, city);
   const isDaylight = currentMinute >= sunrise && currentMinute < sunset;
@@ -297,12 +297,12 @@ function getDayNightData(date, city) {
     isDaylight,
     isTwilight,
     lastLight: formatMinutesAsTime(lastLight),
-    remaining: formatDuration(remainingMinutes),
+    remaining: formatDuration(remainingMinutes, language),
     status,
     sunPath: buildSolarPath({ sunrise, sunset, horizonY, peakY, nightY }),
     sunrise: formatMinutesAsTime(sunrise),
     sunset: formatMinutesAsTime(sunset),
-    totalDaylight: formatDuration(daylightDuration),
+    totalDaylight: formatDuration(daylightDuration, language),
     isEstimated: estimated,
   };
 }
@@ -851,7 +851,7 @@ function getCitySnapshot(now, city, language) {
     persianWeekDays: getWeeklyCalendar(now, city.timeZone, 'persian'),
     timeOfDay: timeOfDay.id,
     timeOfDayLabel: language === 'fa' ? (faTimeOfDay[timeOfDay.id] || timeOfDay.label) : timeOfDay.label,
-    dayNight: getDayNightData(now, city),
+    dayNight: getDayNightData(now, city, language),
   };
 }
 

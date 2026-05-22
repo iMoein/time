@@ -481,6 +481,8 @@ button {
 
 :root[lang="fa"] .timezone-row__phase {
   justify-self: start;
+  order: -1;
+  margin-inline-end: 0.6rem;
 }
 
 .timezone-row__name {
