@@ -1067,9 +1067,7 @@ function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, search
             onClick: () => onSelect(city.id),
             'aria-pressed': city.id === selectedCityId,
           },
-          language === 'fa'
-            ? [h('span', { className: 'timezone-row__phase', key: 'phase' }, city.timeOfDayLabel), h('span', { className: 'timezone-row__name', key: 'name' }, city.label)]
-            : [h('span', { className: 'timezone-row__name', key: 'name' }, city.label), h('span', { className: 'timezone-row__phase', key: 'phase' }, city.timeOfDayLabel)],
+          [h('span', { className: 'timezone-row__name', key: 'name' }, city.label), h('span', { className: 'timezone-row__phase', key: 'phase' }, city.timeOfDayLabel)],
         ),
         editMode && cities.length > 1 && h(
           'button',
