@@ -475,13 +475,18 @@ button {
 }
 
 :root[lang="fa"] .timezone-row__main {
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   text-align: right;
 }
 
 :root[lang="fa"] .timezone-row__phase {
   justify-self: start;
-  margin-inline-end: 0.6rem;
+  margin-inline-start: 0;
+  margin-inline-end: 0.5rem;
+}
+
+:root[lang="fa"] .timezone-row__name {
+  justify-self: end;
 }
 
 .timezone-row__name {
