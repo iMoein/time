@@ -759,10 +759,6 @@ button {
   line-height: 1.25;
 }
 
-.monthly-calendar__occasion-description {
-  color: #1f2937;
-}
-
 .occasion-insights {
   grid-column: 1 / -1;
   display: grid;
