@@ -5,6 +5,7 @@ import iranIslamicOccasions from './data/occasions-islamic.json' with { type: 'j
 import islamicYearStartSync from './data/islamic-year-start-sync.json' with { type: 'json' };
 import i18n from './data/i18n.json' with { type: 'json' };
 import cityTranslationsFa from './data/city-translations-fa.json' with { type: 'json' };
+import occasionDescriptions from './data/occasion-descriptions.json' with { type: 'json' };
 import { createRoot } from 'react-dom/client';
 
 const { createElement: h } = React;
@@ -741,20 +742,30 @@ function getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes = ['
     .filter((group) => group.events.length > 0);
 }
 
-function getSelectedOccasionDescription(calendar, t, language) {
-  const selectedGroup = calendar.occasions.find((group) => group.dateKey === calendar.days.find((day) => day.isSelected)?.dateKey);
-  if (!selectedGroup) {
-    return t.no_selected_occasion_description;
+function getSelectedOccasionGroup(calendar) {
+  const selectedDateKey = calendar.days.find((day) => day.isSelected)?.dateKey;
+  return calendar.occasions.find((group) => group.dateKey === selectedDateKey) || null;
+}
+
+function getOccasionInsight(event, language) {
+  const key = event.title_fa || event.fa || event.title;
+  const knownDescription = occasionDescriptions[key];
+
+  if (knownDescription) {
+    return {
+      description: language === 'fa' ? knownDescription.description_fa : (knownDescription.description_en || knownDescription.description_fa),
+      sourceLabel: knownDescription.source_label,
+      sourceUrl: knownDescription.source_url,
+    };
   }
 
-  const titles = selectedGroup.events.map((event) => event.title).filter(Boolean);
-  if (titles.length === 0) {
-    return t.no_selected_occasion_description;
-  }
-
-  return language === 'fa'
-    ? `${t.selected_occasion_description_prefix} ${titles.join('، ')}`
-    : `${t.selected_occasion_description_prefix}: ${titles.join(', ')}`;
+  return {
+    description: language === 'fa'
+      ? `این مناسبت برای «${event.title}» ثبت شده است، اما هنوز توضیح تکمیلی برای آن اضافه نشده است.`
+      : `This day marks “${event.title}”, but a detailed description has not been added yet.`,
+    sourceLabel: '',
+    sourceUrl: '',
+  };
 }
 
 function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes = ['iran', 'international', 'islamic']) {
@@ -1206,7 +1217,7 @@ function MonthlyCalendarCard({ city, t, language }) {
     );
   }
 
-  const selectedOccasionDescription = getSelectedOccasionDescription(calendar, t, language);
+  const selectedOccasionGroup = getSelectedOccasionGroup(calendar);
 
   const moveMonth = (direction) => {
     setMonthOffset((offset) => getShiftedCalendarMonthOffset(primaryCalendar, city.cityDate, offset, direction));
@@ -1405,6 +1416,30 @@ function MonthlyCalendarCard({ city, t, language }) {
           )),
         )
         : h('p', { className: 'monthly-occasions__empty' }, t.no_occasions),
+    ),
+    h(
+      'section',
+      { className: 'occasion-insights', 'aria-label': t.occasion_insights_title },
+      h('h3', null, t.occasion_insights_title),
+      selectedOccasionGroup && selectedOccasionGroup.events.length > 0
+        ? h(
+          'div',
+          { className: 'occasion-insights__list' },
+          selectedOccasionGroup.events.map((event) => {
+            const insight = getOccasionInsight(event, language);
+
+            return h(
+              'article',
+              { className: 'occasion-insights__item', key: `${selectedOccasionGroup.id}-${event.title}` },
+              h('strong', null, event.title),
+              h('p', null, insight.description),
+              insight.sourceUrl
+                ? h('a', { href: insight.sourceUrl, target: '_blank', rel: 'noopener noreferrer' }, insight.sourceLabel || insight.sourceUrl)
+                : null,
+            );
+          }),
+        )
+        : h('p', { className: 'occasion-insights__empty' }, t.no_selected_occasion_description),
     ),
   );
 }
