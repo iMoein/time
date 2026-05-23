@@ -74,16 +74,6 @@
     "category": "shia_imams"
   },
   {
-    "month": 2,
-    "day": 30,
-    "month_name_en": "Safar",
-    "month_name_fa": "صفر",
-    "title_en": "Martyrdom of Imam Ali al-Rida",
-    "title_fa": "شهادت امام رضا",
-    "category": "shia_imams",
-    "notes_fa": "در برخی سال‌های قمری، آخر صفر ممکن است ۲۹ صفر باشد."
-  },
-  {
     "month": 3,
     "day": 8,
     "month_name_en": "Rabi al-Awwal",

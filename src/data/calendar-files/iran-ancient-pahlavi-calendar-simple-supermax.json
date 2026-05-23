@@ -8,12 +8,6 @@
   {
     "month": 1,
     "day": 1,
-    "title_en": "Nowruz",
-    "title_fa": "نوروز"
-  },
-  {
-    "month": 1,
-    "day": 1,
     "title_en": "Nowruz: first day of the Iranian year",
     "title_fa": "نوروز / آغاز سال ایرانی"
   },
@@ -187,12 +181,6 @@
   },
   {
     "month": 1,
-    "day": 25,
-    "title_en": "Attar of Nishapur Day",
-    "title_fa": "روز عطار نیشابوری"
-  },
-  {
-    "month": 1,
     "day": 26,
     "title_en": "Death of Parvin Etesami",
     "title_fa": "درگذشت پروین اعتصامی"
@@ -202,12 +190,6 @@
     "day": 1,
     "title_en": "Death of Malek osh-Shoara Bahar",
     "title_fa": "درگذشت ملک‌الشعرای بهار"
-  },
-  {
-    "month": 2,
-    "day": 1,
-    "title_en": "Saadi Day",
-    "title_fa": "روز سعدی"
   },
   {
     "month": 2,
@@ -226,12 +208,6 @@
     "day": 3,
     "title_en": "Sheikh Bahai Day",
     "title_fa": "روز شیخ بهایی"
-  },
-  {
-    "month": 2,
-    "day": 3,
-    "title_en": "Sheikh Bahai Day / Architect’s Day",
-    "title_fa": "روز شیخ بهایی / روز معمار"
   },
   {
     "month": 2,
@@ -278,12 +254,6 @@
   {
     "month": 2,
     "day": 10,
-    "title_en": "National Persian Gulf Day",
-    "title_fa": "روز ملی خلیج فارس"
-  },
-  {
-    "month": 2,
-    "day": 10,
     "title_en": "Persian Gulf historical remembrance",
     "title_fa": "پاسداشت تاریخی خلیج فارس"
   },
@@ -326,12 +296,6 @@
   {
     "month": 2,
     "day": 15,
-    "title_en": "Shiraz Day",
-    "title_fa": "روز شیراز"
-  },
-  {
-    "month": 2,
-    "day": 15,
     "title_en": "Maidyozarem Gahambar ends",
     "title_fa": "پایان گاهنبار میدیوزرم"
   },
@@ -340,12 +304,6 @@
     "day": 16,
     "title_en": "Modern legal institutions remembrance",
     "title_fa": "یادکرد نهادهای حقوقی نوین ایران"
-  },
-  {
-    "month": 2,
-    "day": 19,
-    "title_en": "Documents and National Heritage Day",
-    "title_fa": "روز اسناد ملی و میراث مکتوب"
   },
   {
     "month": 2,
@@ -385,21 +343,9 @@
   },
   {
     "month": 2,
-    "day": 28,
-    "title_en": "Omar Khayyam Day",
-    "title_fa": "روز خیام"
-  },
-  {
-    "month": 2,
     "day": 29,
     "title_en": "Birth of Mohammad Mossadegh",
     "title_fa": "زادروز محمد مصدق"
-  },
-  {
-    "month": 3,
-    "day": 1,
-    "title_en": "Mulla Sadra Day",
-    "title_fa": "روز ملاصدرا"
   },
   {
     "month": 3,
@@ -536,12 +482,6 @@
   {
     "month": 4,
     "day": 13,
-    "title_en": "Tirgan Festival",
-    "title_fa": "جشن تیرگان"
-  },
-  {
-    "month": 4,
-    "day": 13,
     "title_en": "Arash the Archer remembrance",
     "title_fa": "یاد آرش کمانگیر"
   },
@@ -637,12 +577,6 @@
   },
   {
     "month": 5,
-    "day": 8,
-    "title_en": "Sohrevardi Day",
-    "title_fa": "روز سهروردی"
-  },
-  {
-    "month": 5,
     "day": 10,
     "title_en": "Summer harvest remembrance",
     "title_fa": "یادکرد برداشت تابستانی در ایران کهن"
@@ -706,12 +640,6 @@
     "day": 27,
     "title_en": "Death of Kamal-ol-Molk",
     "title_fa": "درگذشت کمال‌الملک"
-  },
-  {
-    "month": 5,
-    "day": 28,
-    "title_en": "1953 Iranian coup anniversary",
-    "title_fa": "سالروز کودتای ۲۸ مرداد ۱۳۳۲"
   },
   {
     "month": 5,
@@ -790,12 +718,6 @@
     "day": 12,
     "title_en": "Rais Ali Delvari remembrance",
     "title_fa": "یادبود رئیسعلی دلواری"
-  },
-  {
-    "month": 6,
-    "day": 13,
-    "title_en": "Abu Rayhan Biruni Day",
-    "title_fa": "روز ابوریحان بیرونی"
   },
   {
     "month": 6,
@@ -913,21 +835,9 @@
   },
   {
     "month": 7,
-    "day": 8,
-    "title_en": "Rumi Day",
-    "title_fa": "روز مولوی"
-  },
-  {
-    "month": 7,
     "day": 10,
     "title_en": "Mehrgan preparation day",
     "title_fa": "پیشواز مهرگان"
-  },
-  {
-    "month": 7,
-    "day": 14,
-    "title_en": "Tehran Day",
-    "title_fa": "روز تهران"
   },
   {
     "month": 7,
@@ -958,12 +868,6 @@
     "day": 20,
     "title_en": "Beginning of the 2,500-year Celebration of the Persian Empire",
     "title_fa": "آغاز جشن‌های ۲۵۰۰ ساله شاهنشاهی ایران"
-  },
-  {
-    "month": 7,
-    "day": 20,
-    "title_en": "Hafez Day",
-    "title_fa": "روز حافظ"
   },
   {
     "month": 7,
@@ -1180,12 +1084,6 @@
     "day": 25,
     "title_en": "Death of Sattar Khan",
     "title_fa": "درگذشت ستارخان"
-  },
-  {
-    "month": 8,
-    "day": 25,
-    "title_en": "Isfahan Day",
-    "title_fa": "روز اصفهان"
   },
   {
     "month": 9,
@@ -1537,12 +1435,6 @@
   },
   {
     "month": 12,
-    "day": 15,
-    "title_en": "Tree Planting Day",
-    "title_fa": "روز درختکاری"
-  },
-  {
-    "month": 12,
     "day": 24,
     "title_en": "Adoption of the Imperial Calendar",
     "title_fa": "تصویب گاه‌شماری شاهنشاهی"
@@ -1564,12 +1456,6 @@
     "day": 25,
     "title_en": "Hamaspathmaidyem Gahambar begins",
     "title_fa": "آغاز گاهنبار همسپثمیدیه"
-  },
-  {
-    "month": 12,
-    "day": 25,
-    "title_en": "Parvin Etesami Day",
-    "title_fa": "روز پروین اعتصامی"
   },
   {
     "month": 12,
@@ -1600,12 +1486,6 @@
     "day": 29,
     "title_en": "Year-end purification rites",
     "title_fa": "آیین‌های پاکیزگی و پایان سال"
-  },
-  {
-    "month": 12,
-    "day": 29,
-    "title_en": "Oil Nationalization Day",
-    "title_fa": "روز ملی شدن صنعت نفت"
   },
   {
     "month": 12,
