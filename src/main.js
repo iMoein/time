@@ -3,6 +3,13 @@ import internationalOccasions from './data/occasions-gregorian.json' with { type
 import iranOccasions from './data/occasions-persian.json' with { type: 'json' };
 import iranIslamicOccasions from './data/occasions-islamic.json' with { type: 'json' };
 import islamicYearStartSync from './data/islamic-year-start-sync.json' with { type: 'json' };
+import marketingOccasions from './data/calendar-files/international-marketing-occasions-simple-max.json' with { type: 'json' };
+import globalOfficialGregorianOccasions from './data/calendar-files/global-official-gregorian-occasions-simple.json' with { type: 'json' };
+import iranCurrentPersianOccasions from './data/calendar-files/iran-current-persian-occasions-simple.json' with { type: 'json' };
+import iranAncientPahlaviOccasions from './data/calendar-files/iran-ancient-pahlavi-calendar-simple-supermax.json' with { type: 'json' };
+import islamicShiaOccasions from './data/calendar-files/islamic-shia-occasions-simple-max.json' with { type: 'json' };
+import islamicSunniOccasions from './data/calendar-files/islamic-sunni-occasions-simple-max.json' with { type: 'json' };
+import islamicSharedOccasions from './data/calendar-files/islamic-shared-occasions-simple-max.json' with { type: 'json' };
 import yearOptionsData from './data/year-options.json' with { type: 'json' };
 import i18n from './data/i18n.json' with { type: 'json' };
 import cityTranslationsFa from './data/city-translations-fa.json' with { type: 'json' };
@@ -724,17 +731,38 @@ function getDateOccasions(date, language, t) {
   const internationalEvents = internationalOccasions
     .filter((event) => event.month === gregorianParts.month && event.day === gregorianParts.day)
     .map((event) => ({ ...event, type: 'international', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_international, dateLabel: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` }));
+  const globalOfficialEvents = globalOfficialGregorianOccasions
+    .filter((event) => event.month === gregorianParts.month && event.day === gregorianParts.day)
+    .map((event) => ({ ...event, type: 'globalOfficial', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_global_official, dateLabel: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` }));
+  const marketingEvents = marketingOccasions
+    .filter((event) => event.month === gregorianParts.month && event.day === gregorianParts.day)
+    .map((event) => ({ ...event, type: 'marketing', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_marketing, dateLabel: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` }));
   const iranEvents = iranOccasions
     .filter((event) => event.month === persianParts.month && event.day === persianParts.day)
     .map((event) => ({ ...event, type: 'iran', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_iran, dateLabel: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` }));
+  const iranCurrentEvents = iranCurrentPersianOccasions
+    .filter((event) => event.month === persianParts.month && event.day === persianParts.day)
+    .map((event) => ({ ...event, type: 'iranCurrent', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_iran_current, dateLabel: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` }));
+  const iranAncientEvents = iranAncientPahlaviOccasions
+    .filter((event) => event.month === persianParts.month && event.day === persianParts.day)
+    .map((event) => ({ ...event, type: 'iranAncient', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_iran_ancient, dateLabel: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` }));
   const islamicEvents = iranIslamicOccasions
     .filter((event) => event.month === islamicParts.month && event.day === islamicParts.day)
     .map((event) => ({ ...event, type: 'islamic', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_islamic, dateLabel: `${islamicParts.day}/${islamicParts.month} AH` }));
+  const islamicShiaEvents = islamicShiaOccasions
+    .filter((event) => event.month === islamicParts.month && event.day === islamicParts.day)
+    .map((event) => ({ ...event, type: 'islamicShia', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_islamic_shia, dateLabel: `${islamicParts.day}/${islamicParts.month} AH` }));
+  const islamicSunniEvents = islamicSunniOccasions
+    .filter((event) => event.month === islamicParts.month && event.day === islamicParts.day)
+    .map((event) => ({ ...event, type: 'islamicSunni', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_islamic_sunni, dateLabel: `${islamicParts.day}/${islamicParts.month} AH` }));
+  const islamicSharedEvents = islamicSharedOccasions
+    .filter((event) => event.month === islamicParts.month && event.day === islamicParts.day)
+    .map((event) => ({ ...event, type: 'islamicShared', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_islamic_shared, dateLabel: `${islamicParts.day}/${islamicParts.month} AH` }));
 
-  return [...iranEvents, ...islamicEvents, ...internationalEvents];
+  return [...iranEvents, ...iranCurrentEvents, ...iranAncientEvents, ...islamicEvents, ...islamicShiaEvents, ...islamicSunniEvents, ...islamicSharedEvents, ...internationalEvents, ...globalOfficialEvents, ...marketingEvents];
 }
 
-function getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes = ['iran', 'international', 'islamic'], selectedDateKey = '') {
+function getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes = ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared'], selectedDateKey = '') {
   return days
     .filter((day) => !day.isOutsideMonth && day.events.length > 0)
     .map((day) => ({
@@ -775,7 +803,7 @@ function getOccasionInsight(event, language) {
   };
 }
 
-function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes = ['iran', 'international', 'islamic']) {
+function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes = ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared']) {
   const secondaryCalendar = primaryCalendar === 'gregorian' ? 'persian' : 'gregorian';
   const monthStart = getCalendarMonthStart(cityDate, primaryCalendar, monthOffset);
   const primaryParts = getCalendarPartsFromUtc(monthStart, primaryCalendar);
@@ -1190,13 +1218,20 @@ function MonthlyCalendarCard({ city, t, language }) {
   const [primaryCalendar, setPrimaryCalendar] = useState('persian');
   const [monthOffset, setMonthOffset] = useState(0);
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
-  const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(['iran', 'international', 'islamic']);
+  const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared']);
   let calendar = null;
 
   const occasionTypeOptions = [
     { id: 'iran', label: t.calendar_iran },
+    { id: 'iranCurrent', label: t.calendar_iran_current },
+    { id: 'iranAncient', label: t.calendar_iran_ancient },
     { id: 'international', label: t.calendar_international },
+    { id: 'globalOfficial', label: t.calendar_global_official },
+    { id: 'marketing', label: t.calendar_marketing },
     { id: 'islamic', label: t.calendar_islamic },
+    { id: 'islamicShia', label: t.calendar_islamic_shia },
+    { id: 'islamicSunni', label: t.calendar_islamic_sunni },
+    { id: 'islamicShared', label: t.calendar_islamic_shared },
   ];
 
   const toggleOccasionType = (type) => {
@@ -1225,7 +1260,7 @@ function MonthlyCalendarCard({ city, t, language }) {
   }
 
   const selectedOccasionGroup = getSelectedOccasionGroup(calendar);
-  const occasionTypeOrder = ['iran', 'international', 'islamic'];
+  const occasionTypeOrder = ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared'];
   const groupOccasionsByType = (events) => occasionTypeOrder
     .map((type) => {
       const typeEvents = events.filter((event) => event.type === type);
