@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import internationalOccasions from './data/occasions-gregorian.json' with { type: 'json' };
 import iranOccasions from './data/occasions-persian.json' with { type: 'json' };
 import iranIslamicOccasions from './data/occasions-islamic.json' with { type: 'json' };
@@ -1231,6 +1231,12 @@ function MonthlyCalendarCard({ city, t, language }) {
     setPrimaryCalendar(nextPrimaryCalendar);
     setMonthOffset(getCalendarMonthOffset(nextPrimaryCalendar, city.cityDate, selectedDate));
   };
+
+  useEffect(() => {
+    if (selectedOccasionRef.current) {
+      selectedOccasionRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [selectedDateKey, calendar.occasions.length]);
 
   return h(
     'section',
