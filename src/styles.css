@@ -1026,6 +1026,15 @@ button {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.86));
 }
 
+
+.monthly-occasions__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
 .monthly-occasions header span {
   color: #64748b;
   font-size: 0.72rem;

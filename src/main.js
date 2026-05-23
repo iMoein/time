@@ -1332,12 +1332,10 @@ function MonthlyCalendarCard({ city, t, language }) {
       h(
         'header',
         null,
-        h('span', null, t.month_occasions),
-        h('strong', null, calendar.title),
         h(
           'div',
-          { className: 'monthly-occasions__meta' },
-          h('small', null, `${t.occasions_summary} · ${calendar.occasions.length} ${t.days}`),
+          { className: 'monthly-occasions__top' },
+          h('span', null, t.month_occasions),
           h(
             'details',
             { className: 'monthly-occasions__filters' },
@@ -1353,6 +1351,12 @@ function MonthlyCalendarCard({ city, t, language }) {
               )),
             ),
           ),
+        ),
+        h('strong', null, calendar.title),
+        h(
+          'div',
+          { className: 'monthly-occasions__meta' },
+          h('small', null, `${t.occasions_summary} · ${calendar.occasions.length} ${t.days}`),
         ),
       ),
       calendar.occasions.length > 0
