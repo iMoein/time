@@ -759,6 +759,10 @@ button {
   line-height: 1.25;
 }
 
+.monthly-calendar__occasion-description {
+  color: #1f2937;
+}
+
 .monthly-calendar__toolbar {
   display: flex;
   flex-wrap: wrap;
