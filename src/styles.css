@@ -497,6 +497,70 @@ button {
   overflow: hidden;
   background: #18181b;
   color: #f8fafc;
+  --sun-chart-sky-top: #79b8f3;
+  --sun-chart-sky-bottom: #0f4f86;
+  --sun-chart-night: #15161a;
+  --sun-chart-surface: #111113;
+}
+
+.day-night-card--dawn {
+  background:
+    radial-gradient(circle at 14% 16%, rgba(255, 255, 255, 0.22), transparent 16rem),
+    linear-gradient(135deg, rgba(124, 58, 237, 0.95), rgba(251, 146, 60, 0.9));
+  --sun-chart-sky-top: #a78bfa;
+  --sun-chart-sky-bottom: #fb923c;
+  --sun-chart-night: #3f2f46;
+  --sun-chart-surface: #32233b;
+}
+
+.day-night-card--morning {
+  background:
+    radial-gradient(circle at 14% 16%, rgba(255, 255, 255, 0.24), transparent 15rem),
+    linear-gradient(135deg, rgba(14, 165, 233, 0.94), rgba(56, 189, 248, 0.88), rgba(250, 204, 21, 0.86));
+  --sun-chart-sky-top: #7dd3fc;
+  --sun-chart-sky-bottom: #38bdf8;
+  --sun-chart-night: #1f3346;
+  --sun-chart-surface: #182736;
+}
+
+.day-night-card--noon {
+  background:
+    radial-gradient(circle at 20% 12%, rgba(255, 255, 255, 0.24), transparent 15rem),
+    linear-gradient(135deg, rgba(2, 132, 199, 0.95), rgba(59, 130, 246, 0.92), rgba(14, 165, 233, 0.88));
+  --sun-chart-sky-top: #60a5fa;
+  --sun-chart-sky-bottom: #0284c7;
+  --sun-chart-night: #1d3551;
+  --sun-chart-surface: #172a3f;
+}
+
+.day-night-card--afternoon {
+  background:
+    radial-gradient(circle at 16% 16%, rgba(255, 255, 255, 0.2), transparent 16rem),
+    linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(236, 72, 153, 0.86), rgba(79, 70, 229, 0.82));
+  --sun-chart-sky-top: #fb923c;
+  --sun-chart-sky-bottom: #ec4899;
+  --sun-chart-night: #432f48;
+  --sun-chart-surface: #342537;
+}
+
+.day-night-card--evening {
+  background:
+    radial-gradient(circle at 16% 18%, rgba(253, 230, 138, 0.2), transparent 15rem),
+    linear-gradient(135deg, #4338ca, #be185d 62%, #7c2d12);
+  --sun-chart-sky-top: #6366f1;
+  --sun-chart-sky-bottom: #be185d;
+  --sun-chart-night: #3f1f2d;
+  --sun-chart-surface: #2f1824;
+}
+
+.day-night-card--night {
+  background:
+    radial-gradient(circle at 16% 18%, rgba(148, 163, 184, 0.16), transparent 15rem),
+    linear-gradient(135deg, #0f172a, #312e81 58%, #111827);
+  --sun-chart-sky-top: #334155;
+  --sun-chart-sky-bottom: #312e81;
+  --sun-chart-night: #131826;
+  --sun-chart-surface: #0f1220;
 }
 
 .day-night-card__header {
@@ -552,7 +616,7 @@ button {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1.35rem;
   overflow: hidden;
-  background: #111113;
+  background: var(--sun-chart-surface);
 }
 
 .sun-chart svg {
@@ -589,7 +653,7 @@ button {
   stroke-width: 2;
 }
 
-.day-night-card--night .sun-chart__sun {
+.day-night-card--is-night .sun-chart__sun {
   fill: #a3a3a3;
   stroke: #a3a3a3;
 }
