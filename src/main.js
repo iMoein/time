@@ -1158,6 +1158,7 @@ function MonthlyCalendarCard({ city, t, language }) {
   const [monthOffset, setMonthOffset] = useState(0);
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
   const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(['iran', 'international', 'islamic']);
+  const occasionRowRefs = useRef(new Map());
   let calendar = null;
 
   const occasionTypeOptions = [
@@ -1175,6 +1176,14 @@ function MonthlyCalendarCard({ city, t, language }) {
       return [...active, type];
     });
   };
+
+  useEffect(() => {
+    const selectedRow = occasionRowRefs.current.get(selectedDateKey);
+
+    if (selectedRow) {
+      selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [selectedDateKey, enabledOccasionTypes]);
 
   try {
     calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes);
@@ -1380,7 +1389,7 @@ function MonthlyCalendarCard({ city, t, language }) {
           { className: 'monthly-occasions__list' },
           calendar.occasions.map((group) => h(
             'article',
-            { className: `monthly-occasions__day${group.isSelected ? ' monthly-occasions__day--selected' : ''}`, key: group.id, 'data-date-key': group.dateKey, onClick: () => selectDay(group.dateKey), role: 'button', tabIndex: 0, onKeyDown: (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectDay(group.dateKey); } } },
+            { className: `monthly-occasions__day${group.isSelected ? ' monthly-occasions__day--selected' : ''}`, key: group.id, 'data-date-key': group.dateKey, ref: (node) => { if (node) { occasionRowRefs.current.set(group.dateKey, node); } else { occasionRowRefs.current.delete(group.dateKey); } }, onClick: () => selectDay(group.dateKey), role: 'button', tabIndex: 0, onKeyDown: (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectDay(group.dateKey); } } },
             h(
               'div',
               { className: 'monthly-occasions__date' },
