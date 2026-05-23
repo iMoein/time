@@ -1031,22 +1031,6 @@ function SettingsPanel({ ntpHostInput, ntpStatus, ntpServerPresets, onHostInputC
 
 function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, searchResults, draggingCityId, onAdd, onDragEnd, onDragStart, onDrop, onEditToggle, onQueryChange, onRemove, onSelect, t, language }) {
 
-  const occasionTypeOptions = [
-    { id: 'iran', label: t.calendar_iran },
-    { id: 'international', label: t.calendar_international },
-    { id: 'islamic', label: t.calendar_islamic },
-  ];
-
-  const toggleOccasionType = (type) => {
-    setEnabledOccasionTypes((active) => {
-      if (active.includes(type)) {
-        return active.length === 1 ? active : active.filter((item) => item !== type);
-      }
-
-      return [...active, type];
-    });
-  };
-
   return h(
     'section',
     { className: 'timezone-manager', 'aria-label': t.manage_timezones },
@@ -1173,6 +1157,22 @@ function MonthlyCalendarCard({ city, t, language }) {
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
   const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(['iran', 'international', 'islamic']);
   let calendar = null;
+
+  const occasionTypeOptions = [
+    { id: 'iran', label: t.calendar_iran },
+    { id: 'international', label: t.calendar_international },
+    { id: 'islamic', label: t.calendar_islamic },
+  ];
+
+  const toggleOccasionType = (type) => {
+    setEnabledOccasionTypes((active) => {
+      if (active.includes(type)) {
+        return active.length === 1 ? active : active.filter((item) => item !== type);
+      }
+
+      return [...active, type];
+    });
+  };
 
   try {
     calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes);
