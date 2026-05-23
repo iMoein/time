@@ -1158,6 +1158,7 @@ function MonthlyCalendarCard({ city, t, language }) {
   const [monthOffset, setMonthOffset] = useState(0);
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
   const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(['iran', 'international', 'islamic']);
+  const selectedOccasionRef = useRef(null);
   let calendar = null;
 
   const occasionTypeOptions = [
@@ -1175,6 +1176,12 @@ function MonthlyCalendarCard({ city, t, language }) {
       return [...active, type];
     });
   };
+
+  useEffect(() => {
+    if (selectedOccasionRef.current) {
+      selectedOccasionRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [selectedDateKey, enabledOccasionTypes]);
 
   try {
     calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes);
@@ -1203,13 +1210,6 @@ function MonthlyCalendarCard({ city, t, language }) {
 
     setSelectedDateKey(dateKey);
     setMonthOffset(getCalendarMonthOffset(primaryCalendar, city.cityDate, selectedDate));
-
-    setTimeout(() => {
-      const selectedOccasion = document.querySelector(`.monthly-occasions__day[data-date-key=\"${dateKey}\"]`);
-      if (selectedOccasion) {
-        selectedOccasion.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    }, 0);
   };
   const selectMonth = (month) => {
     const nextOffset = primaryCalendar === 'gregorian'
@@ -1380,7 +1380,7 @@ function MonthlyCalendarCard({ city, t, language }) {
           { className: 'monthly-occasions__list' },
           calendar.occasions.map((group) => h(
             'article',
-            { className: `monthly-occasions__day${group.isSelected ? ' monthly-occasions__day--selected' : ''}`, key: group.id, 'data-date-key': group.dateKey, onClick: () => selectDay(group.dateKey), role: 'button', tabIndex: 0, onKeyDown: (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectDay(group.dateKey); } } },
+            { className: `monthly-occasions__day${group.isSelected ? ' monthly-occasions__day--selected' : ''}`, key: group.id, ref: group.isSelected ? selectedOccasionRef : null, onClick: () => selectDay(group.dateKey), role: 'button', tabIndex: 0, onKeyDown: (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectDay(group.dateKey); } } },
             h(
               'div',
               { className: 'monthly-occasions__date' },
