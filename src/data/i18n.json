@@ -49,9 +49,9 @@
     "selected": "Selected",
     "choose_primary_calendar": "Choose primary calendar",
     "month_occasions": "Month occasions",
-    "occasions_summary": "Iran + International + Islamic occasions",
+    "occasions_summary": "Selected occasion calendars",
     "days": "days",
-    "no_occasions": "No fixed Iran or international occasion is listed for this month.",
+    "no_occasions": "No occasion is listed for this month in the selected filters.",
     "calendar_details": "Calendar details",
     "sun_status_timezone": "Sun status and timezone management",
     "calendar_loading_issue": "Calendar loading issue",
@@ -87,7 +87,14 @@
     "monthly_calendar": "Monthly calendar",
     "filter_occasions": "Filter occasions",
     "occasion_insights_title": "Occasion details for selected day",
-    "no_selected_occasion_description": "No occasion is available for the selected day."
+    "no_selected_occasion_description": "No occasion is available for the selected day.",
+    "calendar_iran_current": "Iran (current)",
+    "calendar_iran_ancient": "Iran ancient / Pahlavi",
+    "calendar_global_official": "Global official",
+    "calendar_marketing": "International marketing",
+    "calendar_islamic_shia": "Islamic (Shia)",
+    "calendar_islamic_sunni": "Islamic (Sunni)",
+    "calendar_islamic_shared": "Islamic (shared)"
   },
   "fa": {
     "language": "زبان",
@@ -139,9 +146,9 @@
     "selected": "انتخاب‌شده",
     "choose_primary_calendar": "انتخاب تقویم اصلی",
     "month_occasions": "مناسبت‌های ماه",
-    "occasions_summary": "مناسبت‌های ایران + جهانی + اسلامی",
+    "occasions_summary": "مناسبت‌های انتخاب‌شده",
     "days": "روز",
-    "no_occasions": "برای این ماه مناسبت ثابت ایران یا جهانی ثبت نشده است.",
+    "no_occasions": "برای این ماه با فیلترهای انتخاب‌شده مناسبتی ثبت نشده است.",
     "calendar_details": "جزئیات تقویم",
     "sun_status_timezone": "وضعیت خورشید و مدیریت منطقه‌های زمانی",
     "calendar_loading_issue": "خطا در بارگذاری تقویم",
@@ -177,6 +184,13 @@
     "monthly_calendar": "تقویم ماهانه",
     "filter_occasions": "فیلتر مناسبت‌ها",
     "occasion_insights_title": "توضیحات مناسبت‌های روز انتخاب‌شده",
-    "no_selected_occasion_description": "برای روز انتخاب‌شده مناسبتی ثبت نشده است."
+    "no_selected_occasion_description": "برای روز انتخاب‌شده مناسبتی ثبت نشده است.",
+    "calendar_iran_current": "ایران (فعلی)",
+    "calendar_iran_ancient": "ایران کهن / پهلوی",
+    "calendar_global_official": "جهانی رسمی",
+    "calendar_marketing": "مارکتینگ بین‌المللی",
+    "calendar_islamic_shia": "اسلامی (شیعه)",
+    "calendar_islamic_sunni": "اسلامی (سنی)",
+    "calendar_islamic_shared": "اسلامی (مشترک)"
   }
 }
