@@ -123,15 +123,6 @@
   },
   {
     "month": 9,
-    "day": 23,
-    "month_name_en": "Ramadan",
-    "month_name_fa": "رمضان",
-    "title_en": "Night of Qadr observances",
-    "title_fa": "شب قدر",
-    "category": "shared"
-  },
-  {
-    "month": 9,
     "day": 27,
     "month_name_en": "Ramadan",
     "month_name_fa": "رمضان",
@@ -146,15 +137,6 @@
     "month_name_fa": "رمضان",
     "title_en": "End-of-Ramadan observance period",
     "title_fa": "ایام پایانی رمضان",
-    "category": "shared"
-  },
-  {
-    "month": 10,
-    "day": 1,
-    "month_name_en": "Shawwal",
-    "month_name_fa": "شوال",
-    "title_en": "Eid al-Fitr",
-    "title_fa": "عید فطر",
     "category": "shared"
   },
   {
@@ -200,15 +182,6 @@
     "month_name_fa": "ذی‌الحجه",
     "title_en": "Day of Arafah",
     "title_fa": "روز عرفه",
-    "category": "shared"
-  },
-  {
-    "month": 12,
-    "day": 10,
-    "month_name_en": "Dhu al-Hijjah",
-    "month_name_fa": "ذی‌الحجه",
-    "title_en": "Eid al-Adha",
-    "title_fa": "عید قربان",
     "category": "shared"
   },
   {
