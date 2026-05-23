@@ -1177,12 +1177,6 @@ function MonthlyCalendarCard({ city, t, language }) {
     });
   };
 
-  useEffect(() => {
-    if (selectedOccasionRef.current) {
-      selectedOccasionRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }, [selectedDateKey, enabledOccasionTypes]);
-
   try {
     calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes);
   } catch (error) {
