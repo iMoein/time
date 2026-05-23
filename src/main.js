@@ -721,20 +721,17 @@ function getDateOccasions(date, language, t) {
   const gregorianParts = getCalendarPartsFromUtc(date, 'gregorian');
   const persianParts = getCalendarPartsFromUtc(date, 'persian');
   const islamicParts = getIslamicDatePartsFromUtc(date);
-  const internationalEvent = internationalOccasions
+  const internationalEvents = internationalOccasions
     .filter((event) => event.month === gregorianParts.month && event.day === gregorianParts.day)
-    .slice(0, 1)
     .map((event) => ({ ...event, type: 'international', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_international, dateLabel: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` }));
-  const iranEvent = iranOccasions
+  const iranEvents = iranOccasions
     .filter((event) => event.month === persianParts.month && event.day === persianParts.day)
-    .slice(0, 1)
     .map((event) => ({ ...event, type: 'iran', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_iran, dateLabel: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` }));
-  const islamicEvent = iranIslamicOccasions
+  const islamicEvents = iranIslamicOccasions
     .filter((event) => event.month === islamicParts.month && event.day === islamicParts.day)
-    .slice(0, 1)
     .map((event) => ({ ...event, type: 'islamic', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_islamic, dateLabel: `${islamicParts.day}/${islamicParts.month} AH` }));
 
-  return [...iranEvent, ...islamicEvent, ...internationalEvent];
+  return [...iranEvents, ...islamicEvents, ...internationalEvents];
 }
 
 function getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes = ['iran', 'international', 'islamic'], selectedDateKey = '') {
