@@ -1050,6 +1050,19 @@ button {
 }
 
 
+
+.monthly-occasions__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.monthly-occasions__meta small {
+  margin: 0;
+}
+
 .monthly-occasions__filters {
   position: relative;
 }
