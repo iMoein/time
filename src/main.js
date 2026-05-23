@@ -1102,7 +1102,7 @@ function DayNightCard({ city, t }) {
 
   return h(
     'section',
-    { className: `day-night-card${timeline.isDaylight ? ' day-night-card--day' : ' day-night-card--night'}`, 'aria-label': `Day and night in ${city.label}` },
+    { className: `day-night-card day-night-card--${city.timeOfDay}${timeline.isDaylight ? ' day-night-card--day' : ' day-night-card--night'}`, 'aria-label': `Day and night in ${city.label}` },
     h(
       'div',
       { className: 'day-night-card__header' },
