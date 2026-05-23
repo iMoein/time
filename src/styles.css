@@ -1303,10 +1303,15 @@ button {
 
 .monthly-occasions__day li {
   display: grid;
-  gap: 0.14rem;
+  gap: 0.42rem;
 }
 
-.monthly-occasions__day li > span {
+.monthly-occasions__type {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.monthly-occasions__day li span {
   width: fit-content;
   border-radius: 999px;
   padding: 0.14rem 0.38rem;
@@ -1318,11 +1323,22 @@ button {
   text-transform: uppercase;
 }
 
-.monthly-occasions__day li > strong {
+.monthly-occasions__titles {
+  display: grid;
+  gap: 0.14rem;
+}
+
+.monthly-occasions__day li strong {
   color: #172033;
   font-size: 0.86rem;
   font-weight: 900;
   line-height: 1.2;
+}
+
+.monthly-occasions__divider {
+  margin: 0;
+  border: 0;
+  border-top: 1px dashed rgba(148, 163, 184, 0.45);
 }
 
 .monthly-calendars--error {
