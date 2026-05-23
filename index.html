@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Time in Tehran</title>
-    <link rel="stylesheet" href="/src/styles.css?v=monthly-calendar-fix-7" />
+    <link rel="stylesheet" href="/src/styles.css?v=monthly-calendar-fix-9" />
     <script type="importmap">
       {
         "imports": {
@@ -17,6 +17,10 @@
   <body>
     <div id="root"></div>
     <script>
+      // Backward-compatibility shim for older cached app bundles that still reference this identifier.
+      // Remove once all clients have refreshed to the latest bundle.
+      var selectedOccasionDescription = '';
+
       window.getWeeklyCalendar = window.getWeeklyCalendar || function getWeeklyCalendar(date, timeZone, calendar) {
         const dayMs = 86400000;
         const weekdays = calendar === 'persian'
@@ -39,6 +43,6 @@
         });
       };
     </script>
-    <script type="module" src="/src/main.js?v=monthly-calendar-fix-7"></script>
+    <script type="module" src="/src/main.js?v=monthly-calendar-fix-9"></script>
   </body>
 </html>

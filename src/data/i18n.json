@@ -85,7 +85,9 @@
     "add_city": "Add city",
     "translation_pending": "(translation pending)",
     "monthly_calendar": "Monthly calendar",
-    "filter_occasions": "Filter occasions"
+    "filter_occasions": "Filter occasions",
+    "occasion_insights_title": "Occasion details for selected day",
+    "no_selected_occasion_description": "No occasion is available for the selected day."
   },
   "fa": {
     "language": "زبان",
@@ -173,6 +175,8 @@
     "add_city": "افزودن شهر",
     "translation_pending": "(نیازمند ترجمه)",
     "monthly_calendar": "تقویم ماهانه",
-    "filter_occasions": "فیلتر مناسبت‌ها"
+    "filter_occasions": "فیلتر مناسبت‌ها",
+    "occasion_insights_title": "توضیحات مناسبت‌های روز انتخاب‌شده",
+    "no_selected_occasion_description": "برای روز انتخاب‌شده مناسبتی ثبت نشده است."
   }
 }
