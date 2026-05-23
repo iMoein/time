@@ -1,0 +1,393 @@
+[
+  {
+    "month": 1,
+    "day": 2,
+    "month_name_en": "Muharram",
+    "month_name_fa": "محرم",
+    "title_en": "Arrival of Imam Husayn’s caravan in Karbala",
+    "title_fa": "ورود کاروان امام حسین به کربلا",
+    "category": "shia_history"
+  },
+  {
+    "month": 1,
+    "day": 7,
+    "month_name_en": "Muharram",
+    "month_name_fa": "محرم",
+    "title_en": "Closure of water access to Imam Husayn’s camp",
+    "title_fa": "بستن آب بر کاروان امام حسین",
+    "category": "shia_history",
+    "notes_fa": "در برخی تقویم‌ها با عنوان آغاز محاصره آب فرات ثبت می‌شود."
+  },
+  {
+    "month": 1,
+    "day": 9,
+    "month_name_en": "Muharram",
+    "month_name_fa": "محرم",
+    "title_en": "Tasu'a of Husayn",
+    "title_fa": "تاسوعای حسینی",
+    "category": "shia_mourning"
+  },
+  {
+    "month": 1,
+    "day": 11,
+    "month_name_en": "Muharram",
+    "month_name_fa": "محرم",
+    "title_en": "Shaam-e-Ghariban",
+    "title_fa": "شام غریبان حسینی",
+    "category": "shia_mourning"
+  },
+  {
+    "month": 1,
+    "day": 25,
+    "month_name_en": "Muharram",
+    "month_name_fa": "محرم",
+    "title_en": "Martyrdom of Imam Zayn al-Abidin",
+    "title_fa": "شهادت امام زین‌العابدین",
+    "category": "shia_imams"
+  },
+  {
+    "month": 2,
+    "day": 7,
+    "month_name_en": "Safar",
+    "month_name_fa": "صفر",
+    "title_en": "Martyrdom of Imam Hasan al-Mujtaba (one narration)",
+    "title_fa": "شهادت امام حسن مجتبی، بنا بر نقلی",
+    "category": "shia_imams",
+    "notes_fa": "در تقویم‌های شیعی، ۷ صفر و ۲۸ صفر هر دو در برخی منابع دیده می‌شوند."
+  },
+  {
+    "month": 2,
+    "day": 20,
+    "month_name_en": "Safar",
+    "month_name_fa": "صفر",
+    "title_en": "Arba'een of Imam Husayn",
+    "title_fa": "اربعین حسینی",
+    "category": "shia_mourning"
+  },
+  {
+    "month": 2,
+    "day": 28,
+    "month_name_en": "Safar",
+    "month_name_fa": "صفر",
+    "title_en": "Martyrdom of Imam Hasan al-Mujtaba",
+    "title_fa": "شهادت امام حسن مجتبی",
+    "category": "shia_imams"
+  },
+  {
+    "month": 2,
+    "day": 30,
+    "month_name_en": "Safar",
+    "month_name_fa": "صفر",
+    "title_en": "Martyrdom of Imam Ali al-Rida",
+    "title_fa": "شهادت امام رضا",
+    "category": "shia_imams",
+    "notes_fa": "در برخی سال‌های قمری، آخر صفر ممکن است ۲۹ صفر باشد."
+  },
+  {
+    "month": 3,
+    "day": 8,
+    "month_name_en": "Rabi al-Awwal",
+    "month_name_fa": "ربیع‌الاول",
+    "title_en": "Martyrdom of Imam Hasan al-Askari",
+    "title_fa": "شهادت امام حسن عسکری",
+    "category": "shia_imams"
+  },
+  {
+    "month": 3,
+    "day": 9,
+    "month_name_en": "Rabi al-Awwal",
+    "month_name_fa": "ربیع‌الاول",
+    "title_en": "Beginning of the Imamate of Imam al-Mahdi",
+    "title_fa": "آغاز امامت امام مهدی",
+    "category": "shia_imams"
+  },
+  {
+    "month": 3,
+    "day": 17,
+    "month_name_en": "Rabi al-Awwal",
+    "month_name_fa": "ربیع‌الاول",
+    "title_en": "Birth of Imam Ja'far al-Sadiq",
+    "title_fa": "میلاد امام جعفر صادق",
+    "category": "shia_imams"
+  },
+  {
+    "month": 3,
+    "day": 17,
+    "month_name_en": "Rabi al-Awwal",
+    "month_name_fa": "ربیع‌الاول",
+    "title_en": "Birth of Prophet Muhammad according to Shia tradition",
+    "title_fa": "میلاد پیامبر اسلام بنا بر روایت شیعه",
+    "category": "shia_prophet"
+  },
+  {
+    "month": 4,
+    "day": 8,
+    "month_name_en": "Rabi al-Thani",
+    "month_name_fa": "ربیع‌الثانی",
+    "title_en": "Birth of Imam Hasan al-Askari",
+    "title_fa": "میلاد امام حسن عسکری",
+    "category": "shia_imams"
+  },
+  {
+    "month": 5,
+    "day": 5,
+    "month_name_en": "Jumada al-Awwal",
+    "month_name_fa": "جمادی‌الاول",
+    "title_en": "Birth of Zaynab bint Ali",
+    "title_fa": "میلاد حضرت زینب",
+    "category": "shia_history"
+  },
+  {
+    "month": 5,
+    "day": 13,
+    "month_name_en": "Jumada al-Awwal",
+    "month_name_fa": "جمادی‌الاول",
+    "title_en": "Fatimiyyah: Martyrdom of Fatimah al-Zahra (first narration)",
+    "title_fa": "ایام فاطمیه؛ شهادت حضرت فاطمه زهرا، روایت اول",
+    "category": "shia_mourning"
+  },
+  {
+    "month": 6,
+    "day": 3,
+    "month_name_en": "Jumada al-Thani",
+    "month_name_fa": "جمادی‌الثانی",
+    "title_en": "Fatimiyyah: Martyrdom of Fatimah al-Zahra",
+    "title_fa": "ایام فاطمیه؛ شهادت حضرت فاطمه زهرا",
+    "category": "shia_mourning"
+  },
+  {
+    "month": 6,
+    "day": 20,
+    "month_name_en": "Jumada al-Thani",
+    "month_name_fa": "جمادی‌الثانی",
+    "title_en": "Birth of Fatimah al-Zahra",
+    "title_fa": "میلاد حضرت فاطمه زهرا",
+    "category": "shia_history"
+  },
+  {
+    "month": 7,
+    "day": 1,
+    "month_name_en": "Rajab",
+    "month_name_fa": "رجب",
+    "title_en": "Birth of Imam Muhammad al-Baqir",
+    "title_fa": "میلاد امام محمد باقر",
+    "category": "shia_imams"
+  },
+  {
+    "month": 7,
+    "day": 3,
+    "month_name_en": "Rajab",
+    "month_name_fa": "رجب",
+    "title_en": "Martyrdom of Imam Ali al-Hadi",
+    "title_fa": "شهادت امام علی‌النقی الهادی",
+    "category": "shia_imams"
+  },
+  {
+    "month": 7,
+    "day": 10,
+    "month_name_en": "Rajab",
+    "month_name_fa": "رجب",
+    "title_en": "Birth of Imam Muhammad al-Jawad",
+    "title_fa": "میلاد امام محمد تقی جواد",
+    "category": "shia_imams"
+  },
+  {
+    "month": 7,
+    "day": 13,
+    "month_name_en": "Rajab",
+    "month_name_fa": "رجب",
+    "title_en": "Birth of Imam Ali ibn Abi Talib",
+    "title_fa": "میلاد امام علی بن ابی‌طالب",
+    "category": "shia_imams"
+  },
+  {
+    "month": 7,
+    "day": 25,
+    "month_name_en": "Rajab",
+    "month_name_fa": "رجب",
+    "title_en": "Martyrdom of Imam Musa al-Kazim",
+    "title_fa": "شهادت امام موسی کاظم",
+    "category": "shia_imams"
+  },
+  {
+    "month": 7,
+    "day": 27,
+    "month_name_en": "Rajab",
+    "month_name_fa": "رجب",
+    "title_en": "Mab'ath: Beginning of Prophet Muhammad’s mission",
+    "title_fa": "مبعث پیامبر اسلام",
+    "category": "shia_prophet"
+  },
+  {
+    "month": 8,
+    "day": 3,
+    "month_name_en": "Sha'ban",
+    "month_name_fa": "شعبان",
+    "title_en": "Birth of Imam Husayn ibn Ali",
+    "title_fa": "میلاد امام حسین",
+    "category": "shia_imams"
+  },
+  {
+    "month": 8,
+    "day": 4,
+    "month_name_en": "Sha'ban",
+    "month_name_fa": "شعبان",
+    "title_en": "Birth of Abbas ibn Ali",
+    "title_fa": "میلاد حضرت عباس",
+    "category": "shia_history"
+  },
+  {
+    "month": 8,
+    "day": 5,
+    "month_name_en": "Sha'ban",
+    "month_name_fa": "شعبان",
+    "title_en": "Birth of Imam Zayn al-Abidin",
+    "title_fa": "میلاد امام زین‌العابدین",
+    "category": "shia_imams"
+  },
+  {
+    "month": 8,
+    "day": 11,
+    "month_name_en": "Sha'ban",
+    "month_name_fa": "شعبان",
+    "title_en": "Birth of Ali al-Akbar",
+    "title_fa": "میلاد علی‌اکبر",
+    "category": "shia_history"
+  },
+  {
+    "month": 8,
+    "day": 15,
+    "month_name_en": "Sha'ban",
+    "month_name_fa": "شعبان",
+    "title_en": "Birth of Imam al-Mahdi",
+    "title_fa": "میلاد امام مهدی / نیمه شعبان",
+    "category": "shia_imams"
+  },
+  {
+    "month": 9,
+    "day": 10,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Passing of Khadijah bint Khuwaylid",
+    "title_fa": "وفات حضرت خدیجه",
+    "category": "shia_history"
+  },
+  {
+    "month": 9,
+    "day": 15,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Birth of Imam Hasan al-Mujtaba",
+    "title_fa": "میلاد امام حسن مجتبی",
+    "category": "shia_imams"
+  },
+  {
+    "month": 9,
+    "day": 19,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Imam Ali struck during prayer",
+    "title_fa": "ضربت خوردن امام علی",
+    "category": "shia_mourning"
+  },
+  {
+    "month": 9,
+    "day": 21,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Martyrdom of Imam Ali ibn Abi Talib",
+    "title_fa": "شهادت امام علی",
+    "category": "shia_imams"
+  },
+  {
+    "month": 10,
+    "day": 15,
+    "month_name_en": "Shawwal",
+    "month_name_fa": "شوال",
+    "title_en": "Martyrdom of Imam Ja'far al-Sadiq",
+    "title_fa": "شهادت امام جعفر صادق",
+    "category": "shia_imams"
+  },
+  {
+    "month": 11,
+    "day": 1,
+    "month_name_en": "Dhu al-Qadah",
+    "month_name_fa": "ذی‌القعده",
+    "title_en": "Birth of Fatimah al-Ma'sumah",
+    "title_fa": "میلاد حضرت معصومه",
+    "category": "shia_history"
+  },
+  {
+    "month": 11,
+    "day": 11,
+    "month_name_en": "Dhu al-Qadah",
+    "month_name_fa": "ذی‌القعده",
+    "title_en": "Birth of Imam Ali al-Rida",
+    "title_fa": "میلاد امام رضا",
+    "category": "shia_imams"
+  },
+  {
+    "month": 11,
+    "day": 29,
+    "month_name_en": "Dhu al-Qadah",
+    "month_name_fa": "ذی‌القعده",
+    "title_en": "Martyrdom of Imam Muhammad al-Jawad",
+    "title_fa": "شهادت امام محمد تقی جواد",
+    "category": "shia_imams",
+    "notes_fa": "در برخی تقویم‌ها ۲۹ یا ۳۰ ذی‌القعده ثبت می‌شود."
+  },
+  {
+    "month": 12,
+    "day": 1,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Marriage of Imam Ali and Fatimah al-Zahra",
+    "title_fa": "سالروز ازدواج امام علی و حضرت فاطمه",
+    "category": "shia_history"
+  },
+  {
+    "month": 12,
+    "day": 7,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Martyrdom of Imam Muhammad al-Baqir",
+    "title_fa": "شهادت امام محمد باقر",
+    "category": "shia_imams"
+  },
+  {
+    "month": 12,
+    "day": 15,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Birth of Imam Ali al-Hadi",
+    "title_fa": "میلاد امام علی‌النقی الهادی",
+    "category": "shia_imams"
+  },
+  {
+    "month": 12,
+    "day": 18,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Eid al-Ghadir",
+    "title_fa": "عید غدیر خم",
+    "category": "shia_eid"
+  },
+  {
+    "month": 12,
+    "day": 24,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Event of Mubahala",
+    "title_fa": "روز مباهله",
+    "category": "shia_history"
+  },
+  {
+    "month": 12,
+    "day": 25,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Revelation of Surah al-Insan / Ahl al-Kisa charity event",
+    "title_fa": "روز نزول سوره انسان / اطعام اهل‌بیت",
+    "category": "shia_history"
+  }
+]

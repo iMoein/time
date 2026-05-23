@@ -1,0 +1,160 @@
+[
+  {
+    "month": 1,
+    "day": 1,
+    "month_name_en": "Muharram",
+    "month_name_fa": "محرم",
+    "title_en": "Martyrdom/Passing of Umar ibn al-Khattab",
+    "title_fa": "سالروز درگذشت عمر بن خطاب",
+    "category": "sunni_history",
+    "notes_fa": "این تاریخ در بسیاری از تقویم‌های اهل‌سنت برای خلیفه دوم ذکر می‌شود."
+  },
+  {
+    "month": 1,
+    "day": 10,
+    "month_name_en": "Muharram",
+    "month_name_fa": "محرم",
+    "title_en": "Recommended fasting on Ashura",
+    "title_fa": "روزه مستحب عاشورا",
+    "category": "sunni_observance",
+    "notes_fa": "اهل‌سنت بیشتر بر روزه و یادآوری نجات موسی تأکید می‌کنند."
+  },
+  {
+    "month": 3,
+    "day": 12,
+    "month_name_en": "Rabi al-Awwal",
+    "month_name_fa": "ربیع‌الاول",
+    "title_en": "Mawlid al-Nabi according to Sunni tradition",
+    "title_fa": "میلاد پیامبر اسلام بنا بر روایت اهل‌سنت",
+    "category": "sunni_prophet"
+  },
+  {
+    "month": 3,
+    "day": 12,
+    "month_name_en": "Rabi al-Awwal",
+    "month_name_fa": "ربیع‌الاول",
+    "title_en": "Passing of Prophet Muhammad according to many Sunni sources",
+    "title_fa": "وفات پیامبر اسلام بنا بر بسیاری از منابع اهل‌سنت",
+    "category": "sunni_prophet"
+  },
+  {
+    "month": 5,
+    "day": 22,
+    "month_name_en": "Jumada al-Awwal",
+    "month_name_fa": "جمادی‌الاول",
+    "title_en": "Passing of Abu Bakr al-Siddiq",
+    "title_fa": "سالروز درگذشت ابوبکر صدیق",
+    "category": "sunni_history"
+  },
+  {
+    "month": 7,
+    "day": 22,
+    "month_name_en": "Rajab",
+    "month_name_fa": "رجب",
+    "title_en": "Passing of Mu'awiya ibn Abi Sufyan",
+    "title_fa": "سالروز درگذشت معاویه بن ابی‌سفیان",
+    "category": "sunni_history",
+    "notes_fa": "این مناسبت عمومی/جشن‌محور نیست، اما در برخی تقویم‌های تاریخی ثبت می‌شود."
+  },
+  {
+    "month": 7,
+    "day": 27,
+    "month_name_en": "Rajab",
+    "month_name_fa": "رجب",
+    "title_en": "Isra and Mi'raj",
+    "title_fa": "اسراء و معراج پیامبر",
+    "category": "sunni_prophet"
+  },
+  {
+    "month": 8,
+    "day": 15,
+    "month_name_en": "Sha'ban",
+    "month_name_fa": "شعبان",
+    "title_en": "Laylat al-Bara'ah / Shab-e-Barat",
+    "title_fa": "شب برات / نیمه شعبان در سنت اهل‌سنت",
+    "category": "sunni_observance",
+    "notes_fa": "در بسیاری از جوامع اهل‌سنت گرامی داشته می‌شود، اما همه مکاتب آن را یکسان برگزار نمی‌کنند."
+  },
+  {
+    "month": 9,
+    "day": 1,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Start of Taraweeh prayers",
+    "title_fa": "آغاز نماز تراویح",
+    "category": "sunni_observance"
+  },
+  {
+    "month": 9,
+    "day": 17,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Battle of Badr",
+    "title_fa": "غزوه بدر",
+    "category": "sunni_history"
+  },
+  {
+    "month": 9,
+    "day": 20,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Conquest of Makkah",
+    "title_fa": "فتح مکه",
+    "category": "sunni_history"
+  },
+  {
+    "month": 9,
+    "day": 27,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Laylat al-Qadr, commonly observed date in Sunni calendars",
+    "title_fa": "شب قدر، تاریخ رایج در تقویم‌های اهل‌سنت",
+    "category": "sunni_observance"
+  },
+  {
+    "month": 10,
+    "day": 6,
+    "month_name_en": "Shawwal",
+    "month_name_fa": "شوال",
+    "title_en": "Beginning of the six recommended fasts of Shawwal",
+    "title_fa": "آغاز روزه‌های شش‌گانه شوال",
+    "category": "sunni_observance"
+  },
+  {
+    "month": 11,
+    "day": 5,
+    "month_name_en": "Dhu al-Qadah",
+    "month_name_fa": "ذی‌القعده",
+    "title_en": "Battle of Uhud remembrance",
+    "title_fa": "یادبود غزوه احد",
+    "category": "sunni_history",
+    "notes_fa": "تاریخ دقیق در منابع مختلف ممکن است متفاوت گزارش شود."
+  },
+  {
+    "month": 12,
+    "day": 8,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Yawm al-Tarwiyah / Hajj rites begin",
+    "title_fa": "یوم الترویه / آغاز مناسک اصلی حج",
+    "category": "sunni_hajj"
+  },
+  {
+    "month": 12,
+    "day": 9,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Recommended fasting on the Day of Arafah for non-pilgrims",
+    "title_fa": "روزه مستحب روز عرفه برای غیرحاجیان",
+    "category": "sunni_hajj"
+  },
+  {
+    "month": 12,
+    "day": 18,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Martyrdom of Uthman ibn Affan",
+    "title_fa": "شهادت عثمان بن عفان",
+    "category": "sunni_history"
+  }
+]

@@ -1,0 +1,241 @@
+[
+  {
+    "month": 1,
+    "day": 1,
+    "month_name_en": "Muharram",
+    "month_name_fa": "محرم",
+    "title_en": "Islamic New Year / First day of Muharram",
+    "title_fa": "آغاز سال هجری قمری / اول محرم",
+    "category": "shared"
+  },
+  {
+    "month": 1,
+    "day": 10,
+    "month_name_en": "Muharram",
+    "month_name_fa": "محرم",
+    "title_en": "Day of Ashura",
+    "title_fa": "روز عاشورا",
+    "category": "shared",
+    "notes_fa": "این روز در هر دو مذهب مهم است، اما معنا و آیین‌های آن متفاوت است."
+  },
+  {
+    "month": 2,
+    "day": 1,
+    "month_name_en": "Safar",
+    "month_name_fa": "صفر",
+    "title_en": "Month of Safar begins",
+    "title_fa": "آغاز ماه صفر",
+    "category": "shared"
+  },
+  {
+    "month": 3,
+    "day": 1,
+    "month_name_en": "Rabi al-Awwal",
+    "month_name_fa": "ربیع‌الاول",
+    "title_en": "Month of Rabi al-Awwal begins",
+    "title_fa": "آغاز ماه ربیع‌الاول",
+    "category": "shared"
+  },
+  {
+    "month": 3,
+    "day": 12,
+    "month_name_en": "Rabi al-Awwal",
+    "month_name_fa": "ربیع‌الاول",
+    "title_en": "Prophet Muhammad remembrance period",
+    "title_fa": "ایام یادبود پیامبر اسلام",
+    "category": "shared",
+    "notes_fa": "تاریخ دقیق میلاد پیامبر در شیعه و اهل‌سنت متفاوت است؛ ۱۲ و ۱۷ ربیع‌الاول رایج‌ترین تاریخ‌ها هستند."
+  },
+  {
+    "month": 7,
+    "day": 1,
+    "month_name_en": "Rajab",
+    "month_name_fa": "رجب",
+    "title_en": "Sacred month of Rajab begins",
+    "title_fa": "آغاز ماه رجب",
+    "category": "shared"
+  },
+  {
+    "month": 7,
+    "day": 27,
+    "month_name_en": "Rajab",
+    "month_name_fa": "رجب",
+    "title_en": "Prophetic mission / night journey remembrance period",
+    "title_fa": "ایام یادبود بعثت، اسراء و معراج",
+    "category": "shared",
+    "notes_fa": "عنوان و تأکید مذهبی میان شیعه و اهل‌سنت متفاوت است، اما هر دو به پیامبر اسلام مرتبط است."
+  },
+  {
+    "month": 8,
+    "day": 1,
+    "month_name_en": "Sha'ban",
+    "month_name_fa": "شعبان",
+    "title_en": "Month of Sha'ban begins",
+    "title_fa": "آغاز ماه شعبان",
+    "category": "shared"
+  },
+  {
+    "month": 8,
+    "day": 15,
+    "month_name_en": "Sha'ban",
+    "month_name_fa": "شعبان",
+    "title_en": "Mid-Sha'ban",
+    "title_fa": "نیمه شعبان",
+    "category": "shared",
+    "notes_fa": "در هر دو سنت شناخته‌شده است، اما برداشت و آیین‌ها متفاوت است."
+  },
+  {
+    "month": 9,
+    "day": 1,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Ramadan begins",
+    "title_fa": "آغاز ماه رمضان",
+    "category": "shared"
+  },
+  {
+    "month": 9,
+    "day": 17,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Battle of Badr",
+    "title_fa": "غزوه بدر",
+    "category": "shared"
+  },
+  {
+    "month": 9,
+    "day": 19,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "First major night of Qadr observances",
+    "title_fa": "نخستین شب مهم از شب‌های قدر",
+    "category": "shared",
+    "notes_fa": "شیعه بیشتر شب‌های ۱۹، ۲۱ و ۲۳ را برجسته می‌کند؛ اهل‌سنت بیشتر دهه آخر و به‌ویژه ۲۷ رمضان را."
+  },
+  {
+    "month": 9,
+    "day": 21,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Night of Qadr observances",
+    "title_fa": "شب قدر",
+    "category": "shared"
+  },
+  {
+    "month": 9,
+    "day": 23,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Night of Qadr observances",
+    "title_fa": "شب قدر",
+    "category": "shared"
+  },
+  {
+    "month": 9,
+    "day": 27,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "Laylat al-Qadr, widely observed night",
+    "title_fa": "شب قدر، تاریخ رایج در بسیاری از تقویم‌ها",
+    "category": "shared"
+  },
+  {
+    "month": 9,
+    "day": 29,
+    "month_name_en": "Ramadan",
+    "month_name_fa": "رمضان",
+    "title_en": "End-of-Ramadan observance period",
+    "title_fa": "ایام پایانی رمضان",
+    "category": "shared"
+  },
+  {
+    "month": 10,
+    "day": 1,
+    "month_name_en": "Shawwal",
+    "month_name_fa": "شوال",
+    "title_en": "Eid al-Fitr",
+    "title_fa": "عید فطر",
+    "category": "shared"
+  },
+  {
+    "month": 10,
+    "day": 2,
+    "month_name_en": "Shawwal",
+    "month_name_fa": "شوال",
+    "title_en": "Eid al-Fitr holiday period",
+    "title_fa": "تعطیلات عید فطر",
+    "category": "shared"
+  },
+  {
+    "month": 11,
+    "day": 1,
+    "month_name_en": "Dhu al-Qadah",
+    "month_name_fa": "ذی‌القعده",
+    "title_en": "Dhu al-Qadah begins, one of the sacred months",
+    "title_fa": "آغاز ذی‌القعده، از ماه‌های حرام",
+    "category": "shared"
+  },
+  {
+    "month": 12,
+    "day": 1,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Dhu al-Hijjah begins",
+    "title_fa": "آغاز ماه ذی‌الحجه",
+    "category": "shared"
+  },
+  {
+    "month": 12,
+    "day": 8,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Yawm al-Tarwiyah / Hajj rites begin",
+    "title_fa": "یوم الترویه / آغاز مناسک حج",
+    "category": "shared"
+  },
+  {
+    "month": 12,
+    "day": 9,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Day of Arafah",
+    "title_fa": "روز عرفه",
+    "category": "shared"
+  },
+  {
+    "month": 12,
+    "day": 10,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Eid al-Adha",
+    "title_fa": "عید قربان",
+    "category": "shared"
+  },
+  {
+    "month": 12,
+    "day": 11,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Days of Tashriq",
+    "title_fa": "ایام تشریق",
+    "category": "shared"
+  },
+  {
+    "month": 12,
+    "day": 12,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Days of Tashriq",
+    "title_fa": "ایام تشریق",
+    "category": "shared"
+  },
+  {
+    "month": 12,
+    "day": 13,
+    "month_name_en": "Dhu al-Hijjah",
+    "month_name_fa": "ذی‌الحجه",
+    "title_en": "Days of Tashriq",
+    "title_fa": "ایام تشریق",
+    "category": "shared"
+  }
+]

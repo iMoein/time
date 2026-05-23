@@ -1,0 +1,16 @@
+{
+  "note_fa": "این پوشه شامل نسخه‌های نهایی تقویم‌هایی است که در این گفتگو ساخته شدند. فایل‌های simple ساختار month/day/title_en/title_fa دارند. فایل islamic-year-start-sync برای همگام‌سازی سال قمری با تاریخ میلادی است.",
+  "final_files": [
+    "international-marketing-occasions-simple-max.json",
+    "global-official-gregorian-occasions-simple.json",
+    "iran-current-persian-occasions-simple.json",
+    "iran-ancient-pahlavi-calendar-simple-supermax.json",
+    "islamic-shia-occasions-simple-max.json",
+    "islamic-sunni-occasions-simple-max.json",
+    "islamic-shared-occasions-simple-max.json",
+    "islamic-year-start-sync.json",
+    "international-marketing-occasions-max-expanded-rich.json",
+    "international-marketing-occasions-max-additions-only.json",
+    "iran-ancient-pahlavi-calendar-simple-additions-only.json"
+  ]
+}
