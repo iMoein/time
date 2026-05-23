@@ -759,6 +759,38 @@ button {
   line-height: 1.25;
 }
 
+.occasion-insights {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.occasion-insights h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 0.95rem;
+}
+
+.occasion-insights__list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.occasion-insights__item strong {
+  color: #0f172a;
+}
+
+.occasion-insights__item p,
+.occasion-insights__empty {
+  margin: 0.2rem 0 0;
+  color: #334155;
+  line-height: 1.5;
+}
+
 .monthly-calendar__toolbar {
   display: flex;
   flex-wrap: wrap;
