@@ -741,6 +741,22 @@ function getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes = ['
     .filter((group) => group.events.length > 0);
 }
 
+function getSelectedOccasionDescription(calendar, t, language) {
+  const selectedGroup = calendar.occasions.find((group) => group.dateKey === calendar.days.find((day) => day.isSelected)?.dateKey);
+  if (!selectedGroup) {
+    return t.no_selected_occasion_description;
+  }
+
+  const titles = selectedGroup.events.map((event) => event.title).filter(Boolean);
+  if (titles.length === 0) {
+    return t.no_selected_occasion_description;
+  }
+
+  return language === 'fa'
+    ? `${t.selected_occasion_description_prefix} ${titles.join('، ')}`
+    : `${t.selected_occasion_description_prefix}: ${titles.join(', ')}`;
+}
+
 function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes = ['iran', 'international', 'islamic']) {
   const secondaryCalendar = primaryCalendar === 'gregorian' ? 'persian' : 'gregorian';
   const monthStart = getCalendarMonthStart(cityDate, primaryCalendar, monthOffset);
@@ -1190,6 +1206,8 @@ function MonthlyCalendarCard({ city, t, language }) {
     );
   }
 
+  const selectedOccasionDescription = getSelectedOccasionDescription(calendar, t, language);
+
   const moveMonth = (direction) => {
     setMonthOffset((offset) => getShiftedCalendarMonthOffset(primaryCalendar, city.cityDate, offset, direction));
   };
@@ -1277,6 +1295,7 @@ function MonthlyCalendarCard({ city, t, language }) {
           ),
         ),
         h('small', null, `${t.inside}: ${calendar.secondaryTitle} · ${t.selected}: ${calendar.selectedLabel}`),
+        h('small', { className: 'monthly-calendar__occasion-description' }, selectedOccasionDescription),
         h(
           'div',
           { className: 'monthly-calendar__mode', 'aria-label': t.choose_primary_calendar },
