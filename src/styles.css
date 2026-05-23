@@ -563,42 +563,6 @@ button {
   --sun-chart-surface: #0f1220;
 }
 
-.day-night-card--dawn {
-  background:
-    radial-gradient(circle at 14% 16%, rgba(255, 255, 255, 0.22), transparent 16rem),
-    linear-gradient(135deg, rgba(124, 58, 237, 0.95), rgba(251, 146, 60, 0.9));
-}
-
-.day-night-card--morning {
-  background:
-    radial-gradient(circle at 14% 16%, rgba(255, 255, 255, 0.24), transparent 15rem),
-    linear-gradient(135deg, rgba(14, 165, 233, 0.94), rgba(56, 189, 248, 0.88), rgba(250, 204, 21, 0.86));
-}
-
-.day-night-card--noon {
-  background:
-    radial-gradient(circle at 20% 12%, rgba(255, 255, 255, 0.24), transparent 15rem),
-    linear-gradient(135deg, rgba(2, 132, 199, 0.95), rgba(59, 130, 246, 0.92), rgba(14, 165, 233, 0.88));
-}
-
-.day-night-card--afternoon {
-  background:
-    radial-gradient(circle at 16% 16%, rgba(255, 255, 255, 0.2), transparent 16rem),
-    linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(236, 72, 153, 0.86), rgba(79, 70, 229, 0.82));
-}
-
-.day-night-card--evening {
-  background:
-    radial-gradient(circle at 16% 18%, rgba(253, 230, 138, 0.2), transparent 15rem),
-    linear-gradient(135deg, #4338ca, #be185d 62%, #7c2d12);
-}
-
-.day-night-card--night {
-  background:
-    radial-gradient(circle at 16% 18%, rgba(148, 163, 184, 0.16), transparent 15rem),
-    linear-gradient(135deg, #0f172a, #312e81 58%, #111827);
-}
-
 .day-night-card__header {
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -689,7 +653,7 @@ button {
   stroke-width: 2;
 }
 
-.day-night-card--night .sun-chart__sun {
+.day-night-card--is-night .sun-chart__sun {
   fill: #a3a3a3;
   stroke: #a3a3a3;
 }
