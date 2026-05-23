@@ -1157,6 +1157,13 @@ button {
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
+
+.monthly-occasions__day--selected {
+  border-color: rgba(15, 23, 42, 0.42);
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.16);
+  background: rgba(226, 232, 240, 0.75);
+}
+
 .monthly-occasions__day:hover {
   border-color: rgba(4, 120, 87, 0.24);
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);

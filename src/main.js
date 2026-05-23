@@ -726,7 +726,7 @@ function getDateOccasions(date, language, t) {
   return [...iranEvents, ...islamicEvents, ...internationalEvents];
 }
 
-function getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes = ['iran', 'international', 'islamic']) {
+function getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes = ['iran', 'international', 'islamic'], selectedDateKey = '') {
   return days
     .filter((day) => !day.isOutsideMonth && day.events.length > 0)
     .map((day) => ({
@@ -735,6 +735,7 @@ function getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes = ['
       primaryDate: day.primaryDate,
       secondaryDate: day.secondaryDate,
       title: `${day.primaryDate.month}/${formatNumber(day.primaryDate.day)}`,
+      isSelected: day.dateKey === selectedDateKey,
       events: day.events.filter((event) => enabledOccasionTypes.includes(event.type)),
     }))
     .filter((group) => group.events.length > 0);
@@ -778,7 +779,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     yearOptions: buildYearOptions(primaryParts.year),
     selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, primaryCalendar, language),
     days,
-    occasions: getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes),
+    occasions: getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes, selectedDateKey),
   };
 }
 
@@ -1365,7 +1366,7 @@ function MonthlyCalendarCard({ city, t, language }) {
           { className: 'monthly-occasions__list' },
           calendar.occasions.map((group) => h(
             'article',
-            { className: 'monthly-occasions__day', key: group.id },
+            { className: `monthly-occasions__day${group.isSelected ? ' monthly-occasions__day--selected' : ''}`, key: group.id, onClick: () => selectDay(group.dateKey), role: 'button', tabIndex: 0, onKeyDown: (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectDay(group.dateKey); } } },
             h(
               'div',
               { className: 'monthly-occasions__date' },
