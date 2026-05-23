@@ -1241,6 +1241,12 @@ function MonthlyCalendarCard({ city, t, language }) {
     setMonthOffset(getCalendarMonthOffset(nextPrimaryCalendar, city.cityDate, selectedDate));
   };
 
+  useEffect(() => {
+    if (selectedOccasionRef.current) {
+      selectedOccasionRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [selectedDateKey, calendar.occasions.length]);
+
   return h(
     'section',
     { className: 'monthly-calendars monthly-calendars--synced', 'aria-label': `Synced Gregorian and Solar Hijri calendar for ${city.label}` },
