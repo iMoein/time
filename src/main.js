@@ -810,7 +810,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     monthValue: primaryParts.month,
     monthOptions: getCalendarMonthOptions(primaryCalendar),
     yearValue: primaryParts.year,
-    yearOptions: buildYearOptions(primaryCalendarId, primaryParts.year),
+    yearOptions: buildYearOptions(primaryCalendar, primaryParts.year),
     selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, primaryCalendar, language),
     days,
     occasions: getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes, selectedDateKey),
