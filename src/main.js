@@ -1416,12 +1416,16 @@ function MonthlyCalendarCard({ city, t, language }) {
             h(
               'ul',
               null,
-              group.events.map((event) => h(
-                'li',
-                { key: `${group.id}-${event.calendar}-${event.title}` },
-                h('span', null, event.calendar),
-                h('strong', null, event.title),
-              )),
+              group.events.map((event, eventIndex) => {
+                const showCalendarLabel = eventIndex === group.events.findIndex((candidate) => candidate.type === event.type);
+
+                return h(
+                  'li',
+                  { key: `${group.id}-${event.calendar}-${event.title}` },
+                  showCalendarLabel ? h('span', null, event.calendar) : null,
+                  h('strong', null, event.title),
+                );
+              }),
             ),
           )),
         )
