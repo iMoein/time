@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import internationalOccasions from './data/occasions-gregorian.json' with { type: 'json' };
 import iranOccasions from './data/occasions-persian.json' with { type: 'json' };
 import iranIslamicOccasions from './data/occasions-islamic.json' with { type: 'json' };
@@ -1032,6 +1032,7 @@ function SettingsPanel({ ntpHostInput, ntpStatus, ntpServerPresets, onHostInputC
 
 function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, searchResults, draggingCityId, onAdd, onDragEnd, onDragStart, onDrop, onEditToggle, onQueryChange, onRemove, onSelect, t, language }) {
 
+
   return h(
     'section',
     { className: 'timezone-manager', 'aria-label': t.manage_timezones },
@@ -1157,6 +1158,7 @@ function MonthlyCalendarCard({ city, t, language }) {
   const [monthOffset, setMonthOffset] = useState(0);
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
   const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(['iran', 'international', 'islamic']);
+  const selectedOccasionRef = useRef(null);
   let calendar = null;
 
   const occasionTypeOptions = [
@@ -1223,6 +1225,12 @@ function MonthlyCalendarCard({ city, t, language }) {
     setPrimaryCalendar(nextPrimaryCalendar);
     setMonthOffset(getCalendarMonthOffset(nextPrimaryCalendar, city.cityDate, selectedDate));
   };
+
+  useEffect(() => {
+    if (selectedOccasionRef.current) {
+      selectedOccasionRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [selectedDateKey, calendar.occasions.length]);
 
   return h(
     'section',
@@ -1366,7 +1374,7 @@ function MonthlyCalendarCard({ city, t, language }) {
           { className: 'monthly-occasions__list' },
           calendar.occasions.map((group) => h(
             'article',
-            { className: `monthly-occasions__day${group.isSelected ? ' monthly-occasions__day--selected' : ''}`, key: group.id, onClick: () => selectDay(group.dateKey), role: 'button', tabIndex: 0, onKeyDown: (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectDay(group.dateKey); } } },
+            { className: `monthly-occasions__day${group.isSelected ? ' monthly-occasions__day--selected' : ''}`, key: group.id, ref: group.isSelected ? selectedOccasionRef : null, onClick: () => selectDay(group.dateKey), role: 'button', tabIndex: 0, onKeyDown: (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectDay(group.dateKey); } } },
             h(
               'div',
               { className: 'monthly-occasions__date' },
