@@ -1306,6 +1306,7 @@ function MonthlyCalendarCard({ city, t, language }) {
           ),
         ),
         h('small', null, `${t.inside}: ${calendar.secondaryTitle} · ${t.selected}: ${calendar.selectedLabel}`),
+        h('small', { className: 'monthly-calendar__occasion-description' }, selectedOccasionDescription),
         h(
           'div',
           { className: 'monthly-calendar__mode', 'aria-label': t.choose_primary_calendar },
