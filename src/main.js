@@ -534,9 +534,15 @@ function formatNumber(value) {
   return String(value).padStart(2, '0');
 }
 
-function formatNumericCalendarTitle(date, calendarId) {
+function formatNumericCalendarTitle(date, calendarId, language = 'en') {
   const { year, month } = getCalendarPartsFromUtc(date, calendarId);
-  return `${year} / ${formatNumber(month)}`;
+  const formatted = `${year}/${formatNumber(month)}`;
+
+  if (language === 'fa') {
+    return `\u200E${formatted}\u200E`;
+  }
+
+  return formatted;
 }
 
 function formatSelectedCalendarDate(date, calendarId, language = 'en') {
@@ -686,8 +692,8 @@ function getCalendarMonthOptions() {
   });
 }
 
-function formatCalendarMonthTitle(date, calendarId) {
-  return formatNumericCalendarTitle(date, calendarId);
+function formatCalendarMonthTitle(date, calendarId, language = 'en') {
+  return formatNumericCalendarTitle(date, calendarId, language);
 }
 
 function formatCompactCalendarDate(date, calendarId) {
@@ -709,18 +715,18 @@ function getDateOccasions(date, language, t) {
   const islamicParts = getIslamicDatePartsFromUtc(date);
   const internationalEvents = internationalOccasions
     .filter((event) => event.month === gregorianParts.month && event.day === gregorianParts.day)
-    .map((event) => ({ ...event, title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_international, dateLabel: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` }));
+    .map((event) => ({ ...event, type: 'international', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_international, dateLabel: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` }));
   const iranEvents = iranOccasions
     .filter((event) => event.month === persianParts.month && event.day === persianParts.day)
-    .map((event) => ({ ...event, title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_iran, dateLabel: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` }));
+    .map((event) => ({ ...event, type: 'iran', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_iran, dateLabel: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` }));
   const islamicEvents = iranIslamicOccasions
     .filter((event) => event.month === islamicParts.month && event.day === islamicParts.day)
-    .map((event) => ({ ...event, title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_islamic, dateLabel: `${islamicParts.day}/${islamicParts.month} AH` }));
+    .map((event) => ({ ...event, type: 'islamic', title: getLocalizedOccasionTitle(event, language), calendar: t.calendar_islamic, dateLabel: `${islamicParts.day}/${islamicParts.month} AH` }));
 
   return [...iranEvents, ...islamicEvents, ...internationalEvents];
 }
 
-function getMonthOccasionGroups(days, primaryCalendar) {
+function getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes = ['iran', 'international', 'islamic']) {
   return days
     .filter((day) => !day.isOutsideMonth && day.events.length > 0)
     .map((day) => ({
@@ -729,11 +735,12 @@ function getMonthOccasionGroups(days, primaryCalendar) {
       primaryDate: day.primaryDate,
       secondaryDate: day.secondaryDate,
       title: `${day.primaryDate.month}/${formatNumber(day.primaryDate.day)}`,
-      events: day.events,
-    }));
+      events: day.events.filter((event) => enabledOccasionTypes.includes(event.type)),
+    }))
+    .filter((group) => group.events.length > 0);
 }
 
-function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language) {
+function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes = ['iran', 'international', 'islamic']) {
   const secondaryCalendar = primaryCalendar === 'gregorian' ? 'persian' : 'gregorian';
   const monthStart = getCalendarMonthStart(cityDate, primaryCalendar, monthOffset);
   const primaryParts = getCalendarPartsFromUtc(monthStart, primaryCalendar);
@@ -761,9 +768,9 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
   return {
     id: primaryCalendar,
     secondaryId: secondaryCalendar,
-    eyebrow: t.synced_monthly_calendar,
-    title: formatCalendarMonthTitle(monthStart, primaryCalendar),
-    secondaryTitle: formatCalendarMonthTitle(monthStart, secondaryCalendar),
+    eyebrow: t.monthly_calendar,
+    title: formatCalendarMonthTitle(monthStart, primaryCalendar, language),
+    secondaryTitle: formatCalendarMonthTitle(monthStart, secondaryCalendar, language),
     weekdays: getLocalizedWeekdays(primaryCalendar === 'persian' ? 'persian' : 'gregorian', language),
     monthValue: primaryParts.month,
     monthOptions: getCalendarMonthOptions(primaryCalendar),
@@ -771,7 +778,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     yearOptions: buildYearOptions(primaryParts.year),
     selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, primaryCalendar, language),
     days,
-    occasions: getMonthOccasionGroups(days, primaryCalendar),
+    occasions: getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes),
   };
 }
 
@@ -1023,6 +1030,7 @@ function SettingsPanel({ ntpHostInput, ntpStatus, ntpServerPresets, onHostInputC
 
 
 function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, searchResults, draggingCityId, onAdd, onDragEnd, onDragStart, onDrop, onEditToggle, onQueryChange, onRemove, onSelect, t, language }) {
+
   return h(
     'section',
     { className: 'timezone-manager', 'aria-label': t.manage_timezones },
@@ -1147,10 +1155,27 @@ function MonthlyCalendarCard({ city, t, language }) {
   const [primaryCalendar, setPrimaryCalendar] = useState('persian');
   const [monthOffset, setMonthOffset] = useState(0);
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
+  const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(['iran', 'international', 'islamic']);
   let calendar = null;
 
+  const occasionTypeOptions = [
+    { id: 'iran', label: t.calendar_iran },
+    { id: 'international', label: t.calendar_international },
+    { id: 'islamic', label: t.calendar_islamic },
+  ];
+
+  const toggleOccasionType = (type) => {
+    setEnabledOccasionTypes((active) => {
+      if (active.includes(type)) {
+        return active.length === 1 ? active : active.filter((item) => item !== type);
+      }
+
+      return [...active, type];
+    });
+  };
+
   try {
-    calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language);
+    calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes);
   } catch (error) {
     return h(
       'section',
@@ -1307,9 +1332,32 @@ function MonthlyCalendarCard({ city, t, language }) {
       h(
         'header',
         null,
-        h('span', null, t.month_occasions),
+        h(
+          'div',
+          { className: 'monthly-occasions__top' },
+          h('span', null, t.month_occasions),
+          h(
+            'details',
+            { className: 'monthly-occasions__filters' },
+            h('summary', null, t.filter_occasions),
+            h(
+              'div',
+              { className: 'monthly-occasions__filters-menu' },
+              occasionTypeOptions.map((option) => h(
+                'label',
+                { key: option.id },
+                h('input', { type: 'checkbox', checked: enabledOccasionTypes.includes(option.id), onChange: () => toggleOccasionType(option.id) }),
+                h('span', null, option.label),
+              )),
+            ),
+          ),
+        ),
         h('strong', null, calendar.title),
-        h('small', null, `${t.occasions_summary} · ${calendar.occasions.length} ${t.days}`),
+        h(
+          'div',
+          { className: 'monthly-occasions__meta' },
+          h('small', null, `${t.occasions_summary} · ${calendar.occasions.length} ${t.days}`),
+        ),
       ),
       calendar.occasions.length > 0
         ? h(
