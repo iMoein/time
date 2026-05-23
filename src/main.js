@@ -1225,6 +1225,15 @@ function MonthlyCalendarCard({ city, t, language }) {
   }
 
   const selectedOccasionGroup = getSelectedOccasionGroup(calendar);
+  const occasionTypeOrder = ['iran', 'international', 'islamic'];
+  const groupOccasionsByType = (events) => occasionTypeOrder
+    .map((type) => {
+      const typeEvents = events.filter((event) => event.type === type);
+      return typeEvents.length > 0
+        ? { type, calendarLabel: typeEvents[0].calendar, events: typeEvents }
+        : null;
+    })
+    .filter(Boolean);
 
   const moveMonth = (direction) => {
     setMonthOffset((offset) => getShiftedCalendarMonthOffset(primaryCalendar, city.cityDate, offset, direction));
@@ -1413,11 +1422,20 @@ function MonthlyCalendarCard({ city, t, language }) {
             h(
               'ul',
               null,
-              group.events.map((event) => h(
+              groupOccasionsByType(group.events).map((typeGroup, index, groupedTypes) => h(
                 'li',
-                { key: `${group.id}-${event.calendar}-${event.title}` },
-                h('span', null, event.calendar),
-                h('strong', null, event.title),
+                { key: `${group.id}-${typeGroup.type}` },
+                h(
+                  'div',
+                  { className: 'monthly-occasions__type' },
+                  h('span', null, typeGroup.calendarLabel),
+                  h(
+                    'div',
+                    { className: 'monthly-occasions__titles' },
+                    typeGroup.events.map((event) => h('strong', { key: `${group.id}-${typeGroup.type}-${event.title}` }, event.title)),
+                  ),
+                ),
+                index < groupedTypes.length - 1 ? h('hr', { className: 'monthly-occasions__divider' }) : null,
               )),
             ),
           )),
