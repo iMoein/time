@@ -1094,11 +1094,13 @@ button {
 .monthly-occasions__filters-menu {
   position: absolute;
   top: calc(100% + 0.35rem);
-  inset-inline-start: 0;
+  inset-inline-start: auto;
+  inset-inline-end: 0;
   z-index: 5;
   display: grid;
   gap: 0.35rem;
-  min-width: 11rem;
+  min-width: min(11rem, calc(100vw - 2rem));
+  max-width: min(15rem, calc(100vw - 2rem));
   padding: 0.55rem;
   border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 0.8rem;
@@ -1113,6 +1115,7 @@ button {
   color: #334155;
   font-size: 0.8rem;
   font-weight: 750;
+  white-space: nowrap;
 }
 
 .monthly-occasions__list {
