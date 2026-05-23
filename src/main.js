@@ -3,6 +3,7 @@ import internationalOccasions from './data/occasions-gregorian.json' with { type
 import iranOccasions from './data/occasions-persian.json' with { type: 'json' };
 import iranIslamicOccasions from './data/occasions-islamic.json' with { type: 'json' };
 import islamicYearStartSync from './data/islamic-year-start-sync.json' with { type: 'json' };
+import yearOptionsData from './data/year-options.json' with { type: 'json' };
 import i18n from './data/i18n.json' with { type: 'json' };
 import cityTranslationsFa from './data/city-translations-fa.json' with { type: 'json' };
 import occasionDescriptions from './data/occasion-descriptions.json' with { type: 'json' };
@@ -558,8 +559,14 @@ function formatSelectedCalendarDate(date, calendarId, language = 'en') {
   return `${weekday} ${year}/${formatNumber(month)}/${formatNumber(day)}`;
 }
 
-function buildYearOptions(selectedYear) {
-  return Array.from({ length: 21 }, (_, index) => selectedYear - 10 + index);
+function buildYearOptions(calendarId, selectedYear) {
+  const configuredYears = yearOptionsData[calendarId] || [];
+
+  if (configuredYears.includes(selectedYear)) {
+    return configuredYears;
+  }
+
+  return [...configuredYears, selectedYear].sort((a, b) => a - b);
 }
 
 function getGregorianMonthOffset(cityDate, year, month) {
@@ -584,7 +591,7 @@ function getGregorianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
     monthValue: monthStart.getUTCMonth() + 1,
     monthOptions: getCalendarMonthOptions('gregorian'),
     yearValue: monthStart.getUTCFullYear(),
-    yearOptions: buildYearOptions(monthStart.getUTCFullYear()),
+    yearOptions: buildYearOptions('gregorian', monthStart.getUTCFullYear()),
     selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, 'gregorian'),
     days: Array.from({ length: 42 }, (_, index) => {
       const dayDate = addUtcDays(gridStart, index);
@@ -617,7 +624,7 @@ function getPersianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
     monthValue: targetMonth.month,
     monthOptions: getCalendarMonthOptions('persian'),
     yearValue: targetMonth.year,
-    yearOptions: buildYearOptions(targetMonth.year),
+    yearOptions: buildYearOptions('persian', targetMonth.year),
     selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, 'persian'),
     days: Array.from({ length: 42 }, (_, index) => {
       const dayDate = addUtcDays(gridStart, index);
@@ -803,7 +810,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     monthValue: primaryParts.month,
     monthOptions: getCalendarMonthOptions(primaryCalendar),
     yearValue: primaryParts.year,
-    yearOptions: buildYearOptions(primaryParts.year),
+    yearOptions: buildYearOptions(primaryCalendarId, primaryParts.year),
     selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, primaryCalendar, language),
     days,
     occasions: getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes, selectedDateKey),
