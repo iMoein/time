@@ -1136,14 +1136,21 @@ function DayNightCard({ city, t }) {
 }
 
 
-function MonthlyCalendarCard({ city, t, language }) {
+function MonthlyCalendarCard({ city, t, language, initialOccasionTypes }) {
   const todayKey = getCalendarDateKey(city.cityDate);
   const [primaryCalendar, setPrimaryCalendar] = useState('persian');
   const [monthOffset, setMonthOffset] = useState(0);
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
-  const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(globalThis.__defaultOccasionTypes || ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared']);
+  const fallbackOccasionTypes = ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared'];
+  const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(initialOccasionTypes || globalThis.__defaultOccasionTypes || fallbackOccasionTypes);
   let calendar = null;
 
+
+  useEffect(() => {
+    if (Array.isArray(initialOccasionTypes) && initialOccasionTypes.length) {
+      setEnabledOccasionTypes(initialOccasionTypes);
+    }
+  }, [initialOccasionTypes]);
   const occasionTypeOptions = [
     { id: 'iran', label: t.calendar_iran },
     { id: 'iranCurrent', label: t.calendar_iran_current },
@@ -1466,6 +1473,7 @@ function App() {
 
   const [draggingCityId, setDraggingCityId] = useState(null);
   const [language, setLanguage] = useState(getInitialLanguage);
+  const [defaultOccasionTypes, setDefaultOccasionTypes] = useState(globalThis.__defaultOccasionTypes || null);
   const isFa = language === 'fa';
 
   useEffect(() => {
@@ -1497,6 +1505,9 @@ function App() {
         setSelectedCityId(cfg.defaultSelectedCityId);
       }
       globalThis.__defaultOccasionTypes = Array.isArray(cfg.defaultOccasionTypes) ? cfg.defaultOccasionTypes : undefined;
+      if (Array.isArray(cfg.defaultOccasionTypes) && cfg.defaultOccasionTypes.length) {
+        setDefaultOccasionTypes(cfg.defaultOccasionTypes);
+      }
     }).catch(() => {});
   }, []);
 
@@ -1769,7 +1780,7 @@ function App() {
         language,
       }),
     ),
-    h(MonthlyCalendarCard, { city: selectedCityView, t, language }),  );
+    h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes }),  );
 }
 
 
