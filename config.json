@@ -11,9 +11,31 @@
   ],
   "defaultSelectedCityId": "tehran",
   "defaultOccasionTypes": [
-    "iran",
     "iranAncient",
+    "international"
+  ],
+  "visibleOccasionTypes": [
+    "iran",
+    "iranCurrent",
+    "iranAncient",
+    "international",
+    "globalOfficial",
     "marketing",
-    "islamicShia"
+    "islamic",
+    "islamicShia",
+    "islamicSunni",
+    "islamicShared"
+  ],
+  "occasionFilterOrder": [
+    "iranAncient",
+    "iran",
+    "iranCurrent",
+    "international",
+    "globalOfficial",
+    "marketing",
+    "islamic",
+    "islamicShia",
+    "islamicSunni",
+    "islamicShared"
   ]
 }
