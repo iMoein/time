@@ -32,9 +32,7 @@ async function saveAll(){await api('/api/admin/config',{method:'POST',body:JSON.
 $('defaultsSaveBtn').onclick=()=>saveAll().catch(e=>setStatus('defaultsStatus',e.message)); $('ntpSaveBtn').onclick=()=>saveAll().catch(e=>setStatus('ntpStatus',e.message));
 $('jsonLoadBtn').onclick=()=>loadJson($('jsonFileSelect').value); $('jsonSaveBtn').onclick=async()=>{try{await api('/api/admin/json-file',{method:'POST',body:JSON.stringify({file:$('jsonFileSelect').value,content:JSON.parse($('jsonEditor').value)})});setStatus('jsonStatus','Saved');}catch(e){setStatus('jsonStatus',e.message);}};
 
-setMode(false);
 initCities();
-refreshCaptcha();
 checkAuth();
 
 function activateTab(tab){document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.id===`tab-${tab}`));}
