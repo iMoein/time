@@ -6,6 +6,7 @@ let selectedCities=[],cityPool=[];
 async function api(path,opts={}){const r=await fetch(path,{credentials:'include',headers:{'Content-Type':'application/json'},...opts});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Request failed');e.status=r.status;throw e;}return d;}
 const setStatus=(id,m)=>{const el=$(id);if(el)el.textContent=m||'';};
 const on=(id,event,fn)=>{const el=$(id);if(el)el.addEventListener(event,fn);};
+const pick=(obj,keys,def)=>{for(const k of keys){if(obj&&obj[k]!==undefined&&obj[k]!==null)return obj[k];}return def;};
 
 function tabFromPath(){const map={'/admin-dashboard.html':'overview','/admin-defaults.html':'defaults','/admin-ntp.html':'ntp','/admin-json.html':'json'};return map[location.pathname]||new URL(location.href).searchParams.get('tab')||'overview';}
 
@@ -14,9 +15,9 @@ function renderCities(){ $('defaultCityChips').innerHTML=selectedCities.map(c=>`
 function renderOcc(selected=[]){$('occasionSelect').innerHTML=OCC.map(o=>`<option value='${o}' ${selected.includes(o)?'selected':''}>${o}</option>`).join('');}
 function renderNtp(){ $('ntpPreset').innerHTML=NTP.map(([h,l])=>`<option value='${h}'>${l} (${h})</option>`).join(''); }
 
-async function loadConfig(){const d=await api('/api/admin/config');$('ntpHost').value=d?.ntpHost||'pool.ntp.org';selectedCities=[...(d?.defaultCityIds||[])];renderCities();$('defaultSelectedCityInput').value=d?.defaultSelectedCityId||selectedCities[0]||'';renderOcc(d?.defaultOccasionTypes||[]);$('metricCities').textContent=String(selectedCities.length);$('metricNtp').textContent=d?.ntpHost||'-';return d;}
-async function loadJsonFiles(){const d=await api('/api/admin/json-files');const files=Array.isArray(d.files)?d.files:[];$('jsonFileSelect').innerHTML=files.map(f=>`<option value='${f}'>${f}</option>`).join('');$('metricJson').textContent=String(files.length);if(files[0]) await loadJson(files[0]);}
-async function loadJson(file){const d=await api('/api/admin/json-file?file='+encodeURIComponent(file));$('jsonEditor').value=JSON.stringify(d.content,null,2);}
+async function loadConfig(){const raw=await api('/api/admin/config');const d=raw?.config||raw?.data||raw||{};const ntpHost=pick(d,['ntpHost','ntp_host'],'pool.ntp.org');const cityIds=pick(d,['defaultCityIds','default_city_ids'],[]);const selected=pick(d,['defaultSelectedCityId','default_selected_city_id'],'');const occasions=pick(d,['defaultOccasionTypes','default_occasion_types'],[]);if($('ntpHost'))$('ntpHost').value=ntpHost;selectedCities=[...(Array.isArray(cityIds)?cityIds:[])];renderCities();if($('defaultSelectedCityInput'))$('defaultSelectedCityInput').value=selected||selectedCities[0]||'';renderOcc(Array.isArray(occasions)?occasions:[]);if($('metricCities'))$('metricCities').textContent=String(selectedCities.length);if($('metricNtp'))$('metricNtp').textContent=ntpHost||'-';return d;}
+async function loadJsonFiles(){const raw=await api('/api/admin/json-files');const files=pick(raw,['files'],pick(raw?.data||{},['files'],[]));const list=Array.isArray(files)?files:[];if($('jsonFileSelect'))$('jsonFileSelect').innerHTML=list.map(f=>`<option value='${f}'>${f}</option>`).join('');if($('metricJson'))$('metricJson').textContent=String(list.length);if(list[0]&&$('jsonEditor')) await loadJson(list[0]);}
+async function loadJson(file){const raw=await api('/api/admin/json-file?file='+encodeURIComponent(file));const content=pick(raw,['content'],pick(raw?.data||{},['content'],{}));if($('jsonEditor'))$('jsonEditor').value=JSON.stringify(content,null,2);}
 async function initCities(){const z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];cityPool=z.map(v=>v.toLowerCase().replace(/[^a-z0-9]+/g,'-'));}
 function suggest(){const q=$('citySearchInput').value.trim().toLowerCase();$('citySuggestions').innerHTML=cityPool.filter(c=>c.includes(q)&&!selectedCities.includes(c)).slice(0,10).map(c=>`<button data-add='${c}' type='button'>${c}</button>`).join('');}
 
