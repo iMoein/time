@@ -1190,7 +1190,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
   const toggleOccasionType = (type) => {
     setEnabledOccasionTypes((active) => {
       if (active.includes(type)) {
-        return active.length === 1 ? active : active.filter((item) => item !== type);
+        return active.filter((item) => item !== type);
       }
 
       return [...active, type];
@@ -1198,7 +1198,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
   };
 
   try {
-    calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes);
+    calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes.filter((type)=>allowedOccasionTypes.includes(type)));
   } catch (error) {
     return h(
       'section',
@@ -1378,7 +1378,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
             h(
               'div',
               { className: 'monthly-occasions__filters-menu' },
-              (visibleOccasionTypes&&visibleOccasionTypes.length?allOccasionTypeOptions.filter(o=>visibleOccasionTypes.includes(o.id)):allOccasionTypeOptions).map((option) => h(
+              occasionTypeOrder.map((typeId)=>allOccasionTypeOptions.find((o)=>o.id===typeId)).filter(Boolean).map((option) => h(
                 'label',
                 { key: option.id },
                 h('input', { type: 'checkbox', checked: enabledOccasionTypes.includes(option.id), onChange: () => toggleOccasionType(option.id) }),
