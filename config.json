@@ -10,12 +10,8 @@
   ],
   "defaultSelectedCityId": "tehran",
   "defaultOccasionTypes": [
-    "iran",
-    "iranCurrent",
-    "international",
-    "globalOfficial",
-    "islamic",
-    "islamicShia",
-    "islamicShared"
+    "iranAncient",
+    "marketing",
+    "islamicShia"
   ]
 }
