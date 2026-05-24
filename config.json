@@ -16,6 +16,28 @@
     "marketing",
     "islamicShia"
   ],
-  "showOccasionFiltersAdmin": true,
-  "showOccasionFiltersUser": false
+  "visibleOccasionTypes": [
+    "iran",
+    "iranCurrent",
+    "iranAncient",
+    "international",
+    "globalOfficial",
+    "marketing",
+    "islamic",
+    "islamicShia",
+    "islamicSunni",
+    "islamicShared"
+  ],
+  "occasionFilterOrder": [
+    "iran",
+    "iranCurrent",
+    "iranAncient",
+    "international",
+    "globalOfficial",
+    "marketing",
+    "islamic",
+    "islamicShia",
+    "islamicSunni",
+    "islamicShared"
+  ]
 }
