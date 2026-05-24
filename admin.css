@@ -141,3 +141,14 @@ code {
   .grid2,
   .dashboard-grid { grid-template-columns: 1fr; }
 }
+
+/* login redesign */
+.login-shell{display:grid;grid-template-columns:minmax(240px,360px) 1fr;gap:0;overflow:hidden;padding:0;max-width:980px;margin:0 auto}
+.login-art{background:radial-gradient(circle at 20% 20%,#16a34a,#065f46);color:#ecfdf5;padding:34px 26px;display:grid;align-content:center;justify-items:start;min-height:380px}
+.logo-dot{width:52px;height:52px;border-radius:999px;background:#ecfdf5;color:#065f46;display:grid;place-items:center;font-weight:700;margin-bottom:14px}
+.login-art h2{margin:0 0 8px;font-size:2rem}.login-art p{margin:0;opacity:.92;line-height:1.7}
+.login-form-wrap{padding:26px 24px}
+.login-grid{gap:10px}
+.login-grid input{border-radius:999px;background:#f0fdf4;border-color:#bbf7d0}
+.login-grid .btn-primary{border-radius:999px;background:linear-gradient(90deg,#15803d,#10b981)}
+@media (max-width:860px){.login-shell{grid-template-columns:1fr}.login-art{min-height:220px;border-bottom:1px solid var(--line)}.login-form-wrap{padding:18px}}
