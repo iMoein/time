@@ -33,11 +33,13 @@ npm run check
 
 ## Admin API quick reference (cURL)
 
-> Base URL for local development: `http://localhost:8585`
+> Base URL for **admin APIs**: `http://localhost:8686`
+>
+> User app runs on: `http://localhost:8585`
 
 ### 1) Get captcha
 ```bash
-curl -s http://localhost:8585/api/admin/captcha
+curl -s http://localhost:8686/api/admin/captcha
 ```
 
 ### 2) Login (creates session cookie)
@@ -45,17 +47,17 @@ curl -s http://localhost:8585/api/admin/captcha
 curl -i -c cookies.txt \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"admin","captcha":"1234"}' \
-  http://localhost:8585/api/admin/login
+  http://localhost:8686/api/admin/login
 ```
 
 ### 3) Check admin session
 ```bash
-curl -s -b cookies.txt http://localhost:8585/api/admin/session
+curl -s -b cookies.txt http://localhost:8686/api/admin/session
 ```
 
 ### 4) Logout
 ```bash
-curl -s -X POST -b cookies.txt http://localhost:8585/api/admin/logout
+curl -s -X POST -b cookies.txt http://localhost:8686/api/admin/logout
 ```
 
 ### 5) Change initial password
@@ -63,12 +65,12 @@ curl -s -X POST -b cookies.txt http://localhost:8585/api/admin/logout
 curl -s -X POST -b cookies.txt \
   -H "Content-Type: application/json" \
   -d '{"newPassword":"StrongPassword123!"}' \
-  http://localhost:8585/api/admin/change-password
+  http://localhost:8686/api/admin/change-password
 ```
 
 ### 6) Read admin config
 ```bash
-curl -s -b cookies.txt http://localhost:8585/api/admin/config
+curl -s -b cookies.txt http://localhost:8686/api/admin/config
 ```
 
 ### 7) Save admin config
@@ -81,18 +83,18 @@ curl -s -X POST -b cookies.txt \
     "defaultSelectedCityId":"asia-tehran",
     "defaultOccasionTypes":["international","globalOfficial"]
   }' \
-  http://localhost:8585/api/admin/config
+  http://localhost:8686/api/admin/config
 ```
 
 ### 8) List JSON files
 ```bash
-curl -s -b cookies.txt http://localhost:8585/api/admin/json-files
+curl -s -b cookies.txt http://localhost:8686/api/admin/json-files
 ```
 
 ### 9) Read one JSON file
 ```bash
 curl -s -b cookies.txt \
-  "http://localhost:8585/api/admin/json-file?file=calendar-files%2FREADME.json"
+  "http://localhost:8686/api/admin/json-file?file=calendar-files%2FREADME.json"
 ```
 
 ### 10) Save one JSON file
@@ -103,10 +105,10 @@ curl -s -X POST -b cookies.txt \
     "file":"calendar-files/README.json",
     "content":{"updatedAt":"2026-05-24T00:00:00Z"}
   }' \
-  http://localhost:8585/api/admin/json-file
+  http://localhost:8686/api/admin/json-file
 ```
 
 ### 11) NTP check
 ```bash
-curl -s "http://localhost:8585/api/ntp?host=pool.ntp.org"
+curl -s "http://localhost:8686/api/ntp?host=pool.ntp.org"
 ```
