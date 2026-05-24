@@ -84,6 +84,28 @@ const allCities = getAllCities();
 const allCityIds = new Set(allCities.map((city) => city.id));
 const defaultCityIds = defaultCities.map((city) => city.id);
 
+
+function toCityAlias(value = '') {
+  return String(value).trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
+
+function resolveConfiguredCityId(rawId) {
+  if (!rawId) return null;
+  if (allCityIds.has(rawId)) return rawId;
+
+  const alias = toCityAlias(rawId);
+  if (!alias) return null;
+
+  const byAlias = allCities.find((city) => {
+    const labelAlias = toCityAlias(city.label);
+    const faAlias = toCityAlias(city.localFaLabel || '');
+    const tzAlias = toCityAlias(city.timeZone || '');
+    return alias === labelAlias || alias === faAlias || alias === tzAlias;
+  });
+
+  return byAlias ? byAlias.id : null;
+}
+
 const faTimeOfDay = { dawn: 'صبح خیلی زود', morning: 'صبح', noon: 'ظهر', afternoon: 'بعدازظهر', evening: 'عصر', night: 'شب' };
 function getLocalizedWeekdays(calendar, language) { if (language !== 'fa') return calendar === 'persian' ? persianWeekdays : gregorianWeekdays; return calendar === 'persian' ? ['ش','ی','د','س','چ','پ','ج'] : ['د','س','چ','پ','ج','ش','ی']; }
 
@@ -1499,10 +1521,16 @@ function App() {
         setNtpHost(cfg.ntpHost);
       }
       if (Array.isArray(cfg.defaultCityIds) && cfg.defaultCityIds.length) {
-        setActiveCityIds(cfg.defaultCityIds.filter((id) => allCityIds.has(id)));
+        const resolvedIds = cfg.defaultCityIds.map(resolveConfiguredCityId).filter(Boolean);
+        if (resolvedIds.length) {
+          setActiveCityIds(Array.from(new Set(resolvedIds)));
+        }
       }
-      if (typeof cfg.defaultSelectedCityId === 'string' && allCityIds.has(cfg.defaultSelectedCityId)) {
-        setSelectedCityId(cfg.defaultSelectedCityId);
+      if (typeof cfg.defaultSelectedCityId === 'string') {
+        const resolvedSelected = resolveConfiguredCityId(cfg.defaultSelectedCityId);
+        if (resolvedSelected) {
+          setSelectedCityId(resolvedSelected);
+        }
       }
       globalThis.__defaultOccasionTypes = Array.isArray(cfg.defaultOccasionTypes) ? cfg.defaultOccasionTypes : undefined;
       if (Array.isArray(cfg.defaultOccasionTypes) && cfg.defaultOccasionTypes.length) {
