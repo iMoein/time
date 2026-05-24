@@ -6,9 +6,7 @@
   "defaultCityIds": [
     "tehran",
     "los-angeles",
-    "london",
-    "asia-tokyo",
-    "europe-paris"
+    "london"
   ],
   "defaultSelectedCityId": "tehran",
   "defaultOccasionTypes": [
