@@ -21,6 +21,7 @@ input,select,textarea{padding:11px 12px;border:1px solid #cfd8e3;border-radius:1
 input:focus,select:focus,textarea:focus{outline:none;border-color:#0ea5e9;box-shadow:0 0 0 3px #0ea5e930}
 #occasionSelect{min-height:160px;padding:6px}
 #occasionSelect option{padding:7px 8px;border-radius:6px}
+#defaultSelectedCityInput{width:min(100%,360px);max-width:360px}
 .row,.chips,.suggestions,.stats{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 #cityAddBtn{background:#334155;border-color:#334155;color:#fff;font-weight:700}
 #defaultsSaveBtn{margin-top:2px}
