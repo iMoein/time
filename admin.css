@@ -1,0 +1,15 @@
+@font-face{font-family:IRANSansXFaNum;src:url('/src/IRANSansXFaNum-Regular.ttf') format('truetype');font-display:swap}
+:root{--bg:#eef3fb;--card:#f8fbff;--line:#c8d3e3;--text:#162033;--muted:#5f7089;--primary:#0f172a}
+*{box-sizing:border-box}body{margin:0;font-family:IRANSansXFaNum,Inter,sans-serif;color:var(--text);background:linear-gradient(135deg,#f8fafc,#e2e8f0)}
+.admin-layout{max-width:1300px;margin:auto;min-height:100vh;padding:16px;display:grid;grid-template-columns:250px 1fr;gap:14px}
+.sidebar{background:#fff;border:1px solid var(--line);border-radius:20px;padding:14px;display:grid;gap:8px;align-content:start}.side-bottom{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
+.main-panel{display:grid;gap:12px}.topbar{background:#fff;border:1px solid var(--line);border-radius:20px;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
+input,select,textarea,button{font:inherit}label{display:grid;gap:6px;color:var(--muted)}input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff}textarea{min-height:280px;direction:ltr}
+.row,.chips,.suggestions,.stats,.cards{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.stats article,.metric{flex:1;min-width:150px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.chip{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer}.danger{background:#b91c1c;color:#fff;border-color:#b91c1c}.btn-primary{padding:10px 12px;border:none;border-radius:12px;background:var(--primary);color:#fff;cursor:pointer}
+.nav-btn{border:1px solid var(--line);background:#fff;padding:10px;border-radius:10px;cursor:pointer;text-align:right}.nav-btn.active{background:#eaf2ff}
+.login-shell{display:grid;grid-template-columns:1fr 1fr;max-width:780px;margin:auto;overflow:hidden}.login-art{background:linear-gradient(135deg,#16a34a 0 25%,#f97316 25% 50%,#fb923c 50% 75%,#60a5fa 75% 100%);color:#fff;padding:24px;display:grid;align-content:center;gap:8px}.logo-dot{width:50px;height:50px;background:#fff;color:#0f172a;border-radius:999px;display:grid;place-items:center}
+.login-form-wrap{padding:18px}.captcha-inline .row{display:grid;grid-template-columns:auto 1fr auto;gap:8px}.tabs .tab{display:none}.tabs .tab.active{display:block}.hidden{display:none}
+.auth-mode{grid-template-columns:1fr;align-content:center}.dashboard-mode #loginCard{display:none}
+@media(max-width:980px){.admin-layout{grid-template-columns:1fr}.login-shell,.grid2{grid-template-columns:1fr}}
