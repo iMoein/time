@@ -1165,6 +1165,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes }) {
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
   const fallbackOccasionTypes = ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared'];
   const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(initialOccasionTypes || globalThis.__defaultOccasionTypes || fallbackOccasionTypes);
+  const allowedOccasionTypes = (visibleOccasionTypes&&visibleOccasionTypes.length)?visibleOccasionTypes:fallbackOccasionTypes;
   let calendar = null;
 
 
@@ -1173,7 +1174,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes }) {
       setEnabledOccasionTypes(initialOccasionTypes);
     }
   }, [initialOccasionTypes]);
-  const occasionTypeOptions = [
+  const allOccasionTypeOptions = [
     { id: 'iran', label: t.calendar_iran },
     { id: 'iranCurrent', label: t.calendar_iran_current },
     { id: 'iranAncient', label: t.calendar_iran_ancient },
@@ -1213,7 +1214,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes }) {
 
   const selectedOccasionGroup = getSelectedOccasionGroup(calendar);
   const occasionTypeOrder = ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared'];
-  const groupOccasionsByType = (events) => occasionTypeOrder
+  const groupOccasionsByType = (events) => occasionTypeOrder.filter((type)=>allowedOccasionTypes.includes(type))
     .map((type) => {
       const typeEvents = events.filter((event) => event.type === type);
       return typeEvents.length > 0
@@ -1377,7 +1378,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes }) {
             h(
               'div',
               { className: 'monthly-occasions__filters-menu' },
-              occasionTypeOptions.map((option) => h(
+              (visibleOccasionTypes&&visibleOccasionTypes.length?allOccasionTypeOptions.filter(o=>visibleOccasionTypes.includes(o.id)):allOccasionTypeOptions).map((option) => h(
                 'label',
                 { key: option.id },
                 h('input', { type: 'checkbox', checked: enabledOccasionTypes.includes(option.id), onChange: () => toggleOccasionType(option.id) }),
@@ -1496,7 +1497,7 @@ function App() {
   const [draggingCityId, setDraggingCityId] = useState(null);
   const [language, setLanguage] = useState(getInitialLanguage);
   const [defaultOccasionTypes, setDefaultOccasionTypes] = useState(globalThis.__defaultOccasionTypes || null);
-  const [showOccasionFiltersUser, setShowOccasionFiltersUser] = useState(globalThis.__showOccasionFiltersUser !== false);
+  const [visibleOccasionTypes, setVisibleOccasionTypes] = useState(globalThis.__visibleOccasionTypes || null);
   const isFa = language === 'fa';
 
   useEffect(() => {
@@ -1534,8 +1535,8 @@ function App() {
         }
       }
       globalThis.__defaultOccasionTypes = Array.isArray(cfg.defaultOccasionTypes) ? cfg.defaultOccasionTypes : undefined;
-      globalThis.__showOccasionFiltersUser = cfg.showOccasionFiltersUser !== false;
-      setShowOccasionFiltersUser(cfg.showOccasionFiltersUser !== false);
+      globalThis.__visibleOccasionTypes = Array.isArray(cfg.visibleOccasionTypes)?cfg.visibleOccasionTypes:undefined;
+      if(Array.isArray(cfg.visibleOccasionTypes)&&cfg.visibleOccasionTypes.length){setVisibleOccasionTypes(cfg.visibleOccasionTypes);}
       if (Array.isArray(cfg.defaultOccasionTypes) && cfg.defaultOccasionTypes.length) {
         setDefaultOccasionTypes(cfg.defaultOccasionTypes);
       }
@@ -1811,7 +1812,7 @@ function App() {
         language,
       }),
     ),
-    h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, showOccasionFiltersUser }),  );
+    h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes }),  );
 }
 
 

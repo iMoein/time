@@ -34,6 +34,11 @@ textarea{min-height:300px;direction:ltr}
 .status{margin:8px 0 0;font-size:.9rem;color:#475569;min-height:20px}
 
 .defaults-grid .default-col{grid-column:1}.defaults-grid .default-city-field{grid-column:2;align-content:start}
+.default-col,.default-city-field{border:1px solid #d8e1ec;border-radius:10px;padding:10px 12px;background:#fff}
+.default-col legend,.default-city-field legend{padding:0 6px;color:#334155;font-weight:700}
+#citySearchInput,#defaultSelectedCityInput{height:44px}
+.default-city-field .hint{color:#64748b;font-size:.78rem;margin-top:6px}
+.visibility-list{display:grid;gap:6px}.mini{padding:2px 7px;border:1px solid #cbd5e1;background:#f8fafc;border-radius:7px;cursor:pointer}
 .defaults-grid .occasion-col{grid-column:1}
 .defaults-grid .visibility-col{grid-column:2;border:1px solid #d8e1ec;border-radius:10px;padding:10px 12px;background:#fff;display:grid;gap:8px;align-content:start}
 .visibility-col legend{padding:0 6px;color:#334155;font-weight:700}
