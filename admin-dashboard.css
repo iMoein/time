@@ -21,7 +21,8 @@ input,select,textarea{padding:11px 12px;border:1px solid #cfd8e3;border-radius:1
 input:focus,select:focus,textarea:focus{outline:none;border-color:#0ea5e9;box-shadow:0 0 0 3px #0ea5e930}
 #occasionSelect{min-height:160px;padding:6px}
 #occasionSelect option{padding:7px 8px;border-radius:6px}
-#defaultSelectedCityInput{width:min(100%,360px);max-width:360px}
+.default-city-field{max-width:340px}
+#defaultSelectedCityInput{width:100%;max-width:340px;min-width:220px;height:44px;padding:9px 38px 9px 12px;line-height:1.2;background-color:#fff}
 .row,.chips,.suggestions,.stats{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 #cityAddBtn{background:#334155;border-color:#334155;color:#fff;font-weight:700}
 #defaultsSaveBtn{margin-top:2px}
@@ -32,4 +33,4 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#0ea5e9;box-sh
 textarea{min-height:300px;direction:ltr}
 .status{margin:8px 0 0;font-size:.9rem;color:#475569;min-height:20px}
 .tabs .tab{display:none}.tabs .tab.active{display:block}.hidden{display:none}
-@media(max-width:1100px){.admin-layout{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.user-live-frame{height:70vh;min-height:460px}}
+@media(max-width:1100px){.admin-layout{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.default-city-field{max-width:100%}#defaultSelectedCityInput{max-width:100%;min-width:0}.user-live-frame{height:70vh;min-height:460px}}
