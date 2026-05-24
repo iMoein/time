@@ -12,3 +12,7 @@ button{border:none;border-radius:10px;padding:10px 14px;cursor:pointer}.primary{
 @media(max-width:960px){.dashboard-grid,.auth-grid{grid-template-columns:1fr}}
 
 .full{width:100%;text-align:right}.dropdown{position:relative}.checks{position:absolute;inset-inline-start:0;inset-inline-end:0;top:calc(100% + 6px);z-index:20;background:#102a5b;border:1px solid var(--line);border-radius:10px;max-height:220px;overflow:auto}.checks label{display:flex;gap:8px;align-items:center;color:var(--txt);padding:6px 8px}.field{margin-bottom:8px}.ntp-card .inline button{min-width:120px}.metrics{padding:10px;border:1px solid var(--line);border-radius:12px;background:#0b1f48}.metrics strong{display:block;margin-top:4px}
+
+.checks.hidden{display:none !important}
+
+.card{overflow:visible}.dashboard-grid{align-items:start}.dropdown{z-index:30}.ntp-card,.span2{position:relative;z-index:1}

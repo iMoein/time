@@ -22,9 +22,9 @@ renderNtp(); $('ntpPreset').onchange=e=>{if(e.target.value!=='custom')$('ntpHost
 $('ntpTestBtn').onclick=async()=>{try{const st=Date.now();const d=await api('/api/ntp?host='+encodeURIComponent($('ntpHost').value));$('ntpHostLabel').textContent=d.host;$('ntpDelay').textContent=(Date.now()-st)+'ms';setStatus('ntpStatus','Synced');}catch(err){setStatus('ntpStatus',err.message);}};
 $('ntpForm').onsubmit=async e=>{e.preventDefault();try{await api('/api/admin/config',{method:'POST',body:JSON.stringify({ntpHost:$('ntpHost').value,defaultCityIds:selectedCities,defaultSelectedCityId:$('defaultSelectedCityInput').value,defaultOccasionTypes:[...$('occasionChecks').querySelectorAll('input:checked')].map(x=>x.value)})});setStatus('ntpStatus','Saved');setStatus('defaultsStatus','Saved');}catch(err){setStatus('ntpStatus',err.message);}};
 $('defaultsForm').onsubmit=$('ntpForm').onsubmit;
-loadPublicCities();refreshCaptcha();checkAuth();
+$('occasionChecks').classList.add('hidden');loadPublicCities();refreshCaptcha();checkAuth();
 
 function updateOccasionLabel(){const n=[...$('occasionChecks').querySelectorAll('input:checked')].length;$('occasionToggle').textContent=n?`فیلترهای انتخابی: ${n}`:'انتخاب فیلتر';}
 $('occasionToggle').onclick=()=>$('occasionChecks').classList.toggle('hidden');
 document.addEventListener('click',(e)=>{if(!e.target.closest('.dropdown'))$('occasionChecks').classList.add('hidden');});
-$('occasionChecks').addEventListener('change',updateOccasionLabel);
+$('occasionChecks').addEventListener('change',()=>{updateOccasionLabel();});
