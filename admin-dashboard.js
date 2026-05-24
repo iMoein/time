@@ -45,4 +45,10 @@ $('jsonSaveBtn').onclick=async()=>{try{await api('/api/admin/json-file',{method:
 document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>activateTab(btn.dataset.tab)));
 
 initCities();
+initTimeZoneMap();
 checkAuth();
+
+
+function updateSunBand(){const now=new Date();const utcHour=now.getUTCHours()+now.getUTCMinutes()/60;const left=((utcHour/24)*100);const band=$("dayNight");if(band)band.style.left=`${left-24}%`;const sun=$("sunStatus");if(sun)sun.textContent=`Sun over UTC: ${now.toUTCString().slice(17,22)}`;}
+function cityTimeLabel(tz){const now=new Date();const time=new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,weekday:'short'}).format(now);const hour=Number(new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'2-digit',hour12:false}).format(now));const phase=(hour>=6&&hour<18)?'Day':'Night';return {time,phase};}
+function initTimeZoneMap(){const map=$("tzMap");if(!map) return;map.querySelectorAll('.city-dot').forEach(dot=>dot.addEventListener('click',()=>{map.querySelectorAll('.city-dot').forEach(d=>d.classList.remove('active'));dot.classList.add('active');const city=dot.dataset.city,tz=dot.dataset.tz;const info=cityTimeLabel(tz);$('selectedCityTime').textContent=`${city}: ${info.time}`;$('selectedCityMeta').textContent=`${tz} · ${info.phase} time`; }));updateSunBand();setInterval(updateSunBand,30000);}
