@@ -7,14 +7,14 @@ const setStatus=(id,m)=>$(id).textContent=m||'';
 const i18nLogin={fa:{loginTitle:'ورود امن مدیریت',username:'نام کاربری',password:'رمز عبور',captcha:'کپچا',loginBtn:'ورود',welcomeTitle:'خوش آمدید',welcomeDesc:'برای دسترسی به پنل مدیریت هوشمند زمان وارد شوید و تنظیمات پروژه را یکپارچه کنترل کنید.'},en:{loginTitle:'Secure Admin Login',username:'Username',password:'Password',captcha:'Captcha',loginBtn:'Login',welcomeTitle:'Welcome Back',welcomeDesc:'Sign in to access the smart time management console and centrally control project settings.'}};
 function applyLoginLang(){const fa=document.documentElement.lang==='fa';const t=fa?i18nLogin.fa:i18nLogin.en;$('loginTitle').textContent=t.loginTitle;$('usernameLabel').textContent=t.username;$('passwordLabel').textContent=t.password;$('loginBtn').textContent=t.loginBtn;$('welcomeTitle').textContent=t.welcomeTitle;$('welcomeDesc').textContent=t.welcomeDesc;}
 
-function setMode(authenticated){const shell=$('appShell');$('dashHeader').classList.toggle('hidden',!authenticated);$('dashFooter').classList.toggle('hidden',!authenticated);if(authenticated){shell.classList.remove('auth-mode');shell.classList.add('dashboard-mode');}else{shell.classList.add('auth-mode');shell.classList.remove('dashboard-mode');}}
+function setMode(authenticated){const shell=$('appShell');$('dashHeader').classList.toggle('hidden',!authenticated);$('dashSidebar').classList.toggle('hidden',!authenticated);if(authenticated){shell.classList.remove('auth-mode');shell.classList.add('dashboard-mode');}else{shell.classList.add('auth-mode');shell.classList.remove('dashboard-mode');}}
 
 function renderCities(){ $('defaultCityChips').innerHTML=selectedCities.map(c=>`<span class='chip'>${c} <button class='btn soft' data-rm='${c}'>×</button></span>`).join(''); $('defaultSelectedCityInput').innerHTML=selectedCities.map(c=>`<option value='${c}'>${c}</option>`).join('');}
 function renderOcc(selected=[]){$('occasionSelect').innerHTML=OCC.map(o=>`<option value='${o}' ${selected.includes(o)?'selected':''}>${o}</option>`).join('');}
 function renderNtp(){ $('ntpPreset').innerHTML=NTP.map(([h,l])=>`<option value='${h}'>${l} (${h})</option>`).join(''); }
 async function refreshCaptcha(){const d=await api('/api/admin/captcha');$('captchaText').textContent=d.captcha;}
-async function loadConfig(){const d=await api('/api/admin/config');$('ntpHost').value=d.ntpHost||'pool.ntp.org';selectedCities=[...(d.defaultCityIds||[])];renderCities();$('defaultSelectedCityInput').value=d.defaultSelectedCityId||selectedCities[0]||'';renderOcc(d.defaultOccasionTypes||[]);}
-async function loadJsonFiles(){const d=await api('/api/admin/json-files');$('jsonFileSelect').innerHTML=d.files.map(f=>`<option value='${f}'>${f}</option>`).join('');if(d.files[0])loadJson(d.files[0]);}
+async function loadConfig(){const d=await api('/api/admin/config');$('ntpHost').value=d.ntpHost||'pool.ntp.org';selectedCities=[...(d.defaultCityIds||[])];renderCities();$('defaultSelectedCityInput').value=d.defaultSelectedCityId||selectedCities[0]||'';renderOcc(d.defaultOccasionTypes||[]);$('metricCities').textContent=String(selectedCities.length);$('metricNtp').textContent=d.ntpHost||'-';}
+async function loadJsonFiles(){const d=await api('/api/admin/json-files');$('jsonFileSelect').innerHTML=d.files.map(f=>`<option value='${f}'>${f}</option>`).join('');$('metricJson').textContent=String((d.files||[]).length);if(d.files[0])loadJson(d.files[0]);}
 async function loadJson(file){const d=await api('/api/admin/json-file?file='+encodeURIComponent(file));$('jsonEditor').value=JSON.stringify(d.content,null,2);}
 function suggest(){const q=$('citySearchInput').value.trim().toLowerCase();$('citySuggestions').innerHTML=cityPool.filter(c=>c.includes(q)&&!selectedCities.includes(c)).slice(0,10).map(c=>`<button data-add='${c}' type='button'>${c}</button>`).join('');}
 async function initCities(){const z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];cityPool=z.map(v=>v.toLowerCase().replace(/[^a-z0-9]+/g,'-'));}
@@ -36,3 +36,6 @@ setMode(false);
 initCities();
 refreshCaptcha();
 checkAuth();
+
+function activateTab(tab){document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.id===`tab-${tab}`));}
+document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>activateTab(btn.dataset.tab)));
