@@ -14,7 +14,7 @@ function renderOcc(selected=[]){$('occasionSelect').innerHTML=OCC.map(o=>`<optio
 function renderNtp(){ $('ntpPreset').innerHTML=NTP.map(([h,l])=>`<option value='${h}'>${l} (${h})</option>`).join(''); }
 
 async function loadConfig(){const d=await api('/api/admin/config');$('ntpHost').value=d.ntpHost||'pool.ntp.org';selectedCities=[...(d.defaultCityIds||[])];renderCities();$('defaultSelectedCityInput').value=d.defaultSelectedCityId||selectedCities[0]||'';renderOcc(d.defaultOccasionTypes||[]);$('metricCities').textContent=String(selectedCities.length);$('metricNtp').textContent=d.ntpHost||'-';}
-async function loadJsonFiles(){const d=await api('/api/admin/json-files');$('jsonFileSelect').innerHTML=d.files.map(f=>`<option value='${f}'>${f}</option>`).join('');$('metricJson').textContent=String((d.files||[]).length);if(d.files[0])loadJson(d.files[0]);}
+async function loadJsonFiles(){const d=await api('/api/admin/json-files');const files=Array.isArray(d.files)?d.files:[];$('jsonFileSelect').innerHTML=files.map(f=>`<option value='${f}'>${f}</option>`).join('');$('metricJson').textContent=String(files.length);if(files[0]) await loadJson(files[0]);}
 async function loadJson(file){const d=await api('/api/admin/json-file?file='+encodeURIComponent(file));$('jsonEditor').value=JSON.stringify(d.content,null,2);}
 async function initCities(){const z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];cityPool=z.map(v=>v.toLowerCase().replace(/[^a-z0-9]+/g,'-'));}
 function suggest(){const q=$('citySearchInput').value.trim().toLowerCase();$('citySuggestions').innerHTML=cityPool.filter(c=>c.includes(q)&&!selectedCities.includes(c)).slice(0,10).map(c=>`<button data-add='${c}' type='button'>${c}</button>`).join('');}
@@ -27,9 +27,10 @@ async function checkAuth(){
     $('dashboardContent').classList.remove('hidden');
     const tab=tabFromPath();
     activateTab(tab,false);
-    const jobs=[loadConfig(),loadJsonFiles()];
+    const jobs=[loadConfig()];
+    if(tab==='json'||tab==='overview') jobs.push(loadJsonFiles());
     const results=await Promise.allSettled(jobs);
-    results.forEach(r=>{if(r.status==='rejected'){setStatus('defaultsStatus',r.reason?.message||'Load failed');setStatus('jsonStatus',r.reason?.message||'Load failed');setStatus('ntpStatus',r.reason?.message||'Load failed');}});
+    results.forEach(r=>{if(r.status==='rejected'){const m=r.reason?.message||'Load failed';setStatus('defaultsStatus',m);setStatus('jsonStatus',m);setStatus('ntpStatus',m);}});
   }catch(err){
     if(err.status===401){location.href='/admin-login.html';return;}
     setStatus('defaultsStatus',err.message);setStatus('jsonStatus',err.message);setStatus('ntpStatus',err.message);
@@ -58,6 +59,7 @@ $('jsonSaveBtn').onclick=async()=>{try{await api('/api/admin/json-file',{method:
 
 document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',e=>{const href=btn.getAttribute('href');if(href&&href!==location.pathname){return;}e.preventDefault();activateTab(btn.dataset.tab,true);}));
 
+activateTab(tabFromPath(),false);
 initCities();
 initTimeZoneMap();
 checkAuth();
