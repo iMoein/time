@@ -3,6 +3,8 @@ const NTP=[['ntp.time.ir','Iran NTP'],['pool.ntp.org','NTP Pool'],['time.google.
 const $=id=>document.getElementById(id);let selectedCities=[],cityPool=[];
 async function api(path,opts={}){const r=await fetch(path,{credentials:'include',headers:{'Content-Type':'application/json'},...opts});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Request failed');return d;}
 const setStatus=(id,m)=>$(id).textContent=m||'';
+function setMode(authenticated){const shell=$('appShell');$('dashHeader').classList.toggle('hidden',!authenticated);$('dashFooter').classList.toggle('hidden',!authenticated);if(authenticated){shell.classList.remove('auth-mode');shell.classList.add('dashboard-mode');}else{shell.classList.add('auth-mode');shell.classList.remove('dashboard-mode');}}
+
 function renderCities(){ $('defaultCityChips').innerHTML=selectedCities.map(c=>`<span class='chip'>${c} <button class='btn soft' data-rm='${c}'>×</button></span>`).join(''); $('defaultSelectedCityInput').innerHTML=selectedCities.map(c=>`<option value='${c}'>${c}</option>`).join('');}
 function renderOcc(selected=[]){$('occasionSelect').innerHTML=OCC.map(o=>`<option value='${o}' ${selected.includes(o)?'selected':''}>${o}</option>`).join('');}
 function renderNtp(){ $('ntpPreset').innerHTML=NTP.map(([h,l])=>`<option value='${h}'>${l} (${h})</option>`).join(''); }
@@ -12,7 +14,7 @@ async function loadJsonFiles(){const d=await api('/api/admin/json-files');$('jso
 async function loadJson(file){const d=await api('/api/admin/json-file?file='+encodeURIComponent(file));$('jsonEditor').value=JSON.stringify(d.content,null,2);}
 function suggest(){const q=$('citySearchInput').value.trim().toLowerCase();$('citySuggestions').innerHTML=cityPool.filter(c=>c.includes(q)&&!selectedCities.includes(c)).slice(0,10).map(c=>`<button data-add='${c}' type='button'>${c}</button>`).join('');}
 async function initCities(){const z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];cityPool=z.map(v=>v.toLowerCase().replace(/[^a-z0-9]+/g,'-'));}
-async function checkAuth(){try{const s=await api('/api/admin/session');$('loginCard').classList.add('hidden');$('dashboard').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');if(s.forcePasswordChange){$('forcePasswordCard').classList.remove('hidden');$('dashboardContent').classList.add('hidden');}else{$('forcePasswordCard').classList.add('hidden');$('dashboardContent').classList.remove('hidden');await loadConfig();await loadJsonFiles();}}catch{}}
+async function checkAuth(){try{const s=await api('/api/admin/session');setMode(true);$('dashboard').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');if(s.forcePasswordChange){$('forcePasswordCard').classList.remove('hidden');$('dashboardContent').classList.add('hidden');}else{$('forcePasswordCard').classList.add('hidden');$('dashboardContent').classList.remove('hidden');await loadConfig();await loadJsonFiles();}}catch{setMode(false);$('dashboard').classList.add('hidden');$('loginCard').classList.remove('hidden');}}
 
 $('refreshCaptcha').onclick=refreshCaptcha; $('langToggle').onclick=()=>{const fa=document.documentElement.lang==='fa';document.documentElement.lang=fa?'en':'fa';document.documentElement.dir=fa?'ltr':'rtl';$('langToggle').textContent=fa?'FA':'EN';};
 $('loginForm').onsubmit=async e=>{e.preventDefault();try{await api('/api/admin/login',{method:'POST',body:JSON.stringify(Object.fromEntries(new FormData(e.target).entries()))});checkAuth();}catch(err){setStatus('loginStatus',err.message);refreshCaptcha();}};
@@ -25,6 +27,7 @@ async function saveAll(){await api('/api/admin/config',{method:'POST',body:JSON.
 $('defaultsSaveBtn').onclick=()=>saveAll().catch(e=>setStatus('defaultsStatus',e.message)); $('ntpSaveBtn').onclick=()=>saveAll().catch(e=>setStatus('ntpStatus',e.message));
 $('jsonLoadBtn').onclick=()=>loadJson($('jsonFileSelect').value); $('jsonSaveBtn').onclick=async()=>{try{await api('/api/admin/json-file',{method:'POST',body:JSON.stringify({file:$('jsonFileSelect').value,content:JSON.parse($('jsonEditor').value)})});setStatus('jsonStatus','Saved');}catch(e){setStatus('jsonStatus',e.message);}};
 
+setMode(false);
 initCities();
 refreshCaptcha();
 checkAuth();

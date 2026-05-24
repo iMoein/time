@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="/admin.css" />
 </head>
 <body>
-  <main class="page-shell" id="appShell">
-    <header class="top-nav card">
+  <main class="page-shell auth-mode" id="appShell">
+    <header id="dashHeader" class="top-nav card hidden">
       <div class="brand-block"><small>Admin Dashboard</small><h1 id="title">مدیریت هوشمند زمان</h1></div>
       <div class="top-actions"><button id="langToggle" class="chip">EN</button><button id="logoutBtn" class="chip danger hidden">خروج</button></div>
     </header>
@@ -46,7 +46,7 @@
       </div>
     </section>
 
-    <footer class="footer card"><small>Time Admin Panel • Synced design language with main app</small></footer>
+    <footer id="dashFooter" class="footer card hidden"><small>Time Admin Panel • Synced design language with main app</small></footer>
   </main>
   <script type="module" src="/admin.js"></script>
 </body>
