@@ -20,8 +20,20 @@ async function initCities(){const z=Intl.supportedValuesOf?Intl.supportedValuesO
 function suggest(){const q=$('citySearchInput').value.trim().toLowerCase();$('citySuggestions').innerHTML=cityPool.filter(c=>c.includes(q)&&!selectedCities.includes(c)).slice(0,10).map(c=>`<button data-add='${c}' type='button'>${c}</button>`).join('');}
 
 async function checkAuth(){
-  try{const s=await api('/api/admin/session');if(s.forcePasswordChange){$('forcePasswordCard').classList.remove('hidden');$('dashboardContent').classList.add('hidden');}else{$('forcePasswordCard').classList.add('hidden');$('dashboardContent').classList.remove('hidden');await loadConfig();await loadJsonFiles();const tab=tabFromPath();activateTab(tab,false);}}
-  catch(err){if(err.status===401){location.href='/admin-login.html';return;}setStatus('defaultsStatus',err.message);setStatus('jsonStatus',err.message);setStatus('ntpStatus',err.message);}
+  try{
+    const s=await api('/api/admin/session');
+    if(s.forcePasswordChange){$('forcePasswordCard').classList.remove('hidden');$('dashboardContent').classList.add('hidden');return;}
+    $('forcePasswordCard').classList.add('hidden');
+    $('dashboardContent').classList.remove('hidden');
+    const tab=tabFromPath();
+    activateTab(tab,false);
+    const jobs=[loadConfig(),loadJsonFiles()];
+    const results=await Promise.allSettled(jobs);
+    results.forEach(r=>{if(r.status==='rejected'){setStatus('defaultsStatus',r.reason?.message||'Load failed');setStatus('jsonStatus',r.reason?.message||'Load failed');setStatus('ntpStatus',r.reason?.message||'Load failed');}});
+  }catch(err){
+    if(err.status===401){location.href='/admin-login.html';return;}
+    setStatus('defaultsStatus',err.message);setStatus('jsonStatus',err.message);setStatus('ntpStatus',err.message);
+  }
 }
 
 $('logoutBtn').onclick=async()=>{await api('/api/admin/logout',{method:'POST'});location.href='/admin-login.html';};
@@ -44,7 +56,7 @@ $('ntpSaveBtn').onclick=()=>saveAll().catch(e=>setStatus('ntpStatus',e.message))
 $('jsonLoadBtn').onclick=()=>loadJson($('jsonFileSelect').value);
 $('jsonSaveBtn').onclick=async()=>{try{await api('/api/admin/json-file',{method:'POST',body:JSON.stringify({file:$('jsonFileSelect').value,content:JSON.parse($('jsonEditor').value)})});setStatus('jsonStatus','Saved');}catch(e){setStatus('jsonStatus',e.message);}};
 
-document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',e=>{e.preventDefault();activateTab(btn.dataset.tab,true);}));
+document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',e=>{const href=btn.getAttribute('href');if(href&&href!==location.pathname){return;}e.preventDefault();activateTab(btn.dataset.tab,true);}));
 
 initCities();
 initTimeZoneMap();
