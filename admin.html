@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Studio</title>
+  <link rel="stylesheet" href="/admin.css" />
+</head>
+<body>
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <p>Admin Studio</p>
+        <h1 id="title">مدیریت هوشمند زمان</h1>
+      </div>
+      <nav class="menu" id="dashMenu">
+        <button data-tab="defaults" class="active">پیش‌فرض‌ها</button>
+        <button data-tab="ntp">NTP</button>
+        <button data-tab="json">JSON</button>
+      </nav>
+      <div class="side-actions">
+        <button id="langToggle" class="btn soft">EN</button>
+        <button id="logoutBtn" class="btn danger hidden">خروج</button>
+      </div>
+    </aside>
+
+    <section class="content">
+      <section id="loginCard" class="card auth">
+        <h2 id="loginTitle">ورود امن مدیریت</h2>
+        <p id="firstLoginNote" class="note hidden"></p>
+        <form id="loginForm" class="grid2">
+          <label><span id="usernameLabel">نام کاربری</span><input name="username" required /></label>
+          <label><span id="passwordLabel">رمز عبور</span><input name="password" type="password" required /></label>
+          <label class="full"><span id="captchaLabel">کپچا</span><div class="cap"><code id="captchaText">------</code><button id="refreshCaptcha" type="button" class="btn soft">↻</button></div><input name="captcha" required /></label>
+          <button class="btn primary full" id="loginBtn" type="submit">ورود</button>
+        </form>
+        <p id="loginStatus" class="status"></p>
+      </section>
+
+      <section id="dashboard" class="hidden">
+        <section id="forcePasswordCard" class="card hidden"><h3 id="passwordTitle">تغییر رمز اولیه</h3><p id="forcePasswordInfo" class="note"></p><form id="passwordForm" class="grid2"><label><span id="newPasswordLabel">رمز جدید</span><input id="newPassword" type="password" required minlength="8" /></label><label><span id="confirmPasswordLabel">تکرار رمز</span><input id="confirmPassword" type="password" required minlength="8" /></label><button class="btn primary full" id="passwordSaveBtn" type="submit">ذخیره رمز</button></form><p id="passwordStatus" class="status"></p></section>
+
+        <div id="dashboardContent" class="hidden">
+          <section id="tab-defaults" class="card tab active">
+            <h3 id="defaultsTitle">پیش‌فرض‌های برنامه</h3>
+            <div class="grid2">
+              <label class="full"><span>جستجو و افزودن شهر</span><div class="row"><input id="citySearchInput" placeholder="tehran, london, tokyo" /><button id="cityAddBtn" type="button" class="btn soft">افزودن</button></div><div id="citySuggestions" class="suggestions"></div></label>
+              <div id="defaultCityChips" class="chips full"></div>
+              <label><span id="defaultSelectedCityLabel">شهر اولیه</span><select id="defaultSelectedCityInput"></select></label>
+              <label><span id="defaultOccasionsLabel">فیلتر مناسبت‌ها</span><select id="occasionSelect" multiple size="8"></select></label>
+            </div>
+            <button id="defaultsSaveBtn" class="btn primary">ذخیره پیش‌فرض‌ها</button>
+            <p id="defaultsStatus" class="status"></p>
+          </section>
+
+          <section id="tab-ntp" class="card tab">
+            <h3 id="ntpTitle">NTP Control Center</h3>
+            <div class="grid2">
+              <label><span>Preset Servers</span><select id="ntpPreset"></select></label>
+              <label><span>Custom Host</span><input id="ntpHost" placeholder="pool.ntp.org" /></label>
+            </div>
+            <div class="row"><button id="ntpSaveBtn" class="btn primary">Save</button><button id="ntpTestBtn" class="btn soft">Sync now</button></div>
+            <div class="stats"><article><small>Server</small><strong id="ntpHostLabel">-</strong></article><article><small>Delay</small><strong id="ntpDelay">-</strong></article></div>
+            <p id="ntpStatus" class="status"></p>
+          </section>
+
+          <section id="tab-json" class="card tab">
+            <h3 id="jsonTitle">JSON Workspace</h3>
+            <div class="row"><select id="jsonFileSelect"></select><button id="jsonLoadBtn" class="btn soft">بارگذاری</button><button id="jsonSaveBtn" class="btn primary">ذخیره</button></div>
+            <textarea id="jsonEditor" spellcheck="false"></textarea>
+            <p id="jsonStatus" class="status"></p>
+          </section>
+        </div>
+      </section>
+    </section>
+  </main>
+  <script type="module" src="/admin.js"></script>
+</body>
+</html>
