@@ -1,0 +1,18 @@
+{
+  "ntpHost": "pool.ntp.org",
+  "adminUsername": "admin",
+  "adminPassword": "admin",
+  "passwordChanged": true,
+  "defaultCityIds": [
+    "tehran",
+    "los-angeles",
+    "london",
+    "asia-tokyo"
+  ],
+  "defaultSelectedCityId": "tehran",
+  "defaultOccasionTypes": [
+    "iranAncient",
+    "marketing",
+    "islamicShia"
+  ]
+}
