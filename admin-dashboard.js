@@ -13,7 +13,7 @@ function renderCities(){ $('defaultCityChips').innerHTML=selectedCities.map(c=>`
 function renderOcc(selected=[]){$('occasionSelect').innerHTML=OCC.map(o=>`<option value='${o}' ${selected.includes(o)?'selected':''}>${o}</option>`).join('');}
 function renderNtp(){ $('ntpPreset').innerHTML=NTP.map(([h,l])=>`<option value='${h}'>${l} (${h})</option>`).join(''); }
 
-async function loadConfig(){const d=await api('/api/admin/config');$('ntpHost').value=d.ntpHost||'pool.ntp.org';selectedCities=[...(d.defaultCityIds||[])];renderCities();$('defaultSelectedCityInput').value=d.defaultSelectedCityId||selectedCities[0]||'';renderOcc(d.defaultOccasionTypes||[]);$('metricCities').textContent=String(selectedCities.length);$('metricNtp').textContent=d.ntpHost||'-';}
+async function loadConfig(){const d=await api('/api/admin/config');$('ntpHost').value=d?.ntpHost||'pool.ntp.org';selectedCities=[...(d?.defaultCityIds||[])];renderCities();$('defaultSelectedCityInput').value=d?.defaultSelectedCityId||selectedCities[0]||'';renderOcc(d?.defaultOccasionTypes||[]);$('metricCities').textContent=String(selectedCities.length);$('metricNtp').textContent=d?.ntpHost||'-';return d;}
 async function loadJsonFiles(){const d=await api('/api/admin/json-files');const files=Array.isArray(d.files)?d.files:[];$('jsonFileSelect').innerHTML=files.map(f=>`<option value='${f}'>${f}</option>`).join('');$('metricJson').textContent=String(files.length);if(files[0]) await loadJson(files[0]);}
 async function loadJson(file){const d=await api('/api/admin/json-file?file='+encodeURIComponent(file));$('jsonEditor').value=JSON.stringify(d.content,null,2);}
 async function initCities(){const z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];cityPool=z.map(v=>v.toLowerCase().replace(/[^a-z0-9]+/g,'-'));}
@@ -27,13 +27,17 @@ async function checkAuth(){
     $('dashboardContent').classList.remove('hidden');
     const tab=tabFromPath();
     activateTab(tab,false);
-    const jobs=[loadConfig()];
-    if(tab==='json'||tab==='overview') jobs.push(loadJsonFiles());
-    const results=await Promise.allSettled(jobs);
-    results.forEach(r=>{if(r.status==='rejected'){const m=r.reason?.message||'Load failed';setStatus('defaultsStatus',m);setStatus('jsonStatus',m);setStatus('ntpStatus',m);}});
+
+    const cfg=await loadConfig().catch(err=>{setStatus('defaultsStatus',err.message||'Config load failed');return null;});
+    if(!cfg){$('metricCities').textContent='0';$('metricNtp').textContent='-';}
+
+    if(tab==='json'||tab==='overview'){
+      await loadJsonFiles().catch(err=>{setStatus('jsonStatus',err.message||'JSON list load failed');$('metricJson').textContent='0';});
+    }
   }catch(err){
     if(err.status===401){location.href='/admin-login.html';return;}
-    setStatus('defaultsStatus',err.message);setStatus('jsonStatus',err.message);setStatus('ntpStatus',err.message);
+    const m=err.message||'Session check failed';
+    setStatus('defaultsStatus',m);setStatus('jsonStatus',m);setStatus('ntpStatus',m);
   }
 }
 
