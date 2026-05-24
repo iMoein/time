@@ -1158,7 +1158,7 @@ function DayNightCard({ city, t }) {
 }
 
 
-function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleOccasionTypes = null }) {
+function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleOccasionTypes = null, occasionFilterOrder = null }) {
   const todayKey = getCalendarDateKey(city.cityDate);
   const [primaryCalendar, setPrimaryCalendar] = useState('persian');
   const [monthOffset, setMonthOffset] = useState(0);
@@ -1213,7 +1213,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
   }
 
   const selectedOccasionGroup = getSelectedOccasionGroup(calendar);
-  const occasionTypeOrder = ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared'];
+  const occasionTypeOrder = (Array.isArray(occasionFilterOrder) && occasionFilterOrder.length ? occasionFilterOrder : ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared']).filter((type)=>fallbackOccasionTypes.includes(type));
   const groupOccasionsByType = (events) => occasionTypeOrder.filter((type)=>allowedOccasionTypes.includes(type))
     .map((type) => {
       const typeEvents = events.filter((event) => event.type === type);
@@ -1498,6 +1498,7 @@ function App() {
   const [language, setLanguage] = useState(getInitialLanguage);
   const [defaultOccasionTypes, setDefaultOccasionTypes] = useState(globalThis.__defaultOccasionTypes || null);
   const [visibleOccasionTypes, setVisibleOccasionTypes] = useState(globalThis.__visibleOccasionTypes || null);
+  const [occasionFilterOrder, setOccasionFilterOrder] = useState(globalThis.__occasionFilterOrder || null);
   const isFa = language === 'fa';
 
   useEffect(() => {
@@ -1537,6 +1538,8 @@ function App() {
       globalThis.__defaultOccasionTypes = Array.isArray(cfg.defaultOccasionTypes) ? cfg.defaultOccasionTypes : undefined;
       globalThis.__visibleOccasionTypes = Array.isArray(cfg.visibleOccasionTypes)?cfg.visibleOccasionTypes:undefined;
       if(Array.isArray(cfg.visibleOccasionTypes)&&cfg.visibleOccasionTypes.length){setVisibleOccasionTypes(cfg.visibleOccasionTypes);}
+      globalThis.__occasionFilterOrder = Array.isArray(cfg.occasionFilterOrder)?cfg.occasionFilterOrder:undefined;
+      if(Array.isArray(cfg.occasionFilterOrder)&&cfg.occasionFilterOrder.length){setOccasionFilterOrder(cfg.occasionFilterOrder);}
       if (Array.isArray(cfg.defaultOccasionTypes) && cfg.defaultOccasionTypes.length) {
         setDefaultOccasionTypes(cfg.defaultOccasionTypes);
       }
@@ -1812,7 +1815,7 @@ function App() {
         language,
       }),
     ),
-    h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes }),  );
+    h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes, occasionFilterOrder }),  );
 }
 
 
