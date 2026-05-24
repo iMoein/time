@@ -8,12 +8,12 @@ const port = Number(process.env.PORT || 8585);
 const adminPort = Number(process.env.ADMIN_PORT || 8686);
 const root = resolve(process.cwd());
 const dataRoot = resolve(join(root, 'src/data'));
-const configPath = resolve(join(root, '.admin-config.json'));
+const configPath = resolve(join(root, 'config.json'));
 const ntpPort = 123;
 const ntpTimeoutMs = 3000;
 const ntpEpochOffset = 2208988800;
-const adminUser = process.env.ADMIN_USERNAME || 'admin';
-const adminPassword = process.env.ADMIN_PASSWORD || 'ChangeMe123!';
+const defaultAdminUser = 'admin';
+const defaultAdminPassword = 'ChangeMe123!';
 const sessions = new Map();
 const captchas = new Map();
 const loginAttempts = new Map();
@@ -27,7 +27,7 @@ function sanitizeNtpHost(value){const host=value.trim();if(!host||host.length>25
 function getSafePath(url, basePort){const {pathname}=new URL(url,`http://localhost:${basePort}`);const decoded=decodeURIComponent(pathname);const reqPath=normalize(decoded==='/'?'/index.html':decoded);const fp=resolve(join(root,reqPath));return fp.startsWith(root)?fp:null;}
 function isAuth(req){const sid=parseCookies(req.headers.cookie).admin_session;return sid&&sessions.has(sid);}
 function readBody(req){return new Promise((resolveBody,reject)=>{let data='';req.on('data',c=>data+=c);req.on('end',()=>{try{resolveBody(data?JSON.parse(data):{});}catch{reject(new Error('Invalid JSON body'));}});req.on('error',reject);});}
-function ensureConfig(){if(!existsSync(configPath)){writeFileSync(configPath,JSON.stringify({ntpHost:'pool.ntp.org'},null,2));}return JSON.parse(readFileSync(configPath,'utf8'));}
+function ensureConfig(){if(!existsSync(configPath)){writeFileSync(configPath,JSON.stringify({ntpHost:'pool.ntp.org',adminUsername:defaultAdminUser,adminPassword:defaultAdminPassword,passwordChanged:false},null,2));}const cfg=JSON.parse(readFileSync(configPath,'utf8'));return {ntpHost:cfg.ntpHost||'pool.ntp.org',adminUsername:cfg.adminUsername||defaultAdminUser,adminPassword:cfg.adminPassword||defaultAdminPassword,passwordChanged:Boolean(cfg.passwordChanged)};}
 function writeConfig(c){writeFileSync(configPath,JSON.stringify(c,null,2));}
 function listJsonFiles(dir){const out=[];for(const name of readdirSync(dir,{withFileTypes:true})){const full=join(dir,name.name);if(name.isDirectory()) out.push(...listJsonFiles(full)); else if(name.isFile()&&name.name.endsWith('.json')) out.push(relative(dataRoot,full));}return out.sort();}
 function safeDataFile(rel){const full=resolve(join(dataRoot,rel));if(!full.startsWith(dataRoot)||!full.endsWith('.json')) return null;return full;}
@@ -41,12 +41,13 @@ const appServer=createServer((request,response)=>{const requestUrl=new URL(reque
 const adminServer=createServer(async (request,response)=>{const requestUrl=new URL(request.url||'/',`http://localhost:${adminPort}`);try{
 if(requestUrl.pathname==='/api/ntp') return await handleNtpRequest(requestUrl,response);
 if(requestUrl.pathname==='/api/admin/captcha'){const id=crypto.randomUUID();const captcha=randomCode(6);captchas.set(id,{captcha,expires:Date.now()+5*60_000});response.writeHead(200,{'Set-Cookie':`captcha_id=${id}; HttpOnly; SameSite=Strict; Path=/`,'Content-Type':'application/json; charset=utf-8'});return response.end(JSON.stringify({captcha}));}
-if(requestUrl.pathname==='/api/admin/login'&&request.method==='POST'){const ip=request.socket.remoteAddress||'unknown';const blocked=loginAttempts.get(ip);if(blocked&&blocked.count>=5&&Date.now()-blocked.last<15*60_000)return sendJson(response,429,{error:'Too many attempts'});const body=await readBody(request);const ck=parseCookies(request.headers.cookie);const cap=captchas.get(ck.captcha_id);if(!cap||Date.now()>cap.expires||String(body.captcha||'').toUpperCase()!==cap.captcha)return sendJson(response,401,{error:'Invalid captcha'});if(body.username!==adminUser||body.password!==adminPassword){const prev=loginAttempts.get(ip)||{count:0,last:0};loginAttempts.set(ip,{count:prev.count+1,last:Date.now()});return sendJson(response,401,{error:'Invalid credentials'});}loginAttempts.delete(ip);const sid=crypto.randomUUID();sessions.set(sid,{at:Date.now()});response.writeHead(200,{'Set-Cookie':`admin_session=${sid}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800`,'Content-Type':'application/json; charset=utf-8'});return response.end(JSON.stringify({ok:true}));}
+if(requestUrl.pathname==='/api/admin/login'&&request.method==='POST'){const ip=request.socket.remoteAddress||'unknown';const blocked=loginAttempts.get(ip);if(blocked&&blocked.count>=5&&Date.now()-blocked.last<15*60_000)return sendJson(response,429,{error:'Too many attempts'});const body=await readBody(request);const ck=parseCookies(request.headers.cookie);const cap=captchas.get(ck.captcha_id);if(!cap||Date.now()>cap.expires||String(body.captcha||'').toUpperCase()!==cap.captcha)return sendJson(response,401,{error:'Invalid captcha'});const cfg=ensureConfig();if(body.username!==cfg.adminUsername||body.password!==cfg.adminPassword){const prev=loginAttempts.get(ip)||{count:0,last:0};loginAttempts.set(ip,{count:prev.count+1,last:Date.now()});return sendJson(response,401,{error:'Invalid credentials'});}loginAttempts.delete(ip);const sid=crypto.randomUUID();sessions.set(sid,{at:Date.now(),forcePasswordChange:!cfg.passwordChanged});response.writeHead(200,{'Set-Cookie':`admin_session=${sid}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800`,'Content-Type':'application/json; charset=utf-8'});return response.end(JSON.stringify({ok:true,forcePasswordChange:!cfg.passwordChanged}));}
 if(requestUrl.pathname==='/api/admin/logout'&&request.method==='POST'){const sid=parseCookies(request.headers.cookie).admin_session;if(sid)sessions.delete(sid);response.writeHead(200,{'Set-Cookie':'admin_session=deleted; Path=/; Max-Age=0','Content-Type':'application/json; charset=utf-8'});return response.end(JSON.stringify({ok:true}));}
 if(requestUrl.pathname.startsWith('/api/admin/')&&!isAuth(request)) return sendJson(response,401,{error:'Unauthorized'});
-if(requestUrl.pathname==='/api/admin/session') return sendJson(response,200,{ok:true});
-if(requestUrl.pathname==='/api/admin/config'&&request.method==='GET') return sendJson(response,200,ensureConfig());
+if(requestUrl.pathname==='/api/admin/session'){const sid=parseCookies(request.headers.cookie).admin_session;const session=sessions.get(sid);return sendJson(response,200,{ok:true,forcePasswordChange:Boolean(session?.forcePasswordChange)});}
+if(requestUrl.pathname==='/api/admin/config'&&request.method==='GET'){const cfg=ensureConfig();return sendJson(response,200,{ntpHost:cfg.ntpHost});}
 if(requestUrl.pathname==='/api/admin/config'&&request.method==='POST'){const body=await readBody(request);const host=sanitizeNtpHost(body.ntpHost||'');if(!host) return sendJson(response,400,{error:'Invalid NTP host'});writeConfig({ntpHost:host});return sendJson(response,200,{ok:true});}
+if(requestUrl.pathname==='/api/admin/change-password'&&request.method==='POST'){const body=await readBody(request);const newPassword=String(body.newPassword||'');if(newPassword.length<8)return sendJson(response,400,{error:'Password must be at least 8 characters'});const cfg=ensureConfig();cfg.adminPassword=newPassword;cfg.passwordChanged=true;writeConfig(cfg);const sid=parseCookies(request.headers.cookie).admin_session;const session=sessions.get(sid);if(session)session.forcePasswordChange=false;return sendJson(response,200,{ok:true});}
 if(requestUrl.pathname==='/api/admin/json-files') return sendJson(response,200,{files:listJsonFiles(dataRoot)});
 if(requestUrl.pathname==='/api/admin/json-file'&&request.method==='GET'){const rel=requestUrl.searchParams.get('file')||'';const full=safeDataFile(rel);if(!full||!existsSync(full)) return sendJson(response,404,{error:'File not found'});return sendJson(response,200,{file:rel,content:JSON.parse(readFileSync(full,'utf8'))});}
 if(requestUrl.pathname==='/api/admin/json-file'&&request.method==='POST'){const body=await readBody(request);const full=safeDataFile(body.file||'');if(!full||!existsSync(full)) return sendJson(response,404,{error:'File not found'});writeFileSync(full,JSON.stringify(body.content,null,2)+'\n');return sendJson(response,200,{ok:true});}

@@ -1,62 +1,18 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>پنل مدیریت | Admin Panel</title>
-  <link rel="stylesheet" href="/admin.css" />
-</head>
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>پنل مدیریت | Admin Panel</title><link rel="stylesheet" href="/admin.css" /></head>
 <body>
-  <main class="container">
-    <header class="topbar">
-      <h1 id="title">پنل مدیریت</h1>
-      <div>
-        <button id="langToggle" class="ghost">EN</button>
-        <button id="logoutBtn" class="danger hidden">خروج</button>
-      </div>
-    </header>
-
-    <section id="loginCard" class="card">
-      <h2 id="loginTitle">ورود امن</h2>
-      <form id="loginForm">
-        <label><span id="usernameLabel">نام کاربری</span><input name="username" required autocomplete="username" /></label>
-        <label><span id="passwordLabel">رمز عبور</span><input name="password" type="password" required autocomplete="current-password" /></label>
-        <label><span id="captchaLabel">کپچا</span>
-          <div class="captchaRow">
-            <code id="captchaText">------</code>
-            <button type="button" id="refreshCaptcha" class="ghost">↻</button>
-          </div>
-          <input name="captcha" required />
-        </label>
-        <button type="submit" id="loginBtn">ورود</button>
-      </form>
-      <p id="loginStatus" class="status"></p>
-    </section>
-
-    <section id="dashboard" class="hidden">
-      <div class="card">
-        <h2 id="ntpTitle">تنظیمات NTP</h2>
-        <form id="ntpForm" class="inlineForm">
-          <input id="ntpHost" placeholder="pool.ntp.org" required />
-          <button type="submit" id="ntpSaveBtn">ذخیره</button>
-          <button type="button" id="ntpTestBtn" class="ghost">تست</button>
-        </form>
-        <p id="ntpStatus" class="status"></p>
-      </div>
-
-      <div class="card">
-        <h2 id="jsonTitle">مدیریت فایل‌های JSON</h2>
-        <div class="inlineForm">
-          <select id="jsonFileSelect"></select>
-          <button id="jsonLoadBtn" class="ghost">بارگذاری</button>
-          <button id="jsonSaveBtn">ذخیره</button>
-        </div>
-        <textarea id="jsonEditor" spellcheck="false"></textarea>
-        <p id="jsonStatus" class="status"></p>
-      </div>
-    </section>
-  </main>
-
-  <script type="module" src="/admin.js"></script>
-</body>
-</html>
+<main class="container">
+  <header class="topbar"><h1 id="title">پنل مدیریت</h1><div class="topbarActions"><button id="langToggle" class="ghost">EN</button><button id="logoutBtn" class="danger hidden">خروج</button></div></header>
+  <section id="loginCard" class="card"><h2 id="loginTitle">ورود امن</h2><p id="firstLoginNote" class="notice hidden"></p><form id="loginForm" class="grid">
+    <label><span id="usernameLabel">نام کاربری</span><input name="username" required autocomplete="username" /></label>
+    <label><span id="passwordLabel">رمز عبور</span><input name="password" type="password" required autocomplete="current-password" /></label>
+    <label class="span2"><span id="captchaLabel">کپچا</span><div class="captchaRow"><code id="captchaText">------</code><button type="button" id="refreshCaptcha" class="ghost">↻</button></div><input name="captcha" required /></label>
+    <button class="span2" type="submit" id="loginBtn">ورود</button></form><p id="loginStatus" class="status"></p></section>
+  <section id="dashboard" class="hidden">
+    <div id="forcePasswordCard" class="card hidden"><h2 id="passwordTitle">تغییر رمز عبور اولیه</h2><p class="notice" id="forcePasswordInfo"></p><form id="passwordForm" class="grid"><label><span id="newPasswordLabel">رمز عبور جدید</span><input id="newPassword" type="password" required minlength="8"/></label><label><span id="confirmPasswordLabel">تکرار رمز عبور</span><input id="confirmPassword" type="password" required minlength="8"/></label><button class="span2" id="passwordSaveBtn" type="submit">ذخیره رمز عبور</button></form><p id="passwordStatus" class="status"></p></div>
+    <div id="dashboardContent" class="hidden"><div class="card"><h2 id="ntpTitle">تنظیمات NTP</h2><form id="ntpForm" class="inlineForm"><input id="ntpHost" placeholder="pool.ntp.org" required /><button type="submit" id="ntpSaveBtn">ذخیره</button><button type="button" id="ntpTestBtn" class="ghost">تست</button></form><p id="ntpStatus" class="status"></p></div>
+    <div class="card"><h2 id="jsonTitle">مدیریت فایل‌های JSON</h2><div class="inlineForm"><select id="jsonFileSelect"></select><button id="jsonLoadBtn" class="ghost">بارگذاری</button><button id="jsonSaveBtn">ذخیره</button></div><textarea id="jsonEditor" spellcheck="false"></textarea><p id="jsonStatus" class="status"></p></div></div>
+  </section>
+</main><script type="module" src="/admin.js"></script>
+</body></html>
