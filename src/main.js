@@ -30,18 +30,8 @@ const defaultCities = [
 ];
 
 const savedCitiesKey = 'time-app-cities';
-const savedNtpHostKey = 'time-app-ntp-host';
 const savedLanguageKey = 'time-app-language';
 const defaultNtpHost = 'ntp.time.ir';
-const ntpServerOptions = [
-  { host: 'ntp.time.ir', label: 'Iran NTP (ntp.time.ir)' },
-  { host: 'pool.ntp.org', label: 'NTP Pool Project' },
-  { host: 'time.google.com', label: 'Google Public NTP' },
-  { host: 'time.cloudflare.com', label: 'Cloudflare Time Services' },
-  { host: 'time.aws.com', label: 'Amazon Time Sync' },
-  { host: 'time.apple.com', label: 'Apple NTP' },
-  { host: 'time.windows.com', label: 'Microsoft Windows Time' },
-];
 
 function getInitialLanguage() {
   const saved = localStorage.getItem(savedLanguageKey);
@@ -97,10 +87,6 @@ const defaultCityIds = defaultCities.map((city) => city.id);
 const faTimeOfDay = { dawn: 'صبح خیلی زود', morning: 'صبح', noon: 'ظهر', afternoon: 'بعدازظهر', evening: 'عصر', night: 'شب' };
 function getLocalizedWeekdays(calendar, language) { if (language !== 'fa') return calendar === 'persian' ? persianWeekdays : gregorianWeekdays; return calendar === 'persian' ? ['ش','ی','د','س','چ','پ','ج'] : ['د','س','چ','پ','ج','ش','ی']; }
 
-
-function getInitialNtpHost() {
-  return localStorage.getItem(savedNtpHostKey) || defaultNtpHost;
-}
 
 function getInitialCityIds() {
   const savedValue = localStorage.getItem(savedCitiesKey);
@@ -1029,69 +1015,6 @@ function SearchPanel({ query, results, onAdd, onQueryChange, t, language }) {
 }
 
 
-function SettingsPanel({ ntpHostInput, ntpStatus, ntpServerPresets, onHostInputChange, onPresetSelect, onSave, onSync, t }) {
-  const selectedPreset = ntpServerPresets.find((server) => server.host === ntpHostInput.trim())?.host || 'custom';
-  const delayLabel = typeof ntpStatus.delayMs === 'number' ? `${ntpStatus.delayMs}ms` : ntpStatus.delay || 'Not measured';
-
-  return h(
-    'form',
-    { className: 'settings-panel ntp-settings-panel', onSubmit: onSave },
-    h(
-      'div',
-      { className: 'settings-panel__header' },
-      h('span', null, t.ntp_settings),
-      h('strong', null, t.trusted_time_source),
-      h('small', null, t.ntp_help),
-    ),
-    h(
-      'label',
-      { className: 'settings-field' },
-      h('span', null, t.trusted_servers),
-      h(
-        'select',
-        {
-          value: selectedPreset,
-          onChange: (event) => onPresetSelect(event.target.value),
-        },
-        ntpServerPresets.map((server) => h('option', { value: server.host, key: server.host }, server.label)),
-        h('option', { value: 'custom' }, t.custom_ntp),
-      ),
-    ),
-    h(
-      'label',
-      { className: 'settings-field' },
-      h('span', null, t.custom_hostname),
-      h('input', {
-        type: 'text',
-        value: ntpHostInput,
-        onInput: (event) => onHostInputChange(event.target.value),
-        onChange: (event) => onHostInputChange(event.target.value),
-        placeholder: 'ntp.time.ir',
-        autoComplete: 'off',
-      }),
-    ),
-    h(
-      'div',
-      { className: `ntp-status ntp-status--${ntpStatus.kind}` },
-      h('strong', null, ntpStatus.label),
-      h('span', null, ntpStatus.detail),
-      h(
-        'dl',
-        { className: 'ntp-status__metrics' },
-        h('div', null, h('dt', null, t.server), h('dd', null, ntpStatus.host || ntpHostInput || defaultNtpHost)),
-        h('div', null, h('dt', null, t.delay), h('dd', null, delayLabel)),
-      ),
-    ),
-    h(
-      'div',
-      { className: 'settings-actions' },
-      h('button', { type: 'submit', className: 'edit-toggle' }, t.save_ntp),
-      h('button', { type: 'button', className: 'secondary-button', onClick: onSync }, t.sync_now),
-    ),
-  );
-}
-
-
 function TimezoneManager({ cities, selectedCityId, editMode, searchQuery, searchResults, draggingCityId, onAdd, onDragEnd, onDragStart, onDrop, onEditToggle, onQueryChange, onRemove, onSelect, t, language }) {
 
   return h(
@@ -1218,7 +1141,7 @@ function MonthlyCalendarCard({ city, t, language }) {
   const [primaryCalendar, setPrimaryCalendar] = useState('persian');
   const [monthOffset, setMonthOffset] = useState(0);
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
-  const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared']);
+  const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(globalThis.__defaultOccasionTypes || ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared']);
   let calendar = null;
 
   const occasionTypeOptions = [
@@ -1538,10 +1461,9 @@ function App() {
   const [selectedCityId, setSelectedCityId] = useState(activeCityIds[0] || defaultCityIds[0]);
   const [searchQuery, setSearchQuery] = useState('');
   const [editMode, setEditMode] = useState(false);
-  const [ntpHost, setNtpHost] = useState(getInitialNtpHost);
-  const [ntpHostInput, setNtpHostInput] = useState(ntpHost);
+  const [ntpHost, setNtpHost] = useState(defaultNtpHost);
   const [ntpStatus, setNtpStatus] = useState({ kind: 'local', label: i18n.en.local_clock, detail: i18n.en.using_device_clock, host: ntpHost, delay: i18n.en.not_measured });
-  const [ntpSyncRequest, setNtpSyncRequest] = useState(0);
+
   const [draggingCityId, setDraggingCityId] = useState(null);
   const [language, setLanguage] = useState(getInitialLanguage);
   const isFa = language === 'fa';
@@ -1558,14 +1480,25 @@ function App() {
   }, [activeCityIds]);
 
   useEffect(() => {
-    localStorage.setItem(savedNtpHostKey, ntpHost);
-  }, [ntpHost]);
-
-  useEffect(() => {
     localStorage.setItem(savedLanguageKey, language);
     document.documentElement.lang = language;
     document.documentElement.dir = isFa ? 'rtl' : 'ltr';
   }, [isFa, language]);
+
+  useEffect(() => {
+    fetch('/api/public-config').then((res) => res.json()).then((cfg) => {
+      if (cfg.ntpHost) {
+        setNtpHost(cfg.ntpHost);
+      }
+      if (Array.isArray(cfg.defaultCityIds) && cfg.defaultCityIds.length) {
+        setActiveCityIds(cfg.defaultCityIds.filter((id) => allCityIds.has(id)));
+      }
+      if (typeof cfg.defaultSelectedCityId === 'string' && allCityIds.has(cfg.defaultSelectedCityId)) {
+        setSelectedCityId(cfg.defaultSelectedCityId);
+      }
+      globalThis.__defaultOccasionTypes = Array.isArray(cfg.defaultOccasionTypes) ? cfg.defaultOccasionTypes : undefined;
+    }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!activeCityIds.includes(selectedCityId)) {
@@ -1636,7 +1569,7 @@ function App() {
       window.removeEventListener('online', syncNtp);
       window.removeEventListener('offline', syncNtp);
     };
-  }, [ntpHost, ntpSyncRequest]);
+  }, [ntpHost]);
 
   const activeCities = useMemo(
     () => activeCityIds.map((id) => allCities.find((city) => city.id === id)).filter(Boolean),
@@ -1760,42 +1693,6 @@ function App() {
     setDraggingCityId(null);
   };
 
-
-  const saveNtpHost = (event) => {
-    event.preventDefault();
-    const nextHost = ntpHostInput.trim();
-
-    if (!nextHost) {
-      setNtpStatus({ kind: 'error', label: t.ntp_host_required, detail: t.enter_hostname, host: ntpHost, delay: t.not_measured });
-      return;
-    }
-
-    setNtpHost(nextHost);
-    setNtpSyncRequest((requestId) => requestId + 1);
-  };
-
-  const syncCurrentNtpHost = () => {
-    const nextHost = ntpHostInput.trim();
-
-    if (nextHost && nextHost !== ntpHost) {
-      setNtpHost(nextHost);
-      return;
-    }
-
-    setNtpSyncRequest((requestId) => requestId + 1);
-  };
-
-
-  const selectNtpPreset = (host) => {
-    if (host === 'custom') {
-      return;
-    }
-
-    setNtpHostInput(host);
-    setNtpHost(host);
-    setNtpSyncRequest((requestId) => requestId + 1);
-  };
-
   return h(
     'main',
     { className: `page-shell${isFa ? ' page-shell--rtl' : ''}`, 'aria-label': `${t.time_in} ${selectedCityView.label}` },
@@ -1872,22 +1769,7 @@ function App() {
         language,
       }),
     ),
-    h(MonthlyCalendarCard, { city: selectedCityView, t, language }),
-    h(
-      'section',
-      { className: 'switcher-panel ntp-panel', 'aria-label': t.ntp_settings },
-      h(SettingsPanel, {
-        ntpHostInput,
-        ntpStatus,
-        ntpServerPresets: ntpServerOptions,
-        onHostInputChange: setNtpHostInput,
-        onPresetSelect: selectNtpPreset,
-        onSave: saveNtpHost,
-        onSync: syncCurrentNtpHost,
-        t,
-      }),
-    ),
-  );
+    h(MonthlyCalendarCard, { city: selectedCityView, t, language }),  );
 }
 
 
