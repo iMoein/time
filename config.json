@@ -7,10 +7,12 @@
     "tehran",
     "los-angeles",
     "london",
-    "asia-tokyo"
+    "asia-tokyo",
+    "europe-paris"
   ],
   "defaultSelectedCityId": "tehran",
   "defaultOccasionTypes": [
+    "iran",
     "iranAncient",
     "marketing",
     "islamicShia"
