@@ -1496,6 +1496,7 @@ function App() {
   const [draggingCityId, setDraggingCityId] = useState(null);
   const [language, setLanguage] = useState(getInitialLanguage);
   const [defaultOccasionTypes, setDefaultOccasionTypes] = useState(globalThis.__defaultOccasionTypes || null);
+  const [showOccasionFiltersUser, setShowOccasionFiltersUser] = useState(globalThis.__showOccasionFiltersUser !== false);
   const isFa = language === 'fa';
 
   useEffect(() => {
@@ -1533,6 +1534,8 @@ function App() {
         }
       }
       globalThis.__defaultOccasionTypes = Array.isArray(cfg.defaultOccasionTypes) ? cfg.defaultOccasionTypes : undefined;
+      globalThis.__showOccasionFiltersUser = cfg.showOccasionFiltersUser !== false;
+      setShowOccasionFiltersUser(cfg.showOccasionFiltersUser !== false);
       if (Array.isArray(cfg.defaultOccasionTypes) && cfg.defaultOccasionTypes.length) {
         setDefaultOccasionTypes(cfg.defaultOccasionTypes);
       }
@@ -1808,7 +1811,7 @@ function App() {
         language,
       }),
     ),
-    h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes }),  );
+    h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, showOccasionFiltersUser }),  );
 }
 
 
