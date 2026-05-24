@@ -25,7 +25,7 @@
         <form id="loginForm" class="grid2 login-grid">
           <label><span id="usernameLabel">نام کاربری</span><input name="username" required /></label>
           <label><span id="passwordLabel">رمز عبور</span><input name="password" type="password" required /></label>
-          <label class="full"><span id="captchaLabel">کپچا</span><div class="row"><code id="captchaText">------</code><button id="refreshCaptcha" type="button" class="chip">↻</button></div><input name="captcha" required /></label>
+          <label class="full captcha-inline"><div class="row"><code id="captchaText">------</code><input name="captcha" placeholder="Enter captcha" required /><button id="refreshCaptcha" type="button" class="chip">↻</button></div></label>
           <button class="btn-primary full" id="loginBtn" type="submit">ورود</button>
         </form>
         <p id="loginStatus" class="status"></p>

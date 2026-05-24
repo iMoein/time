@@ -5,7 +5,7 @@ async function api(path,opts={}){const r=await fetch(path,{credentials:'include'
 const setStatus=(id,m)=>$(id).textContent=m||'';
 
 const i18nLogin={fa:{loginTitle:'ورود امن مدیریت',username:'نام کاربری',password:'رمز عبور',captcha:'کپچا',loginBtn:'ورود',welcomeTitle:'خوش آمدید',welcomeDesc:'برای دسترسی به پنل مدیریت هوشمند زمان وارد شوید و تنظیمات پروژه را یکپارچه کنترل کنید.'},en:{loginTitle:'Secure Admin Login',username:'Username',password:'Password',captcha:'Captcha',loginBtn:'Login',welcomeTitle:'Welcome Back',welcomeDesc:'Sign in to access the smart time management console and centrally control project settings.'}};
-function applyLoginLang(){const fa=document.documentElement.lang==='fa';const t=fa?i18nLogin.fa:i18nLogin.en;$('loginTitle').textContent=t.loginTitle;$('usernameLabel').textContent=t.username;$('passwordLabel').textContent=t.password;$('captchaLabel').textContent=t.captcha;$('loginBtn').textContent=t.loginBtn;$('welcomeTitle').textContent=t.welcomeTitle;$('welcomeDesc').textContent=t.welcomeDesc;}
+function applyLoginLang(){const fa=document.documentElement.lang==='fa';const t=fa?i18nLogin.fa:i18nLogin.en;$('loginTitle').textContent=t.loginTitle;$('usernameLabel').textContent=t.username;$('passwordLabel').textContent=t.password;$('loginBtn').textContent=t.loginBtn;$('welcomeTitle').textContent=t.welcomeTitle;$('welcomeDesc').textContent=t.welcomeDesc;}
 
 function setMode(authenticated){const shell=$('appShell');$('dashHeader').classList.toggle('hidden',!authenticated);$('dashFooter').classList.toggle('hidden',!authenticated);if(authenticated){shell.classList.remove('auth-mode');shell.classList.add('dashboard-mode');}else{shell.classList.add('auth-mode');shell.classList.remove('dashboard-mode');}}
 

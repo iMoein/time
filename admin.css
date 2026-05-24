@@ -160,3 +160,6 @@ code {
 .login-art>*{position:relative;z-index:1}
 
 .auth-mode{min-height:100vh;display:grid;align-content:center}.auth-mode #loginCard{max-width:760px;margin:0 auto}.login-shell{min-height:420px}.login-form-wrap{display:grid;align-content:center}
+
+.captcha-inline .row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px}
+.captcha-inline input{margin:0}
