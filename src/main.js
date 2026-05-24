@@ -1158,7 +1158,7 @@ function DayNightCard({ city, t }) {
 }
 
 
-function MonthlyCalendarCard({ city, t, language, initialOccasionTypes }) {
+function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleOccasionTypes = null }) {
   const todayKey = getCalendarDateKey(city.cityDate);
   const [primaryCalendar, setPrimaryCalendar] = useState('persian');
   const [monthOffset, setMonthOffset] = useState(0);
