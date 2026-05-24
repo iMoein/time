@@ -15,5 +15,7 @@
     "iranAncient",
     "marketing",
     "islamicShia"
-  ]
+  ],
+  "showOccasionFiltersAdmin": true,
+  "showOccasionFiltersUser": false
 }
