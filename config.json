@@ -5,8 +5,8 @@
   "passwordChanged": true,
   "defaultCityIds": [
     "tehran",
-    "los-angeles",
     "london",
+    "los-angeles",
     "europe-paris"
   ],
   "defaultSelectedCityId": "tehran",
