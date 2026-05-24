@@ -1,0 +1,6 @@
+{
+  "ntpHost": "pool.ntp.org",
+  "adminUsername": "admin",
+  "adminPassword": "admin",
+  "passwordChanged": true
+}
