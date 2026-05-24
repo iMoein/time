@@ -5,7 +5,7 @@ async function api(path,opts={}){const r=await fetch(path,{credentials:'include'
 const setStatus=(id,m)=>$(id).textContent=m||'';
 async function refreshCaptcha(){const d=await api('/api/admin/captcha');$('captchaText').textContent=d.captcha;}
 function renderCities(){ $('defaultCityChips').innerHTML=selectedCities.map(c=>`<span class="chip">${c}<button data-rm="${c}" class="ghost">×</button></span>`).join(''); $('defaultSelectedCityInput').innerHTML=selectedCities.map(c=>`<option value="${c}">${c}</option>`).join('');}
-function renderOcc(selected=[]){$('occasionChecks').innerHTML=OCC.map(o=>`<label><input type="checkbox" value="${o}" ${selected.includes(o)?'checked':''}/> ${o}</label>`).join('');}
+function renderOcc(selected=[]){$('occasionChecks').innerHTML=OCC.map(o=>`<label><input type="checkbox" value="${o}" ${selected.includes(o)?'checked':''}/> ${o}</label>`).join('');updateOccasionLabel();}
 function renderNtp(){ $('ntpPreset').innerHTML=NTP.map(([h,l])=>`<option value="${h}">${l} (${h})</option>`).join('');}
 async function loadConfig(){const d=await api('/api/admin/config');$('ntpHost').value=d.ntpHost||'pool.ntp.org';selectedCities=(d.defaultCityIds||[]).slice();renderCities();$('defaultSelectedCityInput').value=d.defaultSelectedCityId||selectedCities[0]||'';renderOcc(d.defaultOccasionTypes||[]);}
 async function loadPublicCities(){const z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];cityPool=z.map(v=>v.toLowerCase().replace(/[^a-z0-9]+/g,'-'));}
@@ -23,3 +23,8 @@ $('ntpTestBtn').onclick=async()=>{try{const st=Date.now();const d=await api('/ap
 $('ntpForm').onsubmit=async e=>{e.preventDefault();try{await api('/api/admin/config',{method:'POST',body:JSON.stringify({ntpHost:$('ntpHost').value,defaultCityIds:selectedCities,defaultSelectedCityId:$('defaultSelectedCityInput').value,defaultOccasionTypes:[...$('occasionChecks').querySelectorAll('input:checked')].map(x=>x.value)})});setStatus('ntpStatus','Saved');setStatus('defaultsStatus','Saved');}catch(err){setStatus('ntpStatus',err.message);}};
 $('defaultsForm').onsubmit=$('ntpForm').onsubmit;
 loadPublicCities();refreshCaptcha();checkAuth();
+
+function updateOccasionLabel(){const n=[...$('occasionChecks').querySelectorAll('input:checked')].length;$('occasionToggle').textContent=n?`فیلترهای انتخابی: ${n}`:'انتخاب فیلتر';}
+$('occasionToggle').onclick=()=>$('occasionChecks').classList.toggle('hidden');
+document.addEventListener('click',(e)=>{if(!e.target.closest('.dropdown'))$('occasionChecks').classList.add('hidden');});
+$('occasionChecks').addEventListener('change',updateOccasionLabel);
