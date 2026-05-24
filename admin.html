@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>پنل مدیریت</title>
+  <link rel="stylesheet" href="/admin.css" />
+</head>
+<body>
+  <main class="admin-shell">
+    <header class="admin-header glass">
+      <div>
+        <p class="kicker">Management Console</p>
+        <h1 id="title">پنل مدیریت زمان</h1>
+      </div>
+      <div class="header-actions">
+        <button id="langToggle" class="btn btn-ghost">EN</button>
+        <button id="logoutBtn" class="btn btn-danger hidden">خروج</button>
+      </div>
+    </header>
+
+    <section id="loginCard" class="glass auth-card">
+      <h2 id="loginTitle">ورود امن</h2>
+      <p id="firstLoginNote" class="notice hidden"></p>
+      <form id="loginForm" class="form-grid">
+        <label><span id="usernameLabel">نام کاربری</span><input name="username" required /></label>
+        <label><span id="passwordLabel">رمز عبور</span><input name="password" type="password" required /></label>
+        <label class="col-2"><span id="captchaLabel">کپچا</span><div class="captcha-wrap"><code id="captchaText">------</code><button type="button" id="refreshCaptcha" class="btn btn-ghost">↻</button></div><input name="captcha" required /></label>
+        <button class="btn btn-primary col-2" id="loginBtn" type="submit">ورود</button>
+      </form>
+      <p class="status" id="loginStatus"></p>
+    </section>
+
+    <section id="dashboard" class="hidden">
+      <section id="forcePasswordCard" class="glass hidden">
+        <h2 id="passwordTitle">تغییر رمز اولیه</h2>
+        <p id="forcePasswordInfo" class="notice"></p>
+        <form id="passwordForm" class="form-grid">
+          <label><span id="newPasswordLabel">رمز جدید</span><input id="newPassword" type="password" required minlength="8" /></label>
+          <label><span id="confirmPasswordLabel">تکرار رمز</span><input id="confirmPassword" type="password" required minlength="8" /></label>
+          <button class="btn btn-primary col-2" id="passwordSaveBtn" type="submit">ذخیره رمز</button>
+        </form>
+        <p class="status" id="passwordStatus"></p>
+      </section>
+
+      <div id="dashboardContent" class="dashboard hidden">
+        <section class="glass panel panel-wide">
+          <h3 id="defaultsTitle">پیش‌فرض‌های برنامه</h3>
+          <div class="form-grid">
+            <label class="col-2"><span>جستجو و افزودن شهر</span><div class="row"><input id="citySearchInput" placeholder="tehran, london, tokyo" /><button type="button" id="cityAddBtn" class="btn btn-ghost">افزودن</button></div><div id="citySuggestions" class="suggestions"></div></label>
+            <div id="defaultCityChips" class="chips col-2"></div>
+            <label><span id="defaultSelectedCityLabel">شهر اولیه</span><select id="defaultSelectedCityInput"></select></label>
+            <label><span id="defaultOccasionsLabel">فیلتر مناسبت‌ها</span><select id="occasionSelect" multiple size="6"></select></label>
+          </div>
+          <button id="defaultsSaveBtn" class="btn btn-primary">ذخیره پیش‌فرض‌ها</button>
+          <p id="defaultsStatus" class="status"></p>
+        </section>
+
+        <section class="glass panel">
+          <h3 id="ntpTitle">تنظیمات NTP</h3>
+          <label><span>سرورهای آماده</span><select id="ntpPreset"></select></label>
+          <label><span>سرور سفارشی</span><input id="ntpHost" placeholder="pool.ntp.org" /></label>
+          <div class="row"><button id="ntpSaveBtn" class="btn btn-primary">ذخیره</button><button id="ntpTestBtn" class="btn btn-ghost">همگام‌سازی</button></div>
+          <div class="metrics"><div><small>سرور</small><strong id="ntpHostLabel">-</strong></div><div><small>تاخیر</small><strong id="ntpDelay">-</strong></div></div>
+          <p id="ntpStatus" class="status"></p>
+        </section>
+
+        <section class="glass panel panel-wide">
+          <h3 id="jsonTitle">مدیریت JSON</h3>
+          <div class="row"><select id="jsonFileSelect"></select><button id="jsonLoadBtn" class="btn btn-ghost">بارگذاری</button><button id="jsonSaveBtn" class="btn btn-primary">ذخیره</button></div>
+          <textarea id="jsonEditor" spellcheck="false"></textarea>
+          <p class="status" id="jsonStatus"></p>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="/admin.js"></script>
+</body>
+</html>

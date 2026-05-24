@@ -1,0 +1,13 @@
+@font-face{font-family:IRANSansXFaNum;src:url('/src/IRANSansXFaNum-Regular.ttf') format('truetype');font-display:swap}
+:root{--bg:#071638;--bg2:#11295f;--line:#305a9b;--text:#ecf3ff;--muted:#9cb6e7;--primary:#3b82f6;--danger:#dc2626}
+*{box-sizing:border-box}body{margin:0;font-family:IRANSansXFaNum,Inter,sans-serif;color:var(--text);background:radial-gradient(circle at 20% 0%,#1f4389,#071638 45%)}
+.admin-shell{max-width:1200px;margin:auto;padding:24px;display:grid;gap:16px}.glass{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:18px}
+.admin-header{padding:16px 18px;display:flex;justify-content:space-between;align-items:center}.kicker{margin:0;color:var(--muted)}h1,h2,h3{margin:0 0 12px}.header-actions{display:flex;gap:8px}
+.auth-card{padding:20px}.dashboard{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel{padding:18px;display:grid;gap:10px}.panel-wide{grid-column:1/-1}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.col-2{grid-column:1/-1}label{display:grid;gap:6px;color:var(--muted)}input,select,textarea,button{font:inherit}
+input,select,textarea{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:#04122d;color:var(--text)}textarea{min-height:280px;direction:ltr}
+.row{display:flex;gap:8px;align-items:center}.btn{border:none;padding:10px 14px;border-radius:10px;cursor:pointer}.btn-primary{background:var(--primary);color:#fff}.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--line)}.btn-danger{background:var(--danger);color:#fff}
+.captcha-wrap{display:flex;gap:8px}code{padding:8px 10px;border:1px dashed var(--line);border-radius:8px;letter-spacing:3px}.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{background:#173b74;border:1px solid var(--line);border-radius:999px;padding:5px 10px}
+.suggestions{display:flex;flex-wrap:wrap;gap:6px}.sug{background:#173b74;border:1px solid var(--line);border-radius:8px;padding:4px 8px;cursor:pointer}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#0a1f4a}
+.status{min-height:1.2em;color:var(--muted)}.notice{padding:10px;border-radius:10px;border:1px solid #9b7d31;background:#3a2b0d;color:#ffe3a2}.hidden{display:none}
+@media(max-width:980px){.dashboard,.form-grid{grid-template-columns:1fr}}
