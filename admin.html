@@ -1,18 +1,41 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
-<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>پنل مدیریت | Admin Panel</title><link rel="stylesheet" href="/admin.css" /></head>
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>پنل مدیریت | Admin Panel</title><link rel="stylesheet" href="/admin.css" />
+</head>
 <body>
-<main class="container">
-  <header class="topbar"><h1 id="title">پنل مدیریت</h1><div class="topbarActions"><button id="langToggle" class="ghost">EN</button><button id="logoutBtn" class="danger hidden">خروج</button></div></header>
-  <section id="loginCard" class="card"><h2 id="loginTitle">ورود امن</h2><p id="firstLoginNote" class="notice hidden"></p><form id="loginForm" class="grid">
-    <label><span id="usernameLabel">نام کاربری</span><input name="username" required autocomplete="username" /></label>
-    <label><span id="passwordLabel">رمز عبور</span><input name="password" type="password" required autocomplete="current-password" /></label>
-    <label class="span2"><span id="captchaLabel">کپچا</span><div class="captchaRow"><code id="captchaText">------</code><button type="button" id="refreshCaptcha" class="ghost">↻</button></div><input name="captcha" required /></label>
-    <button class="span2" type="submit" id="loginBtn">ورود</button></form><p id="loginStatus" class="status"></p></section>
-  <section id="dashboard" class="hidden">
-    <div id="forcePasswordCard" class="card hidden"><h2 id="passwordTitle">تغییر رمز عبور اولیه</h2><p class="notice" id="forcePasswordInfo"></p><form id="passwordForm" class="grid"><label><span id="newPasswordLabel">رمز عبور جدید</span><input id="newPassword" type="password" required minlength="8"/></label><label><span id="confirmPasswordLabel">تکرار رمز عبور</span><input id="confirmPassword" type="password" required minlength="8"/></label><button class="span2" id="passwordSaveBtn" type="submit">ذخیره رمز عبور</button></form><p id="passwordStatus" class="status"></p></div>
-    <div id="dashboardContent" class="hidden"><div class="card"><h2 id="defaultsTitle">تنظیمات پیش‌فرض برنامه</h2><form id="defaultsForm" class="grid"><label class="span2"><span id="defaultCitiesLabel">شهرهای پیش‌فرض (با کاما جدا کنید)</span><input id="defaultCitiesInput" placeholder="tehran,los-angeles,london"/></label><label><span id="defaultSelectedCityLabel">شهر پیش‌فرض اولیه</span><input id="defaultSelectedCityInput" placeholder="tehran"/></label><label><span id="defaultOccasionsLabel">فیلترهای پیش‌فرض مناسبت‌ها (با کاما)</span><input id="defaultOccasionsInput" placeholder="iran,international,islamic"/></label><button class="span2" type="submit" id="defaultsSaveBtn">ذخیره تنظیمات پیش‌فرض</button></form><p id="defaultsStatus" class="status"></p></div><div class="card"><h2 id="ntpTitle">تنظیمات NTP</h2><form id="ntpForm" class="inlineForm"><input id="ntpHost" placeholder="pool.ntp.org" required /><button type="submit" id="ntpSaveBtn">ذخیره</button><button type="button" id="ntpTestBtn" class="ghost">تست</button></form><p id="ntpStatus" class="status"></p></div>
-    <div class="card"><h2 id="jsonTitle">مدیریت فایل‌های JSON</h2><div class="inlineForm"><select id="jsonFileSelect"></select><button id="jsonLoadBtn" class="ghost">بارگذاری</button><button id="jsonSaveBtn">ذخیره</button></div><textarea id="jsonEditor" spellcheck="false"></textarea><p id="jsonStatus" class="status"></p></div></div>
+<main class="page-shell">
+  <section class="hero-panel"><div class="top-bar"><h1 id="title">پنل مدیریت</h1><div class="top-bar__controls"><button id="langToggle" class="ghost">EN</button><button id="logoutBtn" class="danger hidden">خروج</button></div></div></section>
+
+  <section id="loginCard" class="auth-card">
+    <h2 id="loginTitle">ورود امن</h2><p id="firstLoginNote" class="notice hidden"></p>
+    <form id="loginForm" class="auth-grid">
+      <label><span id="usernameLabel">نام کاربری</span><input name="username" required autocomplete="username"/></label>
+      <label><span id="passwordLabel">رمز عبور</span><input name="password" type="password" required autocomplete="current-password"/></label>
+      <label class="span2"><span id="captchaLabel">کپچا</span><div class="captchaRow"><button type="button" id="refreshCaptcha" class="ghost">↻</button><code id="captchaText">------</code></div><input name="captcha" required/></label>
+      <button class="span2 primary" type="submit" id="loginBtn">ورود</button>
+    </form><p id="loginStatus" class="status"></p>
   </section>
-</main><script type="module" src="/admin.js"></script>
+
+  <section id="dashboard" class="hidden">
+    <div id="forcePasswordCard" class="card hidden"><h2 id="passwordTitle">تغییر رمز عبور اولیه</h2><p class="notice" id="forcePasswordInfo"></p><form id="passwordForm" class="auth-grid"><label><span id="newPasswordLabel">رمز عبور جدید</span><input id="newPassword" type="password" required minlength="8"/></label><label><span id="confirmPasswordLabel">تکرار رمز عبور</span><input id="confirmPassword" type="password" required minlength="8"/></label><button class="span2 primary" id="passwordSaveBtn" type="submit">ذخیره رمز عبور</button></form><p id="passwordStatus" class="status"></p></div>
+    <div id="dashboardContent" class="dashboard-grid hidden">
+      <section class="card span2"><h2 id="defaultsTitle">تنظیمات پیش‌فرض برنامه</h2>
+        <div class="field"><label id="citiesSearchLabel" for="citySearchInput">جستجو و افزودن شهر پیش‌فرض</label><div class="inline"><input id="citySearchInput" placeholder="tehran, london, tokyo..."/><button id="cityAddBtn" class="ghost" type="button">افزودن</button></div><div id="citySuggestions" class="suggestions"></div></div>
+        <div class="chips" id="defaultCityChips"></div>
+        <form id="defaultsForm" class="auth-grid">
+          <label><span id="defaultSelectedCityLabel">شهر اولیه کاربر</span><select id="defaultSelectedCityInput"></select></label>
+          <label><span id="defaultOccasionsLabel">فیلترهای پیش‌فرض مناسبت‌ها</span><details class="dropdown"><summary id="occasionSummary">انتخاب فیلتر</summary><div id="occasionChecks" class="checks"></div></details></label>
+          <button class="span2 primary" type="submit" id="defaultsSaveBtn">ذخیره تنظیمات پیش‌فرض</button>
+        </form><p id="defaultsStatus" class="status"></p>
+      </section>
+
+      <section class="card"><h2 id="ntpTitle">تنظیمات NTP</h2><form id="ntpForm"><label><span id="trustedServersLabel">سرورهای قابل اعتماد</span><select id="ntpPreset"></select></label><label><span id="customNtpLabel">سرور سفارشی</span><input id="ntpHost" placeholder="pool.ntp.org" required/></label><div class="inline"><button type="submit" id="ntpSaveBtn" class="primary">ذخیره</button><button type="button" id="ntpTestBtn" class="ghost">همگام‌سازی</button></div></form><div id="ntpStatus" class="status"></div><div class="metrics"><div><small id="serverLabel">سرور</small><strong id="ntpHostLabel">-</strong></div><div><small id="delayLabel">تاخیر</small><strong id="ntpDelay">-</strong></div></div></section>
+
+      <section class="card"><h2 id="jsonTitle">مدیریت فایل‌های JSON</h2><div class="inline"><select id="jsonFileSelect"></select><button id="jsonLoadBtn" class="ghost">بارگذاری</button><button id="jsonSaveBtn" class="primary">ذخیره</button></div><textarea id="jsonEditor" spellcheck="false"></textarea><p id="jsonStatus" class="status"></p></section>
+    </div>
+  </section>
+</main>
+<script type="module" src="/admin.js"></script>
 </body></html>
