@@ -31,6 +31,8 @@ const defaultCities = [
 
 const savedCitiesKey = 'time-app-cities';
 const savedLanguageKey = 'time-app-language';
+const savedSelectedCityKey = 'time-app-selected-city';
+const savedOccasionFiltersKey = 'time-app-occasion-filters';
 const userCitiesCustomizedKey = 'time-app-cities-customized';
 const defaultNtpHost = 'ntp.time.ir';
 
@@ -1165,16 +1167,31 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
   const [monthOffset, setMonthOffset] = useState(0);
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
   const fallbackOccasionTypes = ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared'];
-  const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(initialOccasionTypes || globalThis.__defaultOccasionTypes || fallbackOccasionTypes);
+  const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(savedOccasionFiltersKey) || 'null');
+      if (Array.isArray(saved) && saved.length) return saved;
+    } catch {}
+    return initialOccasionTypes || globalThis.__defaultOccasionTypes || fallbackOccasionTypes;
+  });
   const allowedOccasionTypes = (visibleOccasionTypes&&visibleOccasionTypes.length)?visibleOccasionTypes:fallbackOccasionTypes;
   let calendar = null;
 
 
   useEffect(() => {
-    if (Array.isArray(initialOccasionTypes) && initialOccasionTypes.length) {
+    let hasSaved = false;
+    try {
+      const saved = JSON.parse(localStorage.getItem(savedOccasionFiltersKey) || 'null');
+      hasSaved = Array.isArray(saved) && saved.length > 0;
+    } catch {}
+    if (!hasSaved && Array.isArray(initialOccasionTypes) && initialOccasionTypes.length) {
       setEnabledOccasionTypes(initialOccasionTypes);
     }
   }, [initialOccasionTypes]);
+
+  useEffect(() => {
+    localStorage.setItem(savedOccasionFiltersKey, JSON.stringify(enabledOccasionTypes));
+  }, [enabledOccasionTypes]);
   const allOccasionTypeOptions = [
     { id: 'iran', label: t.calendar_iran },
     { id: 'iranCurrent', label: t.calendar_iran_current },
@@ -1489,7 +1506,10 @@ function App() {
   const [now, setNow] = useState(() => new Date());
   const [timeOffset, setTimeOffset] = useState(0);
   const [activeCityIds, setActiveCityIds] = useState(getInitialCityIds);
-  const [selectedCityId, setSelectedCityId] = useState(activeCityIds[0] || defaultCityIds[0]);
+  const [selectedCityId, setSelectedCityId] = useState(() => {
+    const savedSelectedCityId = localStorage.getItem(savedSelectedCityKey);
+    return savedSelectedCityId && activeCityIds.includes(savedSelectedCityId) ? savedSelectedCityId : (activeCityIds[0] || defaultCityIds[0]);
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [ntpHost, setNtpHost] = useState(defaultNtpHost);
@@ -1518,6 +1538,12 @@ function App() {
     document.documentElement.lang = language;
     document.documentElement.dir = isFa ? 'rtl' : 'ltr';
   }, [isFa, language]);
+
+  useEffect(() => {
+    if (selectedCityId) {
+      localStorage.setItem(savedSelectedCityKey, selectedCityId);
+    }
+  }, [selectedCityId]);
 
   useEffect(() => {
     let mounted = true;
