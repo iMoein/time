@@ -51,17 +51,23 @@ textarea{min-height:300px;direction:ltr}
 .tabs .tab{display:none}.tabs .tab.active{display:block}.hidden{display:none}
 @media(max-width:1100px){.admin-layout{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.default-city-field{max-width:100%}#defaultSelectedCityInput{max-width:100%;min-width:0}.defaults-grid .default-col,.defaults-grid .default-city-field,.defaults-grid .occasion-col,.defaults-grid .visibility-col{grid-column:1}.user-live-frame{height:70vh;min-height:460px}}
 
-.ntp-card{background:linear-gradient(145deg,#ffffff,#f3f8ff);border:1px solid #cfe0ff;box-shadow:0 12px 30px #1d4ed81a}
-.ntp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap}.ntp-head h3{margin:0}.ntp-sub{margin:0;color:#4b5563;font-size:.9rem}
-.ntp-quick{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}.ntp-chip{border:1px solid #bfd3f9;background:linear-gradient(180deg,#fff,#eef5ff);color:#1e3a8a;border-radius:999px;padding:7px 11px;cursor:pointer;font-weight:700}
-.ntp-chip:hover{background:linear-gradient(180deg,#dbeafe,#e0efff)}
-.ntp-stats article{background:linear-gradient(180deg,#fff,#eff6ff);border-color:#c9dcfb}
 
-.ntp-hero{background:radial-gradient(circle at 20% 20%,#173c7a 0,#0b1f46 45%,#091734 100%);color:#e7eefc;border:1px solid #335a97;box-shadow:0 18px 40px #0f172a40}.ntp-hero h2{margin:6px 0 8px;font-size:2.25rem}.ntp-hero p{margin:0;color:#c5d5f2}.ntp-kicker{text-transform:uppercase;letter-spacing:.12em;color:#84b6ff;font-weight:700}
-.ntp-card{background:linear-gradient(165deg,#0e264f,#0b1d3c 46%,#091633);border:1px solid #315f9f;color:#e6edfb;box-shadow:0 14px 38px #0f172a55}
-.ntp-card label{color:#cfe0ff}.ntp-card input,.ntp-card select{background:#061230;border-color:#3b63a2;color:#e8efff}.ntp-card input:focus,.ntp-card select:focus{border-color:#4cb6ff;box-shadow:0 0 0 3px #38bdf833}
-.ntp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}.ntp-head h3{font-size:2rem;margin:0}.ntp-sub{margin:8px 0 0;color:#c3d3f2}.ntp-badge{background:#1ea86b;color:#eafff4;border-radius:999px;padding:8px 14px;font-weight:700}
-.ntp-grid{margin-top:4px}.ntp-options{margin:10px 0 8px;display:grid;gap:8px}.ntp-check{display:flex;align-items:center;gap:10px;font-weight:600;color:#d7e3fa}
-.ntp-quick{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}.ntp-chip{border:1px solid #5984c7;background:#1b3669;color:#d5e4ff;border-radius:999px;padding:7px 13px;cursor:pointer;font-weight:700}.ntp-chip.active,.ntp-chip:hover{background:#38bdf8;color:#04213f;border-color:#38bdf8}
-.ntp-stats{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:10px}.ntp-stats article{margin:0;background:#203862;border-color:#2f5a94;color:#d8e6ff}.ntp-stats small{color:#a8c2ee}.ntp-actions{margin-top:10px}.ntp-actions .chip{background:#375b92;border-color:#517bb8}.ntp-actions .chip.ghost{background:transparent;border-color:#6d8fbe}
-@media(max-width:1100px){.ntp-hero h2{font-size:1.6rem}.ntp-stats{grid-template-columns:1fr 1fr}}
+.ntp-card{background:var(--panel);border:1px solid var(--line);color:var(--text)}
+.ntp-card label{color:#374151}
+.ntp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.ntp-head h3{font-size:2rem;margin:0}
+.ntp-sub{margin:8px 0 0;color:var(--muted)}
+.ntp-badge{background:#16a34a;color:#fff;border-radius:999px;padding:8px 14px;font-weight:700}
+.ntp-grid{margin-top:4px}
+.ntp-options{margin:10px 0 8px;display:grid;gap:8px}
+.ntp-check{display:flex;align-items:center;gap:10px;font-weight:600;color:#334155}
+.ntp-quick{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+.ntp-chip{border:1px solid #cbd5e1;background:#f8fafc;color:#1e293b;border-radius:999px;padding:7px 13px;cursor:pointer;font-weight:700}
+.ntp-chip.active,.ntp-chip:hover{background:#e2e8f0;color:#0f172a;border-color:#94a3b8}
+.ntp-stats{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:10px}
+.ntp-stats article{margin:0;background:#f8fafc;border-color:#dbe3ee;color:#1f2937}
+.ntp-stats small{color:#64748b}
+.ntp-actions{margin-top:10px}
+.ntp-actions .chip{background:#334155;border-color:#334155}
+.ntp-actions .chip.ghost{background:#fff;color:#334155;border-color:#cbd5e1}
+@media(max-width:1100px){.ntp-stats{grid-template-columns:1fr 1fr}}
