@@ -31,6 +31,9 @@ const defaultCities = [
 
 const savedCitiesKey = 'time-app-cities';
 const savedLanguageKey = 'time-app-language';
+const savedSelectedCityKey = 'time-app-selected-city';
+const savedOccasionFiltersKey = 'time-app-occasion-filters';
+const userCitiesCustomizedKey = 'time-app-cities-customized';
 const defaultNtpHost = 'ntp.time.ir';
 
 function getInitialLanguage() {
@@ -1158,22 +1161,38 @@ function DayNightCard({ city, t }) {
 }
 
 
-function MonthlyCalendarCard({ city, t, language, initialOccasionTypes }) {
+function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleOccasionTypes = null, occasionFilterOrder = null }) {
   const todayKey = getCalendarDateKey(city.cityDate);
   const [primaryCalendar, setPrimaryCalendar] = useState('persian');
   const [monthOffset, setMonthOffset] = useState(0);
   const [selectedDateKey, setSelectedDateKey] = useState(todayKey);
   const fallbackOccasionTypes = ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared'];
-  const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(initialOccasionTypes || globalThis.__defaultOccasionTypes || fallbackOccasionTypes);
+  const [enabledOccasionTypes, setEnabledOccasionTypes] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(savedOccasionFiltersKey) || 'null');
+      if (Array.isArray(saved) && saved.length) return saved;
+    } catch {}
+    return initialOccasionTypes || globalThis.__defaultOccasionTypes || fallbackOccasionTypes;
+  });
+  const allowedOccasionTypes = (visibleOccasionTypes&&visibleOccasionTypes.length)?visibleOccasionTypes:fallbackOccasionTypes;
   let calendar = null;
 
 
   useEffect(() => {
-    if (Array.isArray(initialOccasionTypes) && initialOccasionTypes.length) {
+    let hasSaved = false;
+    try {
+      const saved = JSON.parse(localStorage.getItem(savedOccasionFiltersKey) || 'null');
+      hasSaved = Array.isArray(saved) && saved.length > 0;
+    } catch {}
+    if (!hasSaved && Array.isArray(initialOccasionTypes) && initialOccasionTypes.length) {
       setEnabledOccasionTypes(initialOccasionTypes);
     }
   }, [initialOccasionTypes]);
-  const occasionTypeOptions = [
+
+  useEffect(() => {
+    localStorage.setItem(savedOccasionFiltersKey, JSON.stringify(enabledOccasionTypes));
+  }, [enabledOccasionTypes]);
+  const allOccasionTypeOptions = [
     { id: 'iran', label: t.calendar_iran },
     { id: 'iranCurrent', label: t.calendar_iran_current },
     { id: 'iranAncient', label: t.calendar_iran_ancient },
@@ -1189,7 +1208,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes }) {
   const toggleOccasionType = (type) => {
     setEnabledOccasionTypes((active) => {
       if (active.includes(type)) {
-        return active.length === 1 ? active : active.filter((item) => item !== type);
+        return active.filter((item) => item !== type);
       }
 
       return [...active, type];
@@ -1197,7 +1216,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes }) {
   };
 
   try {
-    calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes);
+    calendar = getSyncedMonthCalendar(city.cityDate, primaryCalendar, monthOffset, selectedDateKey, t, language, enabledOccasionTypes.filter((type)=>allowedOccasionTypes.includes(type)));
   } catch (error) {
     return h(
       'section',
@@ -1212,8 +1231,8 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes }) {
   }
 
   const selectedOccasionGroup = getSelectedOccasionGroup(calendar);
-  const occasionTypeOrder = ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared'];
-  const groupOccasionsByType = (events) => occasionTypeOrder
+  const occasionTypeOrder = (Array.isArray(occasionFilterOrder) && occasionFilterOrder.length ? occasionFilterOrder : ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared']).filter((type)=>fallbackOccasionTypes.includes(type));
+  const groupOccasionsByType = (events) => occasionTypeOrder.filter((type)=>allowedOccasionTypes.includes(type))
     .map((type) => {
       const typeEvents = events.filter((event) => event.type === type);
       return typeEvents.length > 0
@@ -1377,7 +1396,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes }) {
             h(
               'div',
               { className: 'monthly-occasions__filters-menu' },
-              occasionTypeOptions.map((option) => h(
+              occasionTypeOrder.filter((typeId)=>allowedOccasionTypes.includes(typeId)).map((typeId)=>allOccasionTypeOptions.find((o)=>o.id===typeId)).filter(Boolean).map((option) => h(
                 'label',
                 { key: option.id },
                 h('input', { type: 'checkbox', checked: enabledOccasionTypes.includes(option.id), onChange: () => toggleOccasionType(option.id) }),
@@ -1487,7 +1506,10 @@ function App() {
   const [now, setNow] = useState(() => new Date());
   const [timeOffset, setTimeOffset] = useState(0);
   const [activeCityIds, setActiveCityIds] = useState(getInitialCityIds);
-  const [selectedCityId, setSelectedCityId] = useState(activeCityIds[0] || defaultCityIds[0]);
+  const [selectedCityId, setSelectedCityId] = useState(() => {
+    const savedSelectedCityId = localStorage.getItem(savedSelectedCityKey);
+    return savedSelectedCityId && activeCityIds.includes(savedSelectedCityId) ? savedSelectedCityId : (activeCityIds[0] || defaultCityIds[0]);
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [ntpHost, setNtpHost] = useState(defaultNtpHost);
@@ -1496,6 +1518,8 @@ function App() {
   const [draggingCityId, setDraggingCityId] = useState(null);
   const [language, setLanguage] = useState(getInitialLanguage);
   const [defaultOccasionTypes, setDefaultOccasionTypes] = useState(globalThis.__defaultOccasionTypes || null);
+  const [visibleOccasionTypes, setVisibleOccasionTypes] = useState(globalThis.__visibleOccasionTypes || null);
+  const [occasionFilterOrder, setOccasionFilterOrder] = useState(globalThis.__occasionFilterOrder || null);
   const isFa = language === 'fa';
 
   useEffect(() => {
@@ -1516,27 +1540,54 @@ function App() {
   }, [isFa, language]);
 
   useEffect(() => {
-    fetch('/api/public-config').then((res) => res.json()).then((cfg) => {
-      if (cfg.ntpHost) {
-        setNtpHost(cfg.ntpHost);
-      }
-      if (Array.isArray(cfg.defaultCityIds) && cfg.defaultCityIds.length) {
-        const resolvedIds = cfg.defaultCityIds.map(resolveConfiguredCityId).filter(Boolean);
-        if (resolvedIds.length) {
-          setActiveCityIds(Array.from(new Set(resolvedIds)));
+    if (selectedCityId) {
+      localStorage.setItem(savedSelectedCityKey, selectedCityId);
+    }
+  }, [selectedCityId]);
+
+  useEffect(() => {
+    let mounted = true;
+    const loadPublicConfig = () => fetch('/api/public-config')
+      .then((res) => res.json())
+      .then((cfg) => {
+        if (!mounted) return;
+        if (cfg.ntpHost) {
+          setNtpHost(cfg.ntpHost);
         }
-      }
-      if (typeof cfg.defaultSelectedCityId === 'string') {
-        const resolvedSelected = resolveConfiguredCityId(cfg.defaultSelectedCityId);
-        if (resolvedSelected) {
-          setSelectedCityId(resolvedSelected);
+        const userCustomizedCities = localStorage.getItem(userCitiesCustomizedKey) === '1';
+        if (!userCustomizedCities && Array.isArray(cfg.defaultCityIds) && cfg.defaultCityIds.length) {
+          const resolvedIds = cfg.defaultCityIds.map(resolveConfiguredCityId).filter(Boolean);
+          if (resolvedIds.length) {
+            setActiveCityIds(Array.from(new Set(resolvedIds)));
+          }
         }
-      }
-      globalThis.__defaultOccasionTypes = Array.isArray(cfg.defaultOccasionTypes) ? cfg.defaultOccasionTypes : undefined;
-      if (Array.isArray(cfg.defaultOccasionTypes) && cfg.defaultOccasionTypes.length) {
-        setDefaultOccasionTypes(cfg.defaultOccasionTypes);
-      }
-    }).catch(() => {});
+        if (typeof cfg.defaultSelectedCityId === 'string') {
+          const resolvedSelected = resolveConfiguredCityId(cfg.defaultSelectedCityId);
+          if (resolvedSelected) {
+            setSelectedCityId(resolvedSelected);
+          }
+        }
+        globalThis.__defaultOccasionTypes = Array.isArray(cfg.defaultOccasionTypes) ? cfg.defaultOccasionTypes : undefined;
+        globalThis.__visibleOccasionTypes = Array.isArray(cfg.visibleOccasionTypes) ? cfg.visibleOccasionTypes : undefined;
+        globalThis.__occasionFilterOrder = Array.isArray(cfg.occasionFilterOrder) ? cfg.occasionFilterOrder : undefined;
+        if (Array.isArray(cfg.visibleOccasionTypes) && cfg.visibleOccasionTypes.length) {
+          setVisibleOccasionTypes(cfg.visibleOccasionTypes);
+        }
+        if (Array.isArray(cfg.occasionFilterOrder) && cfg.occasionFilterOrder.length) {
+          setOccasionFilterOrder(cfg.occasionFilterOrder);
+        }
+        if (Array.isArray(cfg.defaultOccasionTypes) && cfg.defaultOccasionTypes.length) {
+          setDefaultOccasionTypes(cfg.defaultOccasionTypes);
+        }
+      })
+      .catch(() => {});
+
+    loadPublicConfig();
+    const timer = setInterval(loadPublicConfig, 15000);
+    return () => {
+      mounted = false;
+      clearInterval(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -1666,6 +1717,7 @@ function App() {
   }, [activeIdSet, language, searchQuery]);
 
   const addCity = (cityId) => {
+    localStorage.setItem(userCitiesCustomizedKey, '1');
     setActiveCityIds((currentIds) => (currentIds.includes(cityId) ? currentIds : [...currentIds, cityId]));
     setSelectedCityId(cityId);
     setSearchQuery('');
@@ -1677,6 +1729,7 @@ function App() {
   };
 
   const removeCity = (cityId) => {
+    localStorage.setItem(userCitiesCustomizedKey, '1');
     setActiveCityIds((currentIds) => {
       if (currentIds.length === 1) {
         return currentIds;
@@ -1693,6 +1746,7 @@ function App() {
   };
 
   const moveCity = (draggedCityId, targetCityId) => {
+    localStorage.setItem(userCitiesCustomizedKey, '1');
     if (!draggedCityId || draggedCityId === targetCityId) {
       return;
     }
@@ -1808,7 +1862,7 @@ function App() {
         language,
       }),
     ),
-    h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes }),  );
+    h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes, occasionFilterOrder }),  );
 }
 
 
