@@ -1993,7 +1993,7 @@ function App() {
       }),
     ),
     h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes, occasionFilterOrder }),
-    h(AgeConverterCard, { city: selectedCity, t, language }),  );
+    h(AgeConverterCard, { city: selectedCityConfig, t, language }),  );
 }
 
 
