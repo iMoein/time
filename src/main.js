@@ -992,6 +992,94 @@ function ToggleButton({ city, selected, canRemove, editMode, dragging, onDragEnd
   );
 }
 
+
+function getZonedTodayDate(timeZone) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]));
+  return new Date(Date.UTC(Number(values.year), Number(values.month) - 1, Number(values.day), 12));
+}
+
+function calculateAgeFromDate(birthDate, todayDate) {
+  let years = todayDate.getUTCFullYear() - birthDate.getUTCFullYear();
+  const monthDelta = todayDate.getUTCMonth() - birthDate.getUTCMonth();
+  const dayDelta = todayDate.getUTCDate() - birthDate.getUTCDate();
+
+  if (monthDelta < 0 || (monthDelta === 0 && dayDelta < 0)) {
+    years -= 1;
+  }
+
+  return Math.max(0, years);
+}
+
+function AgeConverterCard({ city, t, language }) {
+  const isFa = language === 'fa';
+  const todayDate = getZonedTodayDate(city.timeZone);
+  const todayPersian = getPersianDatePartsFromUtc(todayDate);
+  const [calendarType, setCalendarType] = useState('persian');
+  const [year, setYear] = useState(todayPersian.year);
+  const [month, setMonth] = useState(todayPersian.month);
+  const [day, setDay] = useState(todayPersian.day);
+
+  const monthOptions = calendarType === 'gregorian' ? getCalendarMonthOptions('gregorian') : getCalendarMonthOptions('persian');
+  const daysInMonth = calendarType === 'gregorian' ? getDaysInGregorianMonth(year, month) : getDaysInPersianMonth(year, month);
+
+  useEffect(() => {
+    setDay((current) => Math.min(current, daysInMonth));
+  }, [daysInMonth]);
+
+  const convertedDate = useMemo(() => {
+    if (calendarType === 'gregorian') {
+      return new Date(Date.UTC(year, month - 1, day, 12));
+    }
+
+    return findGregorianDateForPersianDate(year, month, day);
+  }, [calendarType, year, month, day]);
+
+  const gregorianParts = getCalendarPartsFromUtc(convertedDate, 'gregorian');
+  const persianParts = getPersianDatePartsFromUtc(convertedDate);
+  const age = calculateAgeFromDate(convertedDate, todayDate);
+
+  return h(
+    'section',
+    { className: 'age-converter-card', 'aria-label': t.age_converter_title },
+    h('div', { className: 'age-converter-card__header' },
+      h('strong', null, t.age_converter_title),
+      h('small', null, `${t.time_in} ${isFa ? (city.localFaLabel || city.label) : city.label}`),
+    ),
+    h('div', { className: 'age-converter-card__controls' },
+      h('label', null, t.calendar_type,
+        h('select', { value: calendarType, onChange: (event) => setCalendarType(event.target.value) },
+          h('option', { value: 'persian' }, t.solar_hijri),
+          h('option', { value: 'gregorian' }, t.gregorian),
+        ),
+      ),
+      h('label', null, t.year,
+        h('input', { type: 'number', value: year, min: calendarType === 'gregorian' ? 1900 : 1200, max: calendarType === 'gregorian' ? 2200 : 1700, onChange: (event) => setYear(Number(event.target.value) || 0) }),
+      ),
+      h('label', null, t.month,
+        h('select', { value: month, onChange: (event) => setMonth(Number(event.target.value)) },
+          monthOptions.map((option) => h('option', { key: option.value, value: option.value }, option.label)),
+        ),
+      ),
+      h('label', null, t.day,
+        h('input', { type: 'number', value: day, min: 1, max: daysInMonth, onChange: (event) => setDay(Math.max(1, Number(event.target.value) || 1)) }),
+      ),
+    ),
+    h('div', { className: 'age-converter-card__result' },
+      h(SplitPill, { label: t.dates, items: [
+        { label: t.gregorian, value: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` },
+        { label: t.solar_hijri, value: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` },
+      ] }),
+      h(InfoPill, { label: t.age, value: `${formatLocaleNumber(age)} ${t.years_old}` }),
+    ),
+  );
+}
+
 function SearchPanel({ query, results, onAdd, onQueryChange, t, language }) {
   const [isOpen, setIsOpen] = useState(false);
   const hasQuery = query.trim().length > 0;
@@ -1864,6 +1952,7 @@ function App() {
         language,
       }),
     ),
+    h(AgeConverterCard, { city: selectedCityView, t, language }),
     h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes, occasionFilterOrder }),  );
 }
 
