@@ -16,13 +16,14 @@
   "visibleOccasionTypes": [
     "iranAncient",
     "marketing",
-    "islamic"
+    "islamic",
+    "iranCurrent"
   ],
   "occasionFilterOrder": [
+    "iranCurrent",
     "iranAncient",
     "international",
     "iran",
-    "iranCurrent",
     "globalOfficial",
     "marketing",
     "islamic",
