@@ -7,25 +7,41 @@
     "tehran",
     "london",
     "los-angeles",
-    "europe-paris"
+    "europe-paris",
+    "america-new-york"
   ],
-  "defaultSelectedCityId": "tehran",
+  "defaultSelectedCityId": "america-new-york",
   "defaultOccasionTypes": [
-    "iranAncient"
+    "iranCurrent",
+    "iranAncient",
+    "marketing",
+    "international",
+    "iran",
+    "globalOfficial",
+    "islamic",
+    "islamicShia",
+    "islamicSunni",
+    "islamicShared"
   ],
   "visibleOccasionTypes": [
     "iranAncient",
     "marketing",
+    "iranCurrent",
+    "international",
+    "iran",
+    "globalOfficial",
     "islamic",
-    "iranCurrent"
+    "islamicShia",
+    "islamicSunni",
+    "islamicShared"
   ],
   "occasionFilterOrder": [
     "iranCurrent",
     "iranAncient",
+    "marketing",
     "international",
     "iran",
     "globalOfficial",
-    "marketing",
     "islamic",
     "islamicShia",
     "islamicSunni",
