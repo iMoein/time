@@ -1044,7 +1044,7 @@ function calculateAgeFromDate(birthDate, todayDate) {
   return { years: Math.max(0, years), months: Math.max(0, months), days: Math.max(0, days) };
 }
 
-function AgeConverterCardBase({ city, t, language }) {
+function AgeConverterCard({ city, t, language }) {
   const isFa = language === 'fa';
   const todayDate = getZonedTodayDate(city.timeZone);
   const todayPersian = getPersianDatePartsFromUtc(todayDate);
@@ -1119,7 +1119,6 @@ function AgeConverterCardBase({ city, t, language }) {
   );
 }
 
-const AgeConverterCard = React.memo(AgeConverterCardBase, (prevProps, nextProps) => prevProps.language === nextProps.language && prevProps.city.id === nextProps.city.id && prevProps.city.timeZone === nextProps.city.timeZone);
 
 function SearchPanel({ query, results, onAdd, onQueryChange, t, language }) {
   const [isOpen, setIsOpen] = useState(false);
