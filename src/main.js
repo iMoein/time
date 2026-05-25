@@ -31,6 +31,7 @@ const defaultCities = [
 
 const savedCitiesKey = 'time-app-cities';
 const savedLanguageKey = 'time-app-language';
+const userCitiesCustomizedKey = 'time-app-cities-customized';
 const defaultNtpHost = 'ntp.time.ir';
 
 function getInitialLanguage() {
@@ -1527,7 +1528,8 @@ function App() {
         if (cfg.ntpHost) {
           setNtpHost(cfg.ntpHost);
         }
-        if (Array.isArray(cfg.defaultCityIds) && cfg.defaultCityIds.length) {
+        const userCustomizedCities = localStorage.getItem(userCitiesCustomizedKey) === '1';
+        if (!userCustomizedCities && Array.isArray(cfg.defaultCityIds) && cfg.defaultCityIds.length) {
           const resolvedIds = cfg.defaultCityIds.map(resolveConfiguredCityId).filter(Boolean);
           if (resolvedIds.length) {
             setActiveCityIds(Array.from(new Set(resolvedIds)));
@@ -1689,6 +1691,7 @@ function App() {
   }, [activeIdSet, language, searchQuery]);
 
   const addCity = (cityId) => {
+    localStorage.setItem(userCitiesCustomizedKey, '1');
     setActiveCityIds((currentIds) => (currentIds.includes(cityId) ? currentIds : [...currentIds, cityId]));
     setSelectedCityId(cityId);
     setSearchQuery('');
@@ -1700,6 +1703,7 @@ function App() {
   };
 
   const removeCity = (cityId) => {
+    localStorage.setItem(userCitiesCustomizedKey, '1');
     setActiveCityIds((currentIds) => {
       if (currentIds.length === 1) {
         return currentIds;
@@ -1716,6 +1720,7 @@ function App() {
   };
 
   const moveCity = (draggedCityId, targetCityId) => {
+    localStorage.setItem(userCitiesCustomizedKey, '1');
     if (!draggedCityId || draggedCityId === targetCityId) {
       return;
     }
