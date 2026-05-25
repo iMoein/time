@@ -43,8 +43,10 @@ textarea{min-height:300px;direction:ltr}
 .defaults-grid .occasion-col{grid-column:1}
 .defaults-grid .visibility-col{grid-column:2;border:1px solid #d8e1ec;border-radius:10px;padding:10px 12px;background:#fff;display:grid;gap:8px;align-content:start}
 .visibility-col legend{padding:0 6px;color:#334155;font-weight:700}
-.toggle-row{display:flex;align-items:center;gap:8px;font-weight:600;color:#334155}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:600;color:#334155}
+.toggle-check{display:flex;align-items:center;gap:8px;font-weight:600;color:#334155}
 .toggle-row input{width:16px;height:16px}
+.order-btns{display:flex;gap:6px}
 
 .tabs .tab{display:none}.tabs .tab.active{display:block}.hidden{display:none}
 @media(max-width:1100px){.admin-layout{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.default-city-field{max-width:100%}#defaultSelectedCityInput{max-width:100%;min-width:0}.defaults-grid .default-col,.defaults-grid .default-city-field,.defaults-grid .occasion-col,.defaults-grid .visibility-col{grid-column:1}.user-live-frame{height:70vh;min-height:460px}}
