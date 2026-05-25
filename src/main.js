@@ -571,6 +571,23 @@ function getDaysInPersianMonth(year, month) {
   return Math.round((nextStart.getTime() - start.getTime()) / 86400000);
 }
 
+
+const zodiacAnimalsEn = ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
+const zodiacAnimalsFa = ['موش', 'گاو', 'ببر', 'خرگوش', 'اژدها', 'مار', 'اسب', 'گوسفند', 'میمون', 'خروس', 'سگ', 'خوک'];
+
+function getZodiacAnimal(year, language = 'en') {
+  const normalized = ((year - 4) % 12 + 12) % 12;
+  return language === 'fa' ? zodiacAnimalsFa[normalized] : zodiacAnimalsEn[normalized];
+}
+
+function isGregorianLeapYear(year) {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+function isPersianLeapYear(year) {
+  return getDaysInPersianMonth(year, 12) === 30;
+}
+
 function formatNumericCalendarTitle(date, calendarId, language = 'en') {
   const { year, month } = getCalendarPartsFromUtc(date, calendarId);
   const formatted = `${year}/${formatNumber(month)}`;
@@ -1077,6 +1094,12 @@ function AgeConverterCard({ city, t, language, onInteractionChange = () => {} })
   const gregorianParts = getCalendarPartsFromUtc(convertedDate, 'gregorian');
   const persianParts = getPersianDatePartsFromUtc(convertedDate);
   const age = calculateAgeFromDate(convertedDate, todayDate);
+  const weekdayLabel = new Intl.DateTimeFormat(language === 'fa' ? 'fa-IR' : 'en-US', { timeZone: city.timeZone, weekday: 'long' }).format(convertedDate);
+  const leapYearLabel = calendarType === 'gregorian'
+    ? (isGregorianLeapYear(gregorianParts.year) ? t.yes : t.no)
+    : (isPersianLeapYear(persianParts.year) ? t.yes : t.no);
+  const iranZodiac = getZodiacAnimal(persianParts.year, language);
+  const chineseZodiac = getZodiacAnimal(gregorianParts.year, language);
   const ageLabel = language === 'fa'
     ? `${formatLocaleNumber(age.years, language)} سال ${formatLocaleNumber(age.months, language)} ماه ${formatLocaleNumber(age.days, language)} روز`
     : `${formatLocaleNumber(age.years, language)}y ${formatLocaleNumber(age.months, language)}m ${formatLocaleNumber(age.days, language)}d`; 
@@ -1117,6 +1140,14 @@ function AgeConverterCard({ city, t, language, onInteractionChange = () => {} })
         { label: t.solar_hijri, value: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` },
       ] }),
       h(InfoPill, { label: t.age, value: ageLabel }),
+      h(SplitPill, { label: t.converted_weekday, items: [
+        { label: t.weekday, value: weekdayLabel },
+        { label: t.leap_year, value: leapYearLabel },
+      ] }),
+      h(SplitPill, { label: t.iran_zodiac, items: [
+        { label: t.iran_zodiac, value: iranZodiac },
+        { label: t.chinese_zodiac, value: chineseZodiac },
+      ] }),
     ),
   );
 }
