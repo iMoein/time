@@ -1378,7 +1378,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
             h(
               'div',
               { className: 'monthly-occasions__filters-menu' },
-              occasionTypeOrder.map((typeId)=>allOccasionTypeOptions.find((o)=>o.id===typeId)).filter(Boolean).map((option) => h(
+              occasionTypeOrder.filter((typeId)=>allowedOccasionTypes.includes(typeId)).map((typeId)=>allOccasionTypeOptions.find((o)=>o.id===typeId)).filter(Boolean).map((option) => h(
                 'label',
                 { key: option.id },
                 h('input', { type: 'checkbox', checked: enabledOccasionTypes.includes(option.id), onChange: () => toggleOccasionType(option.id) }),
