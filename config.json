@@ -25,7 +25,6 @@
   ],
   "visibleOccasionTypes": [
     "iranAncient",
-    "marketing",
     "iranCurrent",
     "international",
     "iran",
@@ -33,7 +32,8 @@
     "islamic",
     "islamicShia",
     "islamicSunni",
-    "islamicShared"
+    "islamicShared",
+    "marketing"
   ],
   "occasionFilterOrder": [
     "iranCurrent",
