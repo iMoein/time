@@ -1044,7 +1044,7 @@ function calculateAgeFromDate(birthDate, todayDate) {
   return { years: Math.max(0, years), months: Math.max(0, months), days: Math.max(0, days) };
 }
 
-function AgeConverterCard({ city, t, language }) {
+function AgeConverterCard({ city, t, language, onInteractionChange = () => {} }) {
   const isFa = language === 'fa';
   const todayDate = getZonedTodayDate(city.timeZone);
   const todayPersian = getPersianDatePartsFromUtc(todayDate);
@@ -1052,6 +1052,8 @@ function AgeConverterCard({ city, t, language }) {
   const [year, setYear] = useState(todayPersian.year);
   const [month, setMonth] = useState(todayPersian.month);
   const [day, setDay] = useState(todayPersian.day);
+  const handleFocusIn = () => onInteractionChange(true);
+  const handleFocusOut = () => onInteractionChange(false);
 
   const monthOptions = calendarType === 'gregorian' ? getCalendarMonthOptions('gregorian') : getCalendarMonthOptions('persian');
   const daysInMonth = calendarType === 'gregorian' ? getDaysInGregorianMonth(year, month) : getDaysInPersianMonth(year, month);
@@ -1088,23 +1090,23 @@ function AgeConverterCard({ city, t, language }) {
     ),
     h('div', { className: 'age-converter-card__controls' },
       h('label', null, t.calendar_type,
-        h('select', { value: calendarType, onChange: (event) => setCalendarType(event.target.value) },
+        h('select', { value: calendarType, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => setCalendarType(event.target.value) },
           h('option', { value: 'persian' }, t.solar_hijri),
           h('option', { value: 'gregorian' }, t.gregorian),
         ),
       ),
       h('label', null, t.year,
-        h('select', { value: year, onChange: (event) => setYear(Number(event.target.value)) },
+        h('select', { value: year, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => setYear(Number(event.target.value)) },
           yearOptions.map((optionYear) => h('option', { key: optionYear, value: optionYear }, optionYear)),
         ),
       ),
       h('label', null, t.month,
-        h('select', { value: month, onChange: (event) => setMonth(Number(event.target.value)) },
+        h('select', { value: month, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => setMonth(Number(event.target.value)) },
           monthOptions.map((option) => h('option', { key: option.value, value: option.value }, option.label)),
         ),
       ),
       h('label', null, t.day,
-        h('select', { value: day, onChange: (event) => setDay(Number(event.target.value)) },
+        h('select', { value: day, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => setDay(Number(event.target.value)) },
           dayOptions.map((optionDay) => h('option', { key: optionDay, value: optionDay }, optionDay)),
         ),
       ),
@@ -1633,6 +1635,7 @@ function InfoPill({ label, value }) {
 
 function App() {
   const [now, setNow] = useState(() => new Date());
+  const [isAgePickerActive, setIsAgePickerActive] = useState(false);
   const [timeOffset, setTimeOffset] = useState(0);
   const [activeCityIds, setActiveCityIds] = useState(getInitialCityIds);
   const [selectedCityId, setSelectedCityId] = useState(() => {
@@ -1652,11 +1655,14 @@ function App() {
   const isFa = language === 'fa';
 
   useEffect(() => {
-    const updateClock = () => setNow(new Date(Date.now() + timeOffset));
+    const updateClock = () => {
+      if (isAgePickerActive) return;
+      setNow(new Date(Date.now() + timeOffset));
+    };
     updateClock();
     const timer = setInterval(updateClock, 1000);
     return () => clearInterval(timer);
-  }, [timeOffset]);
+  }, [timeOffset, isAgePickerActive]);
 
   useEffect(() => {
     localStorage.setItem(savedCitiesKey, JSON.stringify(activeCityIds));
@@ -1994,7 +2000,7 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
       }),
     ),
     h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes, occasionFilterOrder }),
-    h(AgeConverterCard, { city: selectedCityConfig, t, language }),  );
+    h(AgeConverterCard, { city: selectedCityConfig, t, language, onInteractionChange: setIsAgePickerActive }),  );
 }
 
 
