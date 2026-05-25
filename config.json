@@ -5,15 +5,30 @@
   "passwordChanged": true,
   "defaultCityIds": [
     "tehran",
-    "los-angeles",
     "london",
+    "los-angeles",
     "europe-paris"
   ],
   "defaultSelectedCityId": "tehran",
   "defaultOccasionTypes": [
-    "iran",
+    "iranAncient"
+  ],
+  "visibleOccasionTypes": [
     "iranAncient",
     "marketing",
-    "islamicShia"
+    "islamic",
+    "iranCurrent"
+  ],
+  "occasionFilterOrder": [
+    "iranCurrent",
+    "iranAncient",
+    "international",
+    "iran",
+    "globalOfficial",
+    "marketing",
+    "islamic",
+    "islamicShia",
+    "islamicSunni",
+    "islamicShared"
   ]
 }
