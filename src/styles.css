@@ -2121,3 +2121,26 @@ button {
     min-height: 12rem;
   }
 }
+
+.age-converter-card {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 2rem;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 1.2rem;
+  display: grid;
+  gap: 1rem;
+}
+.age-converter-card__header { display:flex; justify-content:space-between; align-items:center; gap:.75rem; }
+.age-converter-card__controls { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:.75rem; }
+.age-converter-card__controls label { display:grid; gap:.35rem; color:#475569; font-size:.85rem; }
+.age-converter-card__controls input,
+.age-converter-card__controls select { border:1px solid rgba(148,163,184,.45); border-radius:.7rem; padding:.5rem .6rem; font:inherit; background:#fff; }
+.age-converter-card__result { display:grid; grid-template-columns: minmax(0,1fr) minmax(12rem,18rem); gap:.75rem; }
+@media (max-width: 900px) {
+  .age-converter-card__controls { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .age-converter-card__result { grid-template-columns: 1fr; }
+}
