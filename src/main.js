@@ -32,6 +32,7 @@ const defaultCities = [
 const savedCitiesKey = 'time-app-cities';
 const savedLanguageKey = 'time-app-language';
 const savedSelectedCityKey = 'time-app-selected-city';
+const savedSelectedCityCustomizedKey = 'time-app-selected-city-customized';
 const savedOccasionFiltersKey = 'time-app-occasion-filters';
 const userCitiesCustomizedKey = 'time-app-cities-customized';
 const defaultNtpHost = 'ntp.time.ir';
@@ -1561,7 +1562,8 @@ function App() {
             setActiveCityIds(Array.from(new Set(resolvedIds)));
           }
         }
-        if (typeof cfg.defaultSelectedCityId === 'string') {
+        const userCustomizedSelectedCity = localStorage.getItem(savedSelectedCityCustomizedKey) === '1';
+        if (!userCustomizedSelectedCity && typeof cfg.defaultSelectedCityId === 'string') {
           const resolvedSelected = resolveConfiguredCityId(cfg.defaultSelectedCityId);
           if (resolvedSelected) {
             setSelectedCityId(resolvedSelected);
@@ -1858,7 +1860,7 @@ function App() {
         onQueryChange: setSearchQuery,
         onRemove: removeCity,
         t,
-        onSelect: setSelectedCityId,
+        onSelect: (cityId) => { localStorage.setItem(savedSelectedCityCustomizedKey, '1'); setSelectedCityId(cityId); },
         language,
       }),
     ),
