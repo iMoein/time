@@ -555,6 +555,17 @@ function formatNumber(value) {
   return String(value).padStart(2, '0');
 }
 
+function getDaysInGregorianMonth(year, month) {
+  return new Date(Date.UTC(year, month, 0, 12)).getUTCDate();
+}
+
+function getDaysInPersianMonth(year, month) {
+  const start = findGregorianDateForPersianDate(year, month, 1);
+  const nextMonth = addPersianMonths({ year, month }, 1);
+  const nextStart = findGregorianDateForPersianDate(nextMonth.year, nextMonth.month, 1);
+  return Math.round((nextStart.getTime() - start.getTime()) / 86400000);
+}
+
 function formatNumericCalendarTitle(date, calendarId, language = 'en') {
   const { year, month } = getCalendarPartsFromUtc(date, calendarId);
   const formatted = `${year}/${formatNumber(month)}`;
