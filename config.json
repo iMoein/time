@@ -1,5 +1,5 @@
 {
-  "ntpHost": "pool.ntp.org",
+  "ntpHost": "ntp.time.ir",
   "adminUsername": "admin",
   "adminPassword": "admin",
   "passwordChanged": true,
