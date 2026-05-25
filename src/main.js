@@ -555,6 +555,11 @@ function formatNumber(value) {
   return String(value).padStart(2, '0');
 }
 
+function formatLocaleNumber(value, language = 'en') {
+  const locale = language === 'fa' ? 'fa-IR' : 'en-US';
+  return new Intl.NumberFormat(locale).format(value);
+}
+
 function getDaysInGregorianMonth(year, month) {
   return new Date(Date.UTC(year, month, 0, 12)).getUTCDate();
 }
@@ -1086,7 +1091,7 @@ function AgeConverterCard({ city, t, language }) {
         { label: t.gregorian, value: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` },
         { label: t.solar_hijri, value: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` },
       ] }),
-      h(InfoPill, { label: t.age, value: `${formatLocaleNumber(age)} ${t.years_old}` }),
+      h(InfoPill, { label: t.age, value: `${formatLocaleNumber(age, language)} ${t.years_old}` }),
     ),
   );
 }
