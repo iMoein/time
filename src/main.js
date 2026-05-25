@@ -1797,6 +1797,7 @@ function App() {
   );
   const activeSnapshots = useMemo(() => activeCities.map((city) => getCitySnapshot(now, city, language)), [activeCities, now, language]);
   const selectedCity = activeSnapshots.find((city) => city.id === selectedCityId) || activeSnapshots[0];
+const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity?.id || selectedCityId)) || activeCities[0];
 
   useEffect(() => {
     if (!selectedCity) {
