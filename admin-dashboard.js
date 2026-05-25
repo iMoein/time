@@ -13,6 +13,12 @@ function tabFromPath(){const map={'/admin-dashboard.html':'overview','/admin-def
 function activateTab(tab,push=true){const t=['overview','defaults','ntp','json'].includes(tab)?tab:'overview';document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));document.querySelectorAll('.tab').forEach(sec=>sec.classList.toggle('active',sec.id===`tab-${t}`));if(push){const routes={overview:'/admin-dashboard.html',defaults:'/admin-defaults.html',ntp:'/admin-ntp.html',json:'/admin-json.html'};const target=routes[t]||routes.overview;if(location.pathname!==target){location.href=target;return;}}if(t==='json'&&$('jsonFileSelect').options.length===0)loadJsonFiles().catch(()=>setStatus('jsonStatus','Unable to load JSON files'));if((t==='defaults'||t==='ntp')&&$('defaultSelectedCityInput').options.length===0)loadConfig().catch(()=>setStatus('defaultsStatus','Unable to load config'));}
 function renderCities(){ $('defaultCityChips').innerHTML=selectedCities.map((c,i)=>`<span class='chip'>${c} <button class='chip' type='button' data-up='${c}' ${i===0?'disabled':''}>↑</button><button class='chip' type='button' data-down='${c}' ${i===selectedCities.length-1?'disabled':''}>↓</button><button class='chip' type='button' data-rm='${c}'>×</button></span>`).join(''); $('defaultSelectedCityInput').innerHTML=selectedCities.map(c=>`<option value='${c}'>${c}</option>`).join('');}
 function renderOcc(selected=[]){const allowed=occasionOrder.filter(o=>visibleOccasionTypes.includes(o));$('occasionSelect').innerHTML=allowed.map(o=>`<option value='${o}' ${selected.includes(o)?'selected':''}>${o}</option>`).join('');renderOccVisibility();}
+
+function updateLocalClock(){const el=$('adminLocalClock');if(!el)return;el.textContent=new Date().toLocaleString();}
+function updateNetworkState(){const online=navigator.onLine;const ns=$('networkStatus'),cs=$('clockSource'),cn=$('clockNotice');if(ns)ns.textContent=online?'Online':'Offline';if(cs)cs.textContent=online?'NTP':'Local Clock';if(cn)cn.textContent=online?'-':'ارتباط برقرار نیست، ساعت لوکال ملاک قرار می‌گیرد';if(!online)setStatus('ntpStatus','ارتباط برقرار نیست، ساعت لوکال ملاک قرار می‌گیرد');}
+async function showNtpServersDelay(){const root=$('ntpServerDelayList');if(!root)return;root.classList.remove('hidden');root.innerHTML='Checking servers...';const hosts=NTP.filter(([h])=>h!=='custom').slice(0,8).map(([h,l])=>({host:h,label:l}));const rows=[];for(const item of hosts){const st=Date.now();try{await api('/api/ntp?host='+encodeURIComponent(item.host));rows.push(`<div class="ntp-delay-row"><span>${item.label}</span><strong>${Date.now()-st}ms</strong></div>`);}catch{rows.push(`<div class="ntp-delay-row"><span>${item.label}</span><strong>timeout</strong></div>`);}}
+root.innerHTML=rows.join('');}
+
 function ntpRegionFor(host=''){if(host.includes('.ir'))return 'Iran';if(host.includes('north-america'))return 'North America';if(host.includes('south-america'))return 'South America';if(host.includes('europe'))return 'Europe';if(host.includes('asia'))return 'Asia';if(host.includes('africa'))return 'Africa';if(host.includes('oceania'))return 'Oceania';return 'Global';}
 function updateNtpMeta(host=''){if($('ntpHostLabel'))$('ntpHostLabel').textContent=host||'-';if($('ntpRegion'))$('ntpRegion').textContent=ntpRegionFor(host);const rel=(host&&host.includes('pool'))?'99.95%':'99.99%';if($('ntpReliability'))$('ntpReliability').textContent=rel;}
 function renderNtp(){ const preset=$('ntpPreset'); if(!preset)return; preset.innerHTML=NTP.map(([h,l])=>`<option value='${h}'>${l} (${h})</option>`).join(''); const chips=$('ntpQuickServers'); if(chips){chips.innerHTML=NTP.filter(([h])=>h!=='custom').slice(0,8).map(([h,l],i)=>`<button type="button" class="ntp-chip ${i===0?'active':''}" data-ntp="${h}" title="${h}">${h}</button>`).join('');}}
@@ -49,7 +55,10 @@ async function checkAuth(){
 
 on('logoutBtn','click',async()=>{await api('/api/admin/logout',{method:'POST'});location.href='/admin-login.html';});
 on('langToggle','click',()=>{const fa=document.documentElement.lang==='fa';document.documentElement.lang=fa?'en':'fa';document.documentElement.dir=fa?'ltr':'rtl';const t=$('langToggle');if(t)t.textContent=fa?'FA':'EN';});
-on('passwordForm','submit',async e=>{e.preventDefault();if($('newPassword')?.value!==$('confirmPassword')?.value)return setStatus('passwordStatus','Passwords do not match');try{await api('/api/admin/change-password',{method:'POST',body:JSON.stringify({newPassword:$('newPassword')?.value||''})});await checkAuth();}catch(err){setStatus('passwordStatus',err.message);}});
+on('passwordForm','submit',async e=>{e.preventDefault();if($('newPassword')?.value!==$('confirmPassword')?.value)return setStatus('passwordStatus','Passwords do not match');try{await api('/api/admin/change-password',{method:'POST',body:JSON.stringify({newPassword:$('newPassword')?.value||''})});await checkAuth();
+updateLocalClock();
+updateNetworkState();
+setInterval(updateLocalClock,1000);}catch(err){setStatus('passwordStatus',err.message);}});
 
 on('citySearchInput','input',suggest);
 on('cityAddBtn','click',()=>{const v=$('citySearchInput')?.value?.trim();if(v&&!selectedCities.includes(v)){selectedCities.push(v);renderCities();suggest();}});
@@ -64,6 +73,9 @@ on('ntpQuickServers','click',e=>{const btn=e.target.closest('[data-ntp]');if(!bt
 async function runNtpProbe(statusText){try{const host=$('ntpHost')?.value||'pool.ntp.org';const st=Date.now();const d=await api('/api/ntp?host='+encodeURIComponent(host));updateNtpMeta(d.host||host);if($('ntpDelay'))$('ntpDelay').textContent=(Date.now()-st)+'ms';setStatus('ntpStatus',statusText);}catch(err){setStatus('ntpStatus',err.message);}}
 on('ntpTestBtn','click',()=>runNtpProbe('Synced successfully'));
 on('ntpLatencyBtn','click',()=>runNtpProbe('Latency test completed'));
+on('ntpServersDelayBtn','click',showNtpServersDelay);
+window.addEventListener('online',updateNetworkState);
+window.addEventListener('offline',updateNetworkState);
 
 async function saveAll(){await api('/api/admin/config',{method:'POST',body:JSON.stringify({ntpHost:$('ntpHost').value,defaultCityIds:selectedCities,defaultSelectedCityId:$('defaultSelectedCityInput').value,defaultOccasionTypes:[...$('occasionSelect').selectedOptions].map(o=>o.value),visibleOccasionTypes,occasionFilterOrder:occasionOrder})});setStatus('defaultsStatus','Saved');setStatus('ntpStatus','Saved');}
 on('defaultsSaveBtn','click',()=>saveAll().catch(e=>setStatus('defaultsStatus',e.message)));
@@ -78,6 +90,9 @@ activateTab(tabFromPath(),false);
 initCities();
 initTimeZoneMap();
 checkAuth();
+updateLocalClock();
+updateNetworkState();
+setInterval(updateLocalClock,1000);
 
 
 function project(lat,lon){const x=(lon+180)*(1000/360);const y=(90-lat)*(420/180);return {x,y};}

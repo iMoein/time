@@ -71,3 +71,5 @@ textarea{min-height:300px;direction:ltr}
 .ntp-actions .chip{background:#334155;border-color:#334155}
 .ntp-actions .chip.ghost{background:#fff;color:#334155;border-color:#cbd5e1}
 @media(max-width:1100px){.ntp-stats{grid-template-columns:1fr 1fr}}
+
+.ntp-clock{margin-top:8px}.ntp-delay-list{margin-top:10px;border:1px solid #dbe3ee;border-radius:10px;background:#f8fafc;padding:10px;display:grid;gap:6px}.ntp-delay-row{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:8px;background:#fff;border:1px solid #e2e8f0}
