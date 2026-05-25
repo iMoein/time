@@ -1519,31 +1519,47 @@ function App() {
   }, [isFa, language]);
 
   useEffect(() => {
-    fetch('/api/public-config').then((res) => res.json()).then((cfg) => {
-      if (cfg.ntpHost) {
-        setNtpHost(cfg.ntpHost);
-      }
-      if (Array.isArray(cfg.defaultCityIds) && cfg.defaultCityIds.length) {
-        const resolvedIds = cfg.defaultCityIds.map(resolveConfiguredCityId).filter(Boolean);
-        if (resolvedIds.length) {
-          setActiveCityIds(Array.from(new Set(resolvedIds)));
+    let mounted = true;
+    const loadPublicConfig = () => fetch('/api/public-config')
+      .then((res) => res.json())
+      .then((cfg) => {
+        if (!mounted) return;
+        if (cfg.ntpHost) {
+          setNtpHost(cfg.ntpHost);
         }
-      }
-      if (typeof cfg.defaultSelectedCityId === 'string') {
-        const resolvedSelected = resolveConfiguredCityId(cfg.defaultSelectedCityId);
-        if (resolvedSelected) {
-          setSelectedCityId(resolvedSelected);
+        if (Array.isArray(cfg.defaultCityIds) && cfg.defaultCityIds.length) {
+          const resolvedIds = cfg.defaultCityIds.map(resolveConfiguredCityId).filter(Boolean);
+          if (resolvedIds.length) {
+            setActiveCityIds(Array.from(new Set(resolvedIds)));
+          }
         }
-      }
-      globalThis.__defaultOccasionTypes = Array.isArray(cfg.defaultOccasionTypes) ? cfg.defaultOccasionTypes : undefined;
-      globalThis.__visibleOccasionTypes = Array.isArray(cfg.visibleOccasionTypes)?cfg.visibleOccasionTypes:undefined;
-      if(Array.isArray(cfg.visibleOccasionTypes)&&cfg.visibleOccasionTypes.length){setVisibleOccasionTypes(cfg.visibleOccasionTypes);}
-      globalThis.__occasionFilterOrder = Array.isArray(cfg.occasionFilterOrder)?cfg.occasionFilterOrder:undefined;
-      if(Array.isArray(cfg.occasionFilterOrder)&&cfg.occasionFilterOrder.length){setOccasionFilterOrder(cfg.occasionFilterOrder);}
-      if (Array.isArray(cfg.defaultOccasionTypes) && cfg.defaultOccasionTypes.length) {
-        setDefaultOccasionTypes(cfg.defaultOccasionTypes);
-      }
-    }).catch(() => {});
+        if (typeof cfg.defaultSelectedCityId === 'string') {
+          const resolvedSelected = resolveConfiguredCityId(cfg.defaultSelectedCityId);
+          if (resolvedSelected) {
+            setSelectedCityId(resolvedSelected);
+          }
+        }
+        globalThis.__defaultOccasionTypes = Array.isArray(cfg.defaultOccasionTypes) ? cfg.defaultOccasionTypes : undefined;
+        globalThis.__visibleOccasionTypes = Array.isArray(cfg.visibleOccasionTypes) ? cfg.visibleOccasionTypes : undefined;
+        globalThis.__occasionFilterOrder = Array.isArray(cfg.occasionFilterOrder) ? cfg.occasionFilterOrder : undefined;
+        if (Array.isArray(cfg.visibleOccasionTypes) && cfg.visibleOccasionTypes.length) {
+          setVisibleOccasionTypes(cfg.visibleOccasionTypes);
+        }
+        if (Array.isArray(cfg.occasionFilterOrder) && cfg.occasionFilterOrder.length) {
+          setOccasionFilterOrder(cfg.occasionFilterOrder);
+        }
+        if (Array.isArray(cfg.defaultOccasionTypes) && cfg.defaultOccasionTypes.length) {
+          setDefaultOccasionTypes(cfg.defaultOccasionTypes);
+        }
+      })
+      .catch(() => {});
+
+    loadPublicConfig();
+    const timer = setInterval(loadPublicConfig, 15000);
+    return () => {
+      mounted = false;
+      clearInterval(timer);
+    };
   }, []);
 
   useEffect(() => {
