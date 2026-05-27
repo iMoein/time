@@ -37,6 +37,7 @@ const savedSelectedCityCustomizedKey = 'time-app-selected-city-customized';
 const savedOccasionFiltersKey = 'time-app-occasion-filters';
 const savedDateBookmarksKey = 'time-app-date-bookmarks';
 const userCitiesCustomizedKey = 'time-app-cities-customized';
+const savedFullscreenBackgroundKey = 'time-app-fullscreen-background';
 const defaultNtpHost = 'ntp.time.ir';
 const bookmarkEffectIds = ['none', 'color_ribbons', 'balloons', 'black_ribbons'];
 
@@ -47,6 +48,11 @@ function normalizeBookmarkEffect(value) {
 function getInitialLanguage() {
   const saved = localStorage.getItem(savedLanguageKey);
   return saved === 'fa' ? 'fa' : 'en';
+}
+
+function getInitialFullscreenBackground() {
+  const saved = localStorage.getItem(savedFullscreenBackgroundKey);
+  return saved === 'daynight' ? 'daynight' : 'dark';
 }
 
 function toTitleCase(value) {
@@ -1491,7 +1497,7 @@ function BookmarkEffectOverlay({ effect }) {
   );
 }
 
-function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChange = () => {} }) {
+function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackground = 'dark', timeOfDay = 'night', onFullscreenBackgroundToggle = () => {}, onInteractionChange = () => {} }) {
   const todayDate = getZonedTodayDate(city.timeZone);
   const todayPersian = getPersianDatePartsFromUtc(todayDate);
   const [calculatorMode, setCalculatorMode] = useState('convert');
@@ -1753,6 +1759,16 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
   };
 
   const selectBookmark = (bookmark) => {
+    if (selectedBookmarkId === bookmark.id) {
+      setSelectedBookmarkId('');
+      setEditingBookmarkId('');
+      setActiveBookmarkActionsId('');
+      setConfirmingDeleteId('');
+      setActiveBookmarkEffect(null);
+      setBookmarkEffectWatch(null);
+      return;
+    }
+
     setCalendarType(bookmark.calendarType);
     setYear(bookmark.year);
     setMonth(bookmark.month);
@@ -1940,12 +1956,17 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
       ),
     selectedBookmarkTimer && h(
       'div',
-      { className: 'selected-bookmark-timer', 'aria-live': 'polite' },
+      { className: `selected-bookmark-timer fullscreen-background--${fullscreenBackground} fullscreen-time--${timeOfDay}`, 'aria-live': 'polite' },
       h('div', { className: 'selected-bookmark-timer__header' },
         h('div', { className: 'selected-bookmark-timer__headline' },
           h('strong', null, selectedBookmarkTimerTitle),
         ),
         h('div', { className: 'selected-bookmark-timer__actions' },
+          isBookmarkTimerFullscreen && h(
+            'button',
+            { type: 'button', className: 'fullscreen-background-button', onClick: onFullscreenBackgroundToggle },
+            fullscreenBackground === 'dark' ? t.light_background : t.dark_background,
+          ),
           isBookmarkTimerFullscreen && selectedBookmark && normalizeBookmarkEffect(selectedBookmark.effect) !== 'none' && h(
             'button',
             { type: 'button', className: 'selected-bookmark-timer__effect-button', onClick: runSelectedBookmarkEffect },
@@ -2716,6 +2737,7 @@ function App() {
   const [ntpHost, setNtpHost] = useState(defaultNtpHost);
   const [ntpStatus, setNtpStatus] = useState({ kind: 'local', label: i18n.en.local_clock, detail: i18n.en.using_device_clock, host: ntpHost, delay: i18n.en.not_measured });
   const [isClockFullscreen, setIsClockFullscreen] = useState(false);
+  const [fullscreenBackground, setFullscreenBackground] = useState(getInitialFullscreenBackground);
 
   const [draggingCityId, setDraggingCityId] = useState(null);
   const [language, setLanguage] = useState(getInitialLanguage);
@@ -2751,6 +2773,10 @@ function App() {
   }, [selectedCityId]);
 
   useEffect(() => {
+    localStorage.setItem(savedFullscreenBackgroundKey, fullscreenBackground);
+  }, [fullscreenBackground]);
+
+  useEffect(() => {
     const handleFullscreenChange = () => {
       setIsClockFullscreen(Boolean(document.fullscreenElement?.classList?.contains('hero-panel')));
     };
@@ -2774,6 +2800,10 @@ function App() {
     }
 
     window.alert((i18n[language] || i18n.en).fullscreen_unsupported);
+  };
+
+  const toggleFullscreenBackground = () => {
+    setFullscreenBackground((current) => (current === 'dark' ? 'daynight' : 'dark'));
   };
 
   useEffect(() => {
@@ -3025,12 +3055,17 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
     { className: `page-shell${isFa ? ' page-shell--rtl' : ''}`, 'aria-label': `${t.time_in} ${selectedCityView.label}` },
     h(
       'section',
-      { className: 'hero-panel', style: { '--accent': selectedCityView.accent } },
+      { className: `hero-panel fullscreen-background--${fullscreenBackground} fullscreen-time--${selectedCityView.timeOfDay}`, style: { '--accent': selectedCityView.accent } },
       h(
         'div',
         { className: 'top-bar' },
         h('p', { className: 'eyebrow' }, language === 'fa' ? `${t.time_in} ${selectedCityView.country}، ` : `${t.time_in} `, h('strong', null, selectedCityView.label), language === 'fa' ? ` ${t.now_suffix}` : `, ${selectedCityView.country} ${t.now_suffix}`),
         h('div', { className: 'top-bar__controls' },
+          isClockFullscreen && h(
+            'button',
+            { type: 'button', className: 'fullscreen-background-button', onClick: toggleFullscreenBackground },
+            fullscreenBackground === 'dark' ? t.day_night_background : t.dark_background,
+          ),
           h('button', { type: 'button', className: 'clock-focus-button', onClick: toggleClockFullscreen },
             isClockFullscreen ? t.exit_fullscreen : t.fullscreen,
           ),
@@ -3101,7 +3136,7 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
     ),
     h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes, occasionFilterOrder }),
     h(SolarYearMomentCard, { now, t, language }),
-    h(AgeConverterCard, { city: selectedCityConfig, t, language, timeOffset, onInteractionChange: setIsAgePickerActive }),  );
+    h(AgeConverterCard, { city: selectedCityConfig, t, language, timeOffset, fullscreenBackground, timeOfDay: selectedCityView.timeOfDay, onFullscreenBackgroundToggle: toggleFullscreenBackground, onInteractionChange: setIsAgePickerActive }),  );
 }
 
 

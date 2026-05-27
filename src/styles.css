@@ -119,7 +119,8 @@ button {
   color: #fff;
 }
 
-.clock-focus-button {
+.clock-focus-button,
+.fullscreen-background-button {
   min-height: 2.24rem;
   border: 1px solid rgba(148, 163, 184, 0.5);
   border-radius: 0.75rem;
@@ -131,11 +132,17 @@ button {
 }
 
 .clock-focus-button:hover,
-.clock-focus-button:focus-visible {
+.clock-focus-button:focus-visible,
+.fullscreen-background-button:hover,
+.fullscreen-background-button:focus-visible {
   border-color: rgba(37, 99, 235, 0.48);
   background: #0f172a;
   color: #fff;
   outline: none;
+}
+
+.fullscreen-background-button {
+  display: none;
 }
 
 .page-shell--rtl {
@@ -1971,6 +1978,12 @@ button {
 
 .hero-panel:fullscreen {
   position: relative;
+  --fullscreen-text: #f8fafc;
+  --fullscreen-muted: #e5edf8;
+  --fullscreen-strong: #ffffff;
+  --fullscreen-clock: #f9fbff;
+  --fullscreen-control-bg: rgba(248, 250, 252, .94);
+  --fullscreen-control-text: #0f172a;
   width: 100vw;
   min-height: 100vh;
   align-content: center;
@@ -1982,7 +1995,7 @@ button {
   background:
     radial-gradient(circle at 50% 42%, rgba(30, 41, 59, .7), rgba(2, 6, 23, .96) 48%, #000 100%),
     #020617;
-  color: #f8fafc;
+  color: var(--fullscreen-text);
 }
 
 .hero-panel:fullscreen::backdrop {
@@ -2010,25 +2023,29 @@ button {
   display: none;
 }
 
-.hero-panel:fullscreen .clock-focus-button {
+.hero-panel:fullscreen .clock-focus-button,
+.hero-panel:fullscreen .fullscreen-background-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 2.5rem;
   border-color: rgba(226, 232, 240, .72);
-  background: rgba(248, 250, 252, .94);
-  color: #0f172a;
+  background: var(--fullscreen-control-bg);
+  color: var(--fullscreen-control-text);
   box-shadow: 0 0 0 1px rgba(15, 23, 42, .12), 0 10px 30px rgba(0, 0, 0, .28);
 }
 
 .hero-panel:fullscreen .eyebrow {
   margin: 0;
-  color: #e5edf8;
+  color: var(--fullscreen-muted);
   text-align: center;
   font-size: clamp(1.45rem, 4vw, 3.35rem);
   font-weight: 900;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, .88);
+  text-shadow: none;
 }
 
 .hero-panel:fullscreen .eyebrow strong {
-  color: #ffffff;
+  color: var(--fullscreen-strong);
 }
 
 .hero-panel:fullscreen .hero-content {
@@ -2040,15 +2057,96 @@ button {
 
 .hero-panel:fullscreen .clock {
   padding: 0;
-  color: #f9fbff;
+  color: var(--fullscreen-clock);
   text-align: center;
   font-size: clamp(5.5rem, 18vw, 17rem);
   letter-spacing: -0.055em;
   line-height: .86;
-  text-shadow:
-    0 .035em 0 rgba(96, 165, 250, .24),
-    0 0 22px rgba(226, 232, 240, .2),
-    0 18px 60px rgba(0, 0, 0, .72);
+  text-shadow: none;
+}
+
+.hero-panel.fullscreen-background--daynight.fullscreen-time--dawn:fullscreen {
+  --fullscreen-text: #172033;
+  --fullscreen-muted: #334155;
+  --fullscreen-strong: #0f172a;
+  --fullscreen-clock: #111827;
+  --fullscreen-control-bg: rgba(255, 255, 255, .9);
+  --fullscreen-control-text: #172033;
+  --fullscreen-unit-bg: rgba(255, 255, 255, .82);
+  --fullscreen-unit-border: rgba(124, 58, 237, .2);
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 255, 255, .5), transparent 18rem),
+    linear-gradient(135deg, rgba(167, 139, 250, .96), rgba(251, 146, 60, .9));
+}
+
+.hero-panel.fullscreen-background--daynight.fullscreen-time--morning:fullscreen {
+  --fullscreen-text: #0f172a;
+  --fullscreen-muted: #334155;
+  --fullscreen-strong: #0f172a;
+  --fullscreen-clock: #0f172a;
+  --fullscreen-control-bg: rgba(255, 255, 255, .9);
+  --fullscreen-control-text: #172033;
+  --fullscreen-unit-bg: rgba(255, 255, 255, .84);
+  --fullscreen-unit-border: rgba(14, 165, 233, .22);
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 255, 255, .56), transparent 18rem),
+    linear-gradient(135deg, rgba(254, 249, 195, .96), rgba(125, 211, 252, .94), rgba(56, 189, 248, .88));
+}
+
+.hero-panel.fullscreen-background--daynight.fullscreen-time--noon:fullscreen {
+  --fullscreen-text: #071526;
+  --fullscreen-muted: #1e3a5f;
+  --fullscreen-strong: #071526;
+  --fullscreen-clock: #061425;
+  --fullscreen-control-bg: rgba(255, 255, 255, .9);
+  --fullscreen-control-text: #172033;
+  --fullscreen-unit-bg: rgba(255, 255, 255, .82);
+  --fullscreen-unit-border: rgba(2, 132, 199, .24);
+  background:
+    radial-gradient(circle at 22% 15%, rgba(255, 255, 255, .48), transparent 18rem),
+    linear-gradient(135deg, rgba(186, 230, 253, .94), rgba(59, 130, 246, .88), rgba(14, 165, 233, .86));
+}
+
+.hero-panel.fullscreen-background--daynight.fullscreen-time--afternoon:fullscreen {
+  --fullscreen-text: #fff7ed;
+  --fullscreen-muted: rgba(255, 237, 213, .9);
+  --fullscreen-strong: #ffffff;
+  --fullscreen-clock: #ffffff;
+  --fullscreen-control-bg: rgba(255, 247, 237, .92);
+  --fullscreen-control-text: #7c2d12;
+  --fullscreen-unit-bg: rgba(255, 255, 255, .16);
+  --fullscreen-unit-border: rgba(255, 237, 213, .24);
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, .24), transparent 19rem),
+    linear-gradient(135deg, rgba(249, 115, 22, .94), rgba(236, 72, 153, .88), rgba(79, 70, 229, .82));
+}
+
+.hero-panel.fullscreen-background--daynight.fullscreen-time--evening:fullscreen {
+  --fullscreen-text: #fff7ed;
+  --fullscreen-muted: rgba(255, 237, 213, .86);
+  --fullscreen-strong: #ffffff;
+  --fullscreen-clock: #ffffff;
+  --fullscreen-control-bg: rgba(255, 247, 237, .9);
+  --fullscreen-control-text: #3b0764;
+  --fullscreen-unit-bg: rgba(255, 255, 255, .14);
+  --fullscreen-unit-border: rgba(255, 237, 213, .24);
+  background:
+    radial-gradient(circle at 18% 18%, rgba(253, 230, 138, .22), transparent 18rem),
+    linear-gradient(135deg, #4338ca, #be185d 62%, #7c2d12);
+}
+
+.hero-panel.fullscreen-background--daynight.fullscreen-time--night:fullscreen {
+  --fullscreen-text: #eef2ff;
+  --fullscreen-muted: rgba(226, 232, 240, .82);
+  --fullscreen-strong: #ffffff;
+  --fullscreen-clock: #ffffff;
+  --fullscreen-control-bg: rgba(248, 250, 252, .92);
+  --fullscreen-control-text: #0f172a;
+  --fullscreen-unit-bg: rgba(255, 255, 255, .12);
+  --fullscreen-unit-border: rgba(226, 232, 240, .18);
+  background:
+    radial-gradient(circle at 18% 18%, rgba(148, 163, 184, .18), transparent 18rem),
+    linear-gradient(135deg, #0f172a, #312e81 58%, #111827);
 }
 
 @media (max-height: 760px) and (min-width: 981px) {
@@ -2574,13 +2672,41 @@ button {
   font-weight: 850;
 }
 .selected-bookmark-timer:fullscreen {
+  position: relative;
   width: 100vw;
   min-height: 100vh;
   align-content: center;
+  justify-items: center;
   padding: clamp(1.25rem, 5vw, 4rem);
   border: 0;
   border-radius: 0;
-  background: #f8fbff;
+  color: var(--fullscreen-text);
+}
+.selected-bookmark-timer.fullscreen-background--dark:fullscreen {
+  --fullscreen-text: #f8fafc;
+  --fullscreen-muted: #e5edf8;
+  --fullscreen-strong: #ffffff;
+  --fullscreen-clock: #f9fbff;
+  --fullscreen-control-bg: rgba(248, 250, 252, .94);
+  --fullscreen-control-text: #0f172a;
+  --fullscreen-unit-bg: rgba(255, 255, 255, .12);
+  --fullscreen-unit-border: rgba(226, 232, 240, .18);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(30, 41, 59, .7), rgba(2, 6, 23, .96) 48%, #000 100%),
+    #020617;
+}
+.selected-bookmark-timer.fullscreen-background--daynight:fullscreen {
+  --fullscreen-text: #0f172a;
+  --fullscreen-muted: #475569;
+  --fullscreen-strong: #0f172a;
+  --fullscreen-clock: #0f172a;
+  --fullscreen-control-bg: rgba(255, 255, 255, .94);
+  --fullscreen-control-text: #172033;
+  --fullscreen-unit-bg: rgba(255, 255, 255, .72);
+  --fullscreen-unit-border: rgba(148, 163, 184, .28);
+  background:
+    radial-gradient(circle at 18% 16%, rgba(255, 255, 255, .92), transparent 18rem),
+    linear-gradient(135deg, #f8fafc 0%, #edf3fb 48%, #e2e8f0 100%);
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__header {
   align-items: center;
@@ -2588,12 +2714,28 @@ button {
   width: min(100%, 86rem);
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline strong {
+  color: var(--fullscreen-strong);
   font-size: clamp(1.5rem, 3vw, 3rem);
+  text-shadow: none;
+}
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions {
+  position: absolute;
+  inset-block-start: clamp(1rem, 3vw, 2rem);
+  inset-inline-end: clamp(1rem, 3vw, 2rem);
+  z-index: 2;
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__focus,
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__effect-button {
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__effect-button,
+.selected-bookmark-timer:fullscreen .fullscreen-background-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 2.75rem;
   padding-inline: 1rem;
+  border-color: rgba(226, 232, 240, .72);
+  background: var(--fullscreen-control-bg);
+  color: var(--fullscreen-control-text);
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, .12), 0 10px 30px rgba(0, 0, 0, .28);
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid {
   margin: 0 auto;
@@ -2602,13 +2744,17 @@ button {
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit {
   min-height: clamp(7rem, 17vh, 13rem);
-  border-color: rgba(37, 99, 235, .18);
-  background: #fff;
+  border-color: var(--fullscreen-unit-border);
+  background: var(--fullscreen-unit-bg);
+  backdrop-filter: blur(12px);
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit strong {
+  color: var(--fullscreen-clock);
   font-size: clamp(2.8rem, 8vw, 7.6rem);
+  text-shadow: none;
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit span {
+  color: var(--fullscreen-muted);
   font-size: clamp(.9rem, 1.3vw, 1.3rem);
 }
 .bookmark-effect {
