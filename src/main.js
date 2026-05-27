@@ -1472,7 +1472,7 @@ function SolarYearMomentCard({ now, t, language }) {
 }
 
 function BookmarkEffectOverlay({ effect }) {
-  const items = Array.from({ length: effect === 'balloons' ? 18 : 46 }, (_, index) => index);
+  const items = Array.from({ length: effect === 'balloons' ? 26 : 76 }, (_, index) => index);
 
   return h(
     'div',
@@ -1481,11 +1481,11 @@ function BookmarkEffectOverlay({ effect }) {
       key: index,
       style: {
         '--i': String(index),
-        '--x': `${(index * 37) % 100}%`,
-        '--delay': `${(index % 12) * 0.08}s`,
-        '--duration': `${3.4 + (index % 7) * 0.22}s`,
+        '--x': `${3 + ((index * 37) % 94)}%`,
+        '--delay': `${(index % 12) * 0.045 - 0.18}s`,
+        '--duration': `${effect === 'balloons' ? 5.4 + (index % 8) * 0.22 : 3.8 + (index % 9) * 0.2}s`,
         '--spin': `${(index % 2 ? 1 : -1) * (140 + (index % 9) * 20)}deg`,
-        '--drift': `${((index % 7) - 3) * 2}vw`,
+        '--drift': `${((index % 9) - 4) * (effect === 'balloons' ? 2.8 : 2.1)}vw`,
       },
     })),
   );
@@ -1612,6 +1612,14 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
     }
 
     window.alert(t.fullscreen_unsupported);
+  };
+
+  const runSelectedBookmarkEffect = () => {
+    if (!selectedBookmark || !isBookmarkTimerFullscreen) return;
+    const effect = normalizeBookmarkEffect(selectedBookmark.effect);
+    if (effect === 'none') return;
+
+    setActiveBookmarkEffect({ id: effect, key: `manual:${selectedBookmark.id}:${effect}:${Date.now()}` });
   };
 
   useEffect(() => {
@@ -1937,8 +1945,15 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
         h('div', { className: 'selected-bookmark-timer__headline' },
           h('strong', null, selectedBookmarkTimerTitle),
         ),
-        h('button', { type: 'button', className: 'selected-bookmark-timer__focus', onClick: toggleBookmarkTimerFullscreen },
-          isBookmarkTimerFullscreen ? t.exit_fullscreen : t.fullscreen,
+        h('div', { className: 'selected-bookmark-timer__actions' },
+          isBookmarkTimerFullscreen && selectedBookmark && normalizeBookmarkEffect(selectedBookmark.effect) !== 'none' && h(
+            'button',
+            { type: 'button', className: 'selected-bookmark-timer__effect-button', onClick: runSelectedBookmarkEffect },
+            t.run_bookmark_effect,
+          ),
+          h('button', { type: 'button', className: 'selected-bookmark-timer__focus', onClick: toggleBookmarkTimerFullscreen },
+            isBookmarkTimerFullscreen ? t.exit_fullscreen : t.fullscreen,
+          ),
         ),
       ),
       h('div', { className: 'selected-bookmark-timer__grid' },

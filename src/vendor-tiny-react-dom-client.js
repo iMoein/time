@@ -35,12 +35,20 @@ function changedType(previousVNode, nextVNode) {
 function setStyle(dom, previousStyle = {}, nextStyle = {}) {
   Object.keys(previousStyle).forEach((name) => {
     if (!(name in nextStyle)) {
-      dom.style[name] = '';
+      if (name.startsWith('--')) {
+        dom.style.removeProperty(name);
+      } else {
+        dom.style[name] = '';
+      }
     }
   });
 
   Object.entries(nextStyle).forEach(([name, value]) => {
-    dom.style[name] = value;
+    if (name.startsWith('--')) {
+      dom.style.setProperty(name, value);
+    } else {
+      dom.style[name] = value;
+    }
   });
 }
 
