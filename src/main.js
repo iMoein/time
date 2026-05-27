@@ -34,6 +34,7 @@ const savedLanguageKey = 'time-app-language';
 const savedSelectedCityKey = 'time-app-selected-city';
 const savedSelectedCityCustomizedKey = 'time-app-selected-city-customized';
 const savedOccasionFiltersKey = 'time-app-occasion-filters';
+const savedDateBookmarksKey = 'time-app-date-bookmarks';
 const userCitiesCustomizedKey = 'time-app-cities-customized';
 const defaultNtpHost = 'ntp.time.ir';
 
@@ -127,6 +128,31 @@ function getInitialCityIds() {
     return savedIds.length ? savedIds : defaultCityIds;
   } catch {
     return defaultCityIds;
+  }
+}
+
+function getInitialDateBookmarks() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(savedDateBookmarksKey) || '[]');
+    if (!Array.isArray(saved)) return [];
+
+    return saved
+      .filter((bookmark) => bookmark && typeof bookmark === 'object')
+      .map((bookmark) => ({
+        id: String(bookmark.id || `date-${bookmark.dateKey || Date.now()}`),
+        title: String(bookmark.title || '').trim(),
+        description: String(bookmark.description || '').trim(),
+        calendarType: bookmark.calendarType === 'gregorian' ? 'gregorian' : 'persian',
+        year: Number(bookmark.year),
+        month: Number(bookmark.month),
+        day: Number(bookmark.day),
+        dateKey: String(bookmark.dateKey || ''),
+        createdAt: String(bookmark.createdAt || ''),
+        updatedAt: String(bookmark.updatedAt || ''),
+      }))
+      .filter((bookmark) => Number.isFinite(bookmark.year) && Number.isFinite(bookmark.month) && Number.isFinite(bookmark.day) && bookmark.dateKey);
+  } catch {
+    return [];
   }
 }
 
@@ -1061,7 +1087,109 @@ function calculateDateDistance(startDate, endDate) {
   return { years: Math.max(0, years), months: Math.max(0, months), days: Math.max(0, days) };
 }
 
-function AgeConverterCard({ city, t, language, onInteractionChange = () => {} }) {
+function getZonedDateTimeParts(date, timeZone) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]));
+
+  return {
+    year: Number(values.year),
+    month: Number(values.month),
+    day: Number(values.day),
+    hour: Number(values.hour),
+    minute: Number(values.minute),
+    second: Number(values.second),
+  };
+}
+
+function zonedDateTimeToUtc(parts, timeZone) {
+  const utcGuess = new Date(Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second));
+  const offset = getTimeZoneOffsetMinutes(utcGuess, timeZone);
+  const firstPass = new Date(utcGuess.getTime() - offset * 60000);
+  const correctedOffset = getTimeZoneOffsetMinutes(firstPass, timeZone);
+
+  return correctedOffset === offset
+    ? firstPass
+    : new Date(utcGuess.getTime() - correctedOffset * 60000);
+}
+
+function addGregorianLocalDateTime(parts, { years = 0, months = 0, days = 0 } = {}) {
+  const totalMonths = parts.month - 1 + months + years * 12;
+  const year = parts.year + Math.floor(totalMonths / 12);
+  const month = ((totalMonths % 12) + 12) % 12 + 1;
+  const day = Math.min(parts.day, getDaysInGregorianMonth(year, month));
+  const date = new Date(Date.UTC(year, month - 1, day + days, parts.hour, parts.minute, parts.second));
+
+  return {
+    year: date.getUTCFullYear(),
+    month: date.getUTCMonth() + 1,
+    day: date.getUTCDate(),
+    hour: date.getUTCHours(),
+    minute: date.getUTCMinutes(),
+    second: date.getUTCSeconds(),
+  };
+}
+
+function getDateKeyMidnightUtc(dateKey, timeZone) {
+  const [year, month, day] = dateKey.split('-').map(Number);
+
+  return zonedDateTimeToUtc({ year, month, day, hour: 0, minute: 0, second: 0 }, timeZone);
+}
+
+function getPreciseZonedDistance(fromDate, targetDate, timeZone) {
+  const isFuture = targetDate.getTime() >= fromDate.getTime();
+  const earlierDate = isFuture ? fromDate : targetDate;
+  const laterDate = isFuture ? targetDate : fromDate;
+  const startParts = getZonedDateTimeParts(earlierDate, timeZone);
+  const endParts = getZonedDateTimeParts(laterDate, timeZone);
+  let years = Math.max(0, endParts.year - startParts.year);
+
+  while (years > 0 && zonedDateTimeToUtc(addGregorianLocalDateTime(startParts, { years }), timeZone).getTime() > laterDate.getTime()) {
+    years -= 1;
+  }
+
+  let cursorParts = addGregorianLocalDateTime(startParts, { years });
+  let cursorDate = zonedDateTimeToUtc(cursorParts, timeZone);
+  let months = Math.max(0, (endParts.year - cursorParts.year) * 12 + endParts.month - cursorParts.month);
+
+  while (months > 0 && zonedDateTimeToUtc(addGregorianLocalDateTime(cursorParts, { months }), timeZone).getTime() > laterDate.getTime()) {
+    months -= 1;
+  }
+
+  cursorParts = addGregorianLocalDateTime(cursorParts, { months });
+  cursorDate = zonedDateTimeToUtc(cursorParts, timeZone);
+  let days = 0;
+
+  while (days < 31) {
+    const nextParts = addGregorianLocalDateTime(cursorParts, { days: days + 1 });
+    const nextDate = zonedDateTimeToUtc(nextParts, timeZone);
+
+    if (nextDate.getTime() > laterDate.getTime()) {
+      break;
+    }
+
+    days += 1;
+    cursorDate = nextDate;
+  }
+
+  let remainingSeconds = Math.max(0, Math.floor((laterDate.getTime() - cursorDate.getTime()) / 1000));
+  const hours = Math.floor(remainingSeconds / 3600);
+  remainingSeconds -= hours * 3600;
+  const minutes = Math.floor(remainingSeconds / 60);
+  const seconds = remainingSeconds - minutes * 60;
+
+  return { isFuture, years, months, days, hours, minutes, seconds };
+}
+
+function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChange = () => {} }) {
   const isFa = language === 'fa';
   const todayDate = getZonedTodayDate(city.timeZone);
   const todayPersian = getPersianDatePartsFromUtc(todayDate);
@@ -1069,6 +1197,20 @@ function AgeConverterCard({ city, t, language, onInteractionChange = () => {} })
   const [year, setYear] = useState(todayPersian.year);
   const [month, setMonth] = useState(todayPersian.month);
   const [day, setDay] = useState(todayPersian.day);
+  const [dateBookmarks, setDateBookmarks] = useState(getInitialDateBookmarks);
+  const [selectedBookmarkId, setSelectedBookmarkId] = useState('');
+  const [bookmarkTitle, setBookmarkTitle] = useState('');
+  const [bookmarkDescription, setBookmarkDescription] = useState('');
+  const [activeBookmarkActionsId, setActiveBookmarkActionsId] = useState('');
+  const [editingBookmarkId, setEditingBookmarkId] = useState('');
+  const [editingBookmarkTitle, setEditingBookmarkTitle] = useState('');
+  const [editingBookmarkDescription, setEditingBookmarkDescription] = useState('');
+  const [editingBookmarkCalendarType, setEditingBookmarkCalendarType] = useState('persian');
+  const [editingBookmarkYear, setEditingBookmarkYear] = useState(todayPersian.year);
+  const [editingBookmarkMonth, setEditingBookmarkMonth] = useState(todayPersian.month);
+  const [editingBookmarkDay, setEditingBookmarkDay] = useState(todayPersian.day);
+  const [confirmingDeleteId, setConfirmingDeleteId] = useState('');
+  const [bookmarkNow, setBookmarkNow] = useState(() => new Date(Date.now() + timeOffset));
   const handleFocusIn = () => onInteractionChange(true);
   const handleFocusOut = () => onInteractionChange(false);
 
@@ -1082,6 +1224,31 @@ function AgeConverterCard({ city, t, language, onInteractionChange = () => {} })
   useEffect(() => {
     setDay((current) => Math.min(current, daysInMonth));
   }, [daysInMonth]);
+
+  useEffect(() => {
+    localStorage.setItem(savedDateBookmarksKey, JSON.stringify(dateBookmarks));
+  }, [dateBookmarks]);
+
+  useEffect(() => {
+    if (editingBookmarkId) {
+      return undefined;
+    }
+
+    const updateBookmarkNow = () => setBookmarkNow(new Date(Date.now() + timeOffset));
+    updateBookmarkNow();
+    const timer = setInterval(updateBookmarkNow, 1000);
+
+    return () => clearInterval(timer);
+  }, [editingBookmarkId, timeOffset]);
+
+  useEffect(() => {
+    if (!editingBookmarkId) {
+      return undefined;
+    }
+
+    onInteractionChange(true);
+    return () => onInteractionChange(false);
+  }, [editingBookmarkId]);
 
   const convertedDate = useMemo(() => {
     if (calendarType === 'gregorian') {
@@ -1103,54 +1270,427 @@ function AgeConverterCard({ city, t, language, onInteractionChange = () => {} })
     : (isPersianLeapYear(persianParts.year) ? t.yes : t.no);
   const iranZodiac = getZodiacAnimal(persianParts.year, language);
   const chineseZodiac = getZodiacAnimal(gregorianParts.year, language);
+  const selectedBookmark = dateBookmarks.find((bookmark) => bookmark.id === selectedBookmarkId);
+  useEffect(() => {
+    if (!selectedBookmark) return;
+    setBookmarkTitle(selectedBookmark.title);
+    setBookmarkDescription(selectedBookmark.description || '');
+  }, [selectedBookmark]);
+  const selectedBookmarkTimer = selectedBookmark
+    ? getPreciseZonedDistance(bookmarkNow, getDateKeyMidnightUtc(selectedBookmark.dateKey, city.timeZone), city.timeZone)
+    : null;
   const timeDistanceLabel = language === 'fa'
     ? `${formatLocaleNumber(timeDistance.years, language)} سال ${formatLocaleNumber(timeDistance.months, language)} ماه ${formatLocaleNumber(timeDistance.days, language)} روز`
     : `${formatLocaleNumber(timeDistance.years, language)}y ${formatLocaleNumber(timeDistance.months, language)}m ${formatLocaleNumber(timeDistance.days, language)}d`;
+  const currentDateKey = getCalendarDateKey(convertedDate);
+  const currentDateTitle = `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}`;
+  const getBookmarkTitle = () => `${t.bookmark_default_title} ${currentDateTitle}`;
+  const buildCurrentBookmark = (id = `date-${Date.now()}`, title = getBookmarkTitle(), description = '', createdAt = new Date().toISOString()) => ({
+    id,
+    title: title.trim() || getBookmarkTitle(),
+    description: description.trim(),
+    calendarType,
+    year,
+    month,
+    day,
+    dateKey: currentDateKey,
+    createdAt,
+    updatedAt: new Date().toISOString(),
+  });
+
+  const getBookmarkDateFromFields = (bookmarkCalendarType, bookmarkYear, bookmarkMonth, bookmarkDay) => (
+    bookmarkCalendarType === 'gregorian'
+      ? new Date(Date.UTC(bookmarkYear, bookmarkMonth - 1, bookmarkDay, 12))
+      : findGregorianDateForPersianDate(bookmarkYear, bookmarkMonth, bookmarkDay)
+  );
+
+  const resetBookmarkSelection = () => {
+    setSelectedBookmarkId('');
+    setEditingBookmarkId('');
+    setActiveBookmarkActionsId('');
+    setConfirmingDeleteId('');
+  };
+
+  const saveCurrentBookmark = () => {
+    const existingBookmark = selectedBookmark || dateBookmarks.find((bookmark) => bookmark.dateKey === currentDateKey);
+    const nextTitle = bookmarkTitle.trim() || existingBookmark?.title || getBookmarkTitle();
+    const nextDescription = bookmarkDescription.trim() || existingBookmark?.description || '';
+    const nextBookmark = buildCurrentBookmark(existingBookmark?.id, nextTitle, nextDescription, existingBookmark?.createdAt);
+
+    setDateBookmarks((bookmarks) => existingBookmark
+      ? bookmarks.map((bookmark) => (bookmark.id === existingBookmark.id ? nextBookmark : bookmark))
+      : [nextBookmark, ...bookmarks]);
+    setSelectedBookmarkId(nextBookmark.id);
+    setEditingBookmarkId('');
+    setActiveBookmarkActionsId('');
+    setConfirmingDeleteId('');
+    setBookmarkTitle(nextBookmark.title);
+    setBookmarkDescription(nextBookmark.description);
+  };
+
+  const selectBookmark = (bookmark) => {
+    setCalendarType(bookmark.calendarType);
+    setYear(bookmark.year);
+    setMonth(bookmark.month);
+    setDay(bookmark.day);
+    setSelectedBookmarkId(bookmark.id);
+    setBookmarkTitle(bookmark.title);
+    setBookmarkDescription(bookmark.description || '');
+    setEditingBookmarkId('');
+    setConfirmingDeleteId('');
+  };
+
+  const startEditingBookmark = (bookmark) => {
+    setSelectedBookmarkId(bookmark.id);
+    setActiveBookmarkActionsId(bookmark.id);
+    setConfirmingDeleteId('');
+    setEditingBookmarkId(bookmark.id);
+    setEditingBookmarkTitle(bookmark.title);
+    setEditingBookmarkDescription(bookmark.description || '');
+    setEditingBookmarkCalendarType(bookmark.calendarType);
+    setEditingBookmarkYear(bookmark.year);
+    setEditingBookmarkMonth(bookmark.month);
+    setEditingBookmarkDay(bookmark.day);
+  };
+
+  const saveBookmarkDetails = (bookmark) => {
+    const nextTitle = editingBookmarkTitle.trim() || bookmark.title;
+    const nextDescription = editingBookmarkDescription.trim();
+    const maxEditingDay = editingBookmarkCalendarType === 'gregorian'
+      ? getDaysInGregorianMonth(editingBookmarkYear, editingBookmarkMonth)
+      : getDaysInPersianMonth(editingBookmarkYear, editingBookmarkMonth);
+    const nextDay = Math.min(editingBookmarkDay, maxEditingDay);
+    const nextDate = getBookmarkDateFromFields(editingBookmarkCalendarType, editingBookmarkYear, editingBookmarkMonth, nextDay);
+    const nextDateKey = getCalendarDateKey(nextDate);
+
+    setDateBookmarks((bookmarks) => bookmarks.map((item) => (
+      item.id === bookmark.id
+        ? {
+          ...item,
+          title: nextTitle,
+          description: nextDescription,
+          calendarType: editingBookmarkCalendarType,
+          year: editingBookmarkYear,
+          month: editingBookmarkMonth,
+          day: nextDay,
+          dateKey: nextDateKey,
+          updatedAt: new Date().toISOString(),
+        }
+        : item
+    )));
+    setCalendarType(editingBookmarkCalendarType);
+    setYear(editingBookmarkYear);
+    setMonth(editingBookmarkMonth);
+    setDay(nextDay);
+    setSelectedBookmarkId(bookmark.id);
+    setBookmarkTitle(nextTitle);
+    setBookmarkDescription(nextDescription);
+    setEditingBookmarkId('');
+  };
+
+  const updateBookmarkDate = (bookmark) => {
+    const nextBookmark = buildCurrentBookmark(
+      bookmark.id,
+      editingBookmarkTitle || bookmark.title,
+      editingBookmarkDescription || bookmark.description || '',
+      bookmark.createdAt,
+    );
+
+    setDateBookmarks((bookmarks) => bookmarks.map((item) => (item.id === bookmark.id ? nextBookmark : item)));
+    setSelectedBookmarkId(bookmark.id);
+    setBookmarkTitle(nextBookmark.title);
+    setBookmarkDescription(nextBookmark.description);
+    setEditingBookmarkId('');
+    setActiveBookmarkActionsId('');
+    setConfirmingDeleteId('');
+  };
+
+  const removeBookmark = (bookmarkId) => {
+    setDateBookmarks((bookmarks) => bookmarks.filter((bookmark) => bookmark.id !== bookmarkId));
+    if (selectedBookmarkId === bookmarkId) setSelectedBookmarkId('');
+    if (editingBookmarkId === bookmarkId) setEditingBookmarkId('');
+    if (activeBookmarkActionsId === bookmarkId) setActiveBookmarkActionsId('');
+    if (confirmingDeleteId === bookmarkId) setConfirmingDeleteId('');
+  };
+
+  const toggleBookmarkActions = (bookmarkId) => {
+    setActiveBookmarkActionsId((currentId) => (currentId === bookmarkId ? '' : bookmarkId));
+    setEditingBookmarkId('');
+    setConfirmingDeleteId('');
+  };
 
   return h(
-    'section',
-    { className: 'age-converter-card', 'aria-label': t.age_converter_title },
-    h('div', { className: 'age-converter-card__header' },
-      h('strong', null, t.age_converter_title),
-      h('small', null, `${t.time_in} ${isFa ? (city.localFaLabel || city.label) : city.label}`),
+    'div',
+    { className: 'age-bookmark-stack' },
+    h(
+      'section',
+      { className: 'age-converter-card', 'aria-label': t.age_converter_title },
+      h('div', { className: 'age-converter-card__header' },
+        h('strong', null, t.age_converter_title),
+        h('div', { className: 'age-converter-card__header-actions' },
+          h('small', null, `${t.time_in} ${isFa ? (city.localFaLabel || city.label) : city.label}`),
+        ),
+      ),
+      h('div', { className: 'age-converter-card__controls' },
+        h('label', null, t.calendar_type,
+          h('select', { value: calendarType, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setCalendarType(event.target.value); } },
+            h('option', { value: 'persian' }, t.solar_hijri),
+            h('option', { value: 'gregorian' }, t.gregorian),
+          ),
+        ),
+        h('label', null, t.year,
+          h('select', { value: year, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setYear(Number(event.target.value)); } },
+            yearOptions.map((optionYear) => h('option', { key: optionYear, value: optionYear }, optionYear)),
+          ),
+        ),
+        h('label', null, t.month,
+          h('select', { value: month, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setMonth(Number(event.target.value)); } },
+            monthOptions.map((option) => h('option', { key: option.value, value: option.value }, option.label)),
+          ),
+        ),
+        h('label', null, t.day,
+          h('select', { value: day, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setDay(Number(event.target.value)); } },
+            dayOptions.map((optionDay) => h('option', { key: optionDay, value: optionDay }, optionDay)),
+          ),
+        ),
+      ),
+      h('div', { className: 'age-converter-card__result' },
+        h(SplitPill, { label: t.dates, items: [
+          { label: t.gregorian, value: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` },
+          { label: t.solar_hijri, value: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` },
+        ] }),
+        h(InfoPill, { label: timeDistanceTitle, value: timeDistanceLabel }),
+        h(SplitPill, { label: t.converted_weekday, items: [
+          { label: t.weekday, value: weekdayLabel },
+          { label: t.leap_year, value: leapYearLabel },
+        ] }),
+        h(SplitPill, { label: t.iran_zodiac, items: [
+          { label: t.iran_zodiac, value: iranZodiac },
+          { label: t.chinese_zodiac, value: chineseZodiac },
+        ] }),
+      ),
     ),
-    h('div', { className: 'age-converter-card__controls' },
-      h('label', null, t.calendar_type,
-        h('select', { value: calendarType, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => setCalendarType(event.target.value) },
-          h('option', { value: 'persian' }, t.solar_hijri),
-          h('option', { value: 'gregorian' }, t.gregorian),
-        ),
+    h(
+      'section',
+      { className: 'date-bookmarks-card', 'aria-label': t.date_bookmarks },
+      h('div', { className: 'date-bookmarks-card__header' },
+        h('strong', null, t.date_bookmarks),
+        selectedBookmark && h('small', null, `${t.selected}: ${selectedBookmark.title}`),
       ),
-      h('label', null, t.year,
-        h('select', { value: year, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => setYear(Number(event.target.value)) },
-          yearOptions.map((optionYear) => h('option', { key: optionYear, value: optionYear }, optionYear)),
-        ),
+    selectedBookmarkTimer && h(
+      'div',
+      { className: 'selected-bookmark-timer', 'aria-live': 'polite' },
+      h('div', { className: 'selected-bookmark-timer__header' },
+        h('strong', null, selectedBookmarkTimer.isFuture ? t.time_remaining : t.time_elapsed),
+        h('small', null, `${selectedBookmark.title} · ${t.bookmark_midnight_basis}`),
       ),
-      h('label', null, t.month,
-        h('select', { value: month, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => setMonth(Number(event.target.value)) },
-          monthOptions.map((option) => h('option', { key: option.value, value: option.value }, option.label)),
-        ),
-      ),
-      h('label', null, t.day,
-        h('select', { value: day, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => setDay(Number(event.target.value)) },
-          dayOptions.map((optionDay) => h('option', { key: optionDay, value: optionDay }, optionDay)),
-        ),
+      h('div', { className: 'selected-bookmark-timer__grid' },
+        [
+          [t.year, selectedBookmarkTimer.years],
+          [t.month, selectedBookmarkTimer.months],
+          [t.day, selectedBookmarkTimer.days],
+          [t.hour, selectedBookmarkTimer.hours],
+          [t.minute, selectedBookmarkTimer.minutes],
+          [t.second, selectedBookmarkTimer.seconds],
+        ].map(([label, value]) => h(
+          'article',
+          { className: 'selected-bookmark-timer__unit', key: label },
+          h('strong', null, formatLocaleNumber(value, language)),
+          h('span', null, label),
+        )),
       ),
     ),
-    h('div', { className: 'age-converter-card__result' },
-      h(SplitPill, { label: t.dates, items: [
-        { label: t.gregorian, value: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` },
-        { label: t.solar_hijri, value: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` },
-      ] }),
-      h(InfoPill, { label: timeDistanceTitle, value: timeDistanceLabel }),
-      h(SplitPill, { label: t.converted_weekday, items: [
-        { label: t.weekday, value: weekdayLabel },
-        { label: t.leap_year, value: leapYearLabel },
-      ] }),
-      h(SplitPill, { label: t.iran_zodiac, items: [
-        { label: t.iran_zodiac, value: iranZodiac },
-        { label: t.chinese_zodiac, value: chineseZodiac },
-      ] }),
+    h(
+      'div',
+      { className: 'date-bookmark-form' },
+      h('label', null, t.bookmark_title,
+        h('input', {
+          value: bookmarkTitle,
+          onInput: (event) => setBookmarkTitle(event.target.value),
+          onChange: (event) => setBookmarkTitle(event.target.value),
+          onFocus: handleFocusIn,
+          onBlur: handleFocusOut,
+          placeholder: getBookmarkTitle(),
+        }),
+      ),
+      h('label', null, t.bookmark_description,
+        h('textarea', {
+          value: bookmarkDescription,
+          onInput: (event) => setBookmarkDescription(event.target.value),
+          onChange: (event) => setBookmarkDescription(event.target.value),
+          onFocus: handleFocusIn,
+          onBlur: handleFocusOut,
+          rows: 2,
+          placeholder: t.bookmark_description_placeholder,
+        }),
+      ),
+      h('button', { type: 'button', className: 'date-bookmark-save', onClick: saveCurrentBookmark }, selectedBookmark ? t.update_bookmark : t.bookmark_date),
+    ),
+    h(
+      'div',
+      { className: 'date-bookmarks', 'aria-label': t.date_bookmarks },
+      dateBookmarks.length
+        ? h(
+          'div',
+          { className: 'date-bookmarks__list' },
+          dateBookmarks.map((bookmark) => {
+            const bookmarkDate = new Date(`${bookmark.dateKey}T12:00:00Z`);
+            const bookmarkGregorian = getCalendarPartsFromUtc(bookmarkDate, 'gregorian');
+            const bookmarkPersian = getPersianDatePartsFromUtc(bookmarkDate);
+            const isEditing = editingBookmarkId === bookmark.id;
+            const isActionsOpen = activeBookmarkActionsId === bookmark.id;
+            const isConfirmingDelete = confirmingDeleteId === bookmark.id;
+            const editingMonthOptions = editingBookmarkCalendarType === 'gregorian' ? getCalendarMonthOptions('gregorian') : getCalendarMonthOptions('persian');
+            const editingYearOptions = editingBookmarkCalendarType === 'gregorian'
+              ? Array.from({ length: 2400 - 1900 + 1 }, (_, index) => 1900 + index)
+              : Array.from({ length: 1700 - 1250 + 1 }, (_, index) => 1250 + index);
+            const editingDaysInMonth = editingBookmarkCalendarType === 'gregorian'
+              ? getDaysInGregorianMonth(editingBookmarkYear, editingBookmarkMonth)
+              : getDaysInPersianMonth(editingBookmarkYear, editingBookmarkMonth);
+            const editingDayOptions = Array.from({ length: editingDaysInMonth }, (_, index) => index + 1);
+            const editingSafeDay = Math.min(editingBookmarkDay, editingDaysInMonth);
+            const editingPreviewDate = isEditing
+              ? getBookmarkDateFromFields(editingBookmarkCalendarType, editingBookmarkYear, editingBookmarkMonth, editingSafeDay)
+              : bookmarkDate;
+            const editingPreviewGregorian = getCalendarPartsFromUtc(editingPreviewDate, 'gregorian');
+            const editingPreviewPersian = getPersianDatePartsFromUtc(editingPreviewDate);
+            const updateEditingCalendarType = (nextCalendarType) => {
+              const nextYear = nextCalendarType === 'gregorian' ? editingPreviewGregorian.year : editingPreviewPersian.year;
+              const nextMonth = nextCalendarType === 'gregorian' ? editingPreviewGregorian.month : editingPreviewPersian.month;
+              const nextDay = nextCalendarType === 'gregorian' ? editingPreviewGregorian.day : editingPreviewPersian.day;
+
+              setEditingBookmarkCalendarType(nextCalendarType);
+              setEditingBookmarkYear(nextYear);
+              setEditingBookmarkMonth(nextMonth);
+              setEditingBookmarkDay(nextDay);
+            };
+
+            return h(
+              'article',
+              { className: `date-bookmark${selectedBookmarkId === bookmark.id ? ' selected' : ''}`, key: bookmark.id },
+              h('button', { type: 'button', className: 'date-bookmark__main', onClick: () => selectBookmark(bookmark) },
+                h('strong', null, bookmark.title),
+                h('span', null, `${t.gregorian} ${bookmarkGregorian.year}/${formatNumber(bookmarkGregorian.month)}/${formatNumber(bookmarkGregorian.day)} · ${t.solar_hijri} ${bookmarkPersian.year}/${formatNumber(bookmarkPersian.month)}/${formatNumber(bookmarkPersian.day)}`),
+                bookmark.description && h('small', null, bookmark.description),
+              ),
+              isEditing && h('input', {
+                className: 'date-bookmark__title-input',
+                value: editingBookmarkTitle,
+                onInput: (event) => setEditingBookmarkTitle(event.target.value),
+                onChange: (event) => setEditingBookmarkTitle(event.target.value),
+                onFocus: handleFocusIn,
+                onBlur: handleFocusOut,
+                'aria-label': t.bookmark_title,
+              }),
+              isEditing && h('textarea', {
+                className: 'date-bookmark__description-input',
+                value: editingBookmarkDescription,
+                onInput: (event) => setEditingBookmarkDescription(event.target.value),
+                onChange: (event) => setEditingBookmarkDescription(event.target.value),
+                onFocus: handleFocusIn,
+                onBlur: handleFocusOut,
+                rows: 2,
+                'aria-label': t.bookmark_description,
+              }),
+              isEditing && h(
+                'div',
+                { className: 'date-bookmark__edit-date-panel' },
+                h('div', { className: 'date-bookmark__edit-date-header' },
+                  h('strong', null, t.edit_bookmark_date),
+                  h('span', null, `${t.selected_date}: ${t.gregorian} ${editingPreviewGregorian.year}/${formatNumber(editingPreviewGregorian.month)}/${formatNumber(editingPreviewGregorian.day)} · ${t.solar_hijri} ${editingPreviewPersian.year}/${formatNumber(editingPreviewPersian.month)}/${formatNumber(editingPreviewPersian.day)}`),
+                ),
+                h('div', { className: 'date-bookmark__calendar-tabs', role: 'group', 'aria-label': t.calendar_type },
+                  [
+                    { id: 'persian', label: t.solar_hijri },
+                    { id: 'gregorian', label: t.gregorian },
+                  ].map((option) => h(
+                    'button',
+                    {
+                      type: 'button',
+                      className: editingBookmarkCalendarType === option.id ? 'selected' : '',
+                      onClick: () => updateEditingCalendarType(option.id),
+                      'aria-pressed': editingBookmarkCalendarType === option.id,
+                      key: option.id,
+                    },
+                    option.label,
+                  )),
+                ),
+                h('div', { className: 'date-bookmark__edit-date-fields' },
+                  h('label', null,
+                    h('span', null, t.year),
+                    h('select', {
+                      value: editingBookmarkYear,
+                      onFocus: handleFocusIn,
+                      onBlur: handleFocusOut,
+                      onChange: (event) => {
+                        const nextYear = Number(event.target.value);
+                        const nextDaysInMonth = editingBookmarkCalendarType === 'gregorian'
+                          ? getDaysInGregorianMonth(nextYear, editingBookmarkMonth)
+                          : getDaysInPersianMonth(nextYear, editingBookmarkMonth);
+
+                        setEditingBookmarkYear(nextYear);
+                        setEditingBookmarkDay((currentDay) => Math.min(currentDay, nextDaysInMonth));
+                      },
+                    },
+                    editingYearOptions.map((optionYear) => h('option', { key: optionYear, value: optionYear }, optionYear)),
+                    ),
+                  ),
+                  h('label', null,
+                    h('span', null, t.month),
+                    h('select', {
+                      value: editingBookmarkMonth,
+                      onFocus: handleFocusIn,
+                      onBlur: handleFocusOut,
+                      onChange: (event) => {
+                        const nextMonth = Number(event.target.value);
+                        const nextDaysInMonth = editingBookmarkCalendarType === 'gregorian'
+                          ? getDaysInGregorianMonth(editingBookmarkYear, nextMonth)
+                          : getDaysInPersianMonth(editingBookmarkYear, nextMonth);
+
+                        setEditingBookmarkMonth(nextMonth);
+                        setEditingBookmarkDay((currentDay) => Math.min(currentDay, nextDaysInMonth));
+                      },
+                    },
+                    editingMonthOptions.map((option) => h('option', { key: option.value, value: option.value }, option.label)),
+                    ),
+                  ),
+                  h('label', null,
+                    h('span', null, t.day),
+                    h('select', {
+                      value: editingSafeDay,
+                      onFocus: handleFocusIn,
+                      onBlur: handleFocusOut,
+                      onChange: (event) => setEditingBookmarkDay(Number(event.target.value)),
+                    },
+                    editingDayOptions.map((optionDay) => h('option', { key: optionDay, value: optionDay }, optionDay)),
+                    ),
+                  ),
+                ),
+              ),
+              h('div', { className: 'date-bookmark__actions' },
+                isEditing
+                  ? [
+                    h('button', { key: 'save-title', type: 'button', onClick: () => saveBookmarkDetails(bookmark) }, t.done),
+                    h('button', { key: 'cancel-edit', type: 'button', onClick: () => setEditingBookmarkId('') }, t.cancel),
+                  ]
+                  : [
+                    h('button', { key: 'manage', type: 'button', className: 'date-bookmark__manage', onClick: () => toggleBookmarkActions(bookmark.id), 'aria-expanded': String(isActionsOpen) }, t.manage_bookmark),
+                    isActionsOpen && h('button', { key: 'edit', type: 'button', onClick: () => startEditingBookmark(bookmark) }, t.edit),
+                    isActionsOpen && h('button', { key: 'delete', type: 'button', className: 'date-bookmark__delete', onClick: () => setConfirmingDeleteId(bookmark.id) }, t.remove),
+                  ],
+              ),
+              isActionsOpen && isConfirmingDelete && h(
+                'div',
+                { className: 'date-bookmark__confirm' },
+                h('span', null, t.confirm_delete_bookmark),
+                h('button', { type: 'button', className: 'date-bookmark__delete', onClick: () => removeBookmark(bookmark.id) }, t.confirm_delete),
+                h('button', { type: 'button', onClick: () => setConfirmingDeleteId('') }, t.cancel),
+              ),
+            );
+          }),
+        )
+        : h('p', { className: 'date-bookmarks__empty' }, t.no_date_bookmarks),
+    ),
     ),
   );
 }
@@ -2034,7 +2574,7 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
       }),
     ),
     h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes, occasionFilterOrder }),
-    h(AgeConverterCard, { city: selectedCityConfig, t, language, onInteractionChange: setIsAgePickerActive }),  );
+    h(AgeConverterCard, { city: selectedCityConfig, t, language, timeOffset, onInteractionChange: setIsAgePickerActive }),  );
 }
 
 
