@@ -2176,7 +2176,20 @@ button {
 .age-converter-card__controls label { display:grid; gap:.35rem; color:#475569; font-size:.85rem; }
 .age-converter-card__controls input,
 .age-converter-card__controls select { border:1px solid rgba(148,163,184,.45); border-radius:.7rem; padding:.5rem .6rem; font:inherit; background:#fff; }
-.age-converter-card__result { display:grid; grid-template-columns: minmax(0,1fr) minmax(12rem,18rem); gap:.75rem; }
+.age-converter-card__result {
+  display:grid;
+  grid-template-columns: minmax(17rem, 1.35fr) minmax(11rem, .85fr) minmax(15rem, 1.1fr) minmax(14rem, 1fr);
+  gap:.75rem;
+  align-items: stretch;
+}
+.age-converter-card__result .info-pill,
+.age-converter-card__result .split-pill {
+  min-height: 5.05rem;
+}
+.age-converter-card__result .split-pill__grid {
+  height: 100%;
+  align-items: center;
+}
 .selected-bookmark-timer {
   display: grid;
   gap: .75rem;

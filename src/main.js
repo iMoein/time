@@ -1473,7 +1473,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
           { label: t.weekday, value: weekdayLabel },
           { label: t.leap_year, value: leapYearLabel },
         ] }),
-        h(SplitPill, { label: t.iran_zodiac, items: [
+        h(SplitPill, { label: t.zodiac, items: [
           { label: t.iran_zodiac, value: iranZodiac },
           { label: t.chinese_zodiac, value: chineseZodiac },
         ] }),
