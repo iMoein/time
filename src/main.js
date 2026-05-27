@@ -1189,14 +1189,106 @@ function getPreciseZonedDistance(fromDate, targetDate, timeZone) {
   return { isFuture, years, months, days, hours, minutes, seconds };
 }
 
+function getDateFromCalendarFields(fields) {
+  return fields.calendarType === 'gregorian'
+    ? new Date(Date.UTC(fields.year, fields.month - 1, fields.day, 12))
+    : findGregorianDateForPersianDate(fields.year, fields.month, fields.day);
+}
+
+function getCurrentDateFieldsForCalendar(date, calendarType) {
+  const parts = calendarType === 'gregorian'
+    ? getCalendarPartsFromUtc(date, 'gregorian')
+    : getPersianDatePartsFromUtc(date);
+
+  return { calendarType, year: parts.year, month: parts.month, day: parts.day };
+}
+
+function DateFieldSet({ className = '', title, value, onChange, t, onFocus, onBlur }) {
+  const selectedDate = getDateFromCalendarFields(value);
+  const gregorianParts = getCalendarPartsFromUtc(selectedDate, 'gregorian');
+  const persianParts = getPersianDatePartsFromUtc(selectedDate);
+  const monthOptions = value.calendarType === 'gregorian' ? getCalendarMonthOptions('gregorian') : getCalendarMonthOptions('persian');
+  const yearOptions = value.calendarType === 'gregorian'
+    ? Array.from({ length: 2400 - 1900 + 1 }, (_, index) => 1900 + index)
+    : Array.from({ length: 1700 - 1250 + 1 }, (_, index) => 1250 + index);
+  const daysInMonth = value.calendarType === 'gregorian'
+    ? getDaysInGregorianMonth(value.year, value.month)
+    : getDaysInPersianMonth(value.year, value.month);
+  const safeDay = Math.min(value.day, daysInMonth);
+  const dayOptions = Array.from({ length: daysInMonth }, (_, index) => index + 1);
+  const updateField = (nextFields) => onChange({ ...value, ...nextFields });
+  const switchCalendar = (nextCalendarType) => {
+    const nextParts = nextCalendarType === 'gregorian' ? gregorianParts : persianParts;
+    onChange({ calendarType: nextCalendarType, year: nextParts.year, month: nextParts.month, day: nextParts.day });
+  };
+
+  return h(
+    'section',
+    { className: `date-field-set${className ? ` ${className}` : ''}` },
+    h('header', { className: 'date-field-set__header' },
+      h('strong', null, title),
+      h('span', null, `${t.gregorian} ${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)} · ${t.solar_hijri} ${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}`),
+    ),
+    h('div', { className: 'date-field-set__controls' },
+      h('label', null, t.calendar_type,
+        h('select', { value: value.calendarType, onMouseDown: onFocus, onFocus, onBlur, onChange: (event) => switchCalendar(event.target.value) },
+          h('option', { value: 'persian' }, t.solar_hijri),
+          h('option', { value: 'gregorian' }, t.gregorian),
+        ),
+      ),
+      h('label', null, t.year,
+        h('select', {
+          value: value.year,
+          onMouseDown: onFocus,
+          onFocus,
+          onBlur,
+          onChange: (event) => {
+            const nextYear = Number(event.target.value);
+            const nextDaysInMonth = value.calendarType === 'gregorian'
+              ? getDaysInGregorianMonth(nextYear, value.month)
+              : getDaysInPersianMonth(nextYear, value.month);
+            updateField({ year: nextYear, day: Math.min(value.day, nextDaysInMonth) });
+          },
+        },
+        yearOptions.map((optionYear) => h('option', { key: optionYear, value: optionYear }, optionYear)),
+        ),
+      ),
+      h('label', null, t.month,
+        h('select', {
+          value: value.month,
+          onMouseDown: onFocus,
+          onFocus,
+          onBlur,
+          onChange: (event) => {
+            const nextMonth = Number(event.target.value);
+            const nextDaysInMonth = value.calendarType === 'gregorian'
+              ? getDaysInGregorianMonth(value.year, nextMonth)
+              : getDaysInPersianMonth(value.year, nextMonth);
+            updateField({ month: nextMonth, day: Math.min(value.day, nextDaysInMonth) });
+          },
+        },
+        monthOptions.map((option) => h('option', { key: option.value, value: option.value }, option.label)),
+        ),
+      ),
+      h('label', null, t.day,
+        h('select', { value: safeDay, onMouseDown: onFocus, onFocus, onBlur, onChange: (event) => updateField({ day: Number(event.target.value) }) },
+          dayOptions.map((optionDay) => h('option', { key: optionDay, value: optionDay }, optionDay)),
+        ),
+      ),
+    ),
+  );
+}
+
 function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChange = () => {} }) {
-  const isFa = language === 'fa';
   const todayDate = getZonedTodayDate(city.timeZone);
   const todayPersian = getPersianDatePartsFromUtc(todayDate);
+  const [calculatorMode, setCalculatorMode] = useState('convert');
   const [calendarType, setCalendarType] = useState('persian');
   const [year, setYear] = useState(todayPersian.year);
   const [month, setMonth] = useState(todayPersian.month);
   const [day, setDay] = useState(todayPersian.day);
+  const [differenceStartDate, setDifferenceStartDate] = useState(() => getCurrentDateFieldsForCalendar(todayDate, 'persian'));
+  const [differenceEndDate, setDifferenceEndDate] = useState(() => getCurrentDateFieldsForCalendar(todayDate, 'gregorian'));
   const [dateBookmarks, setDateBookmarks] = useState(getInitialDateBookmarks);
   const [selectedBookmarkId, setSelectedBookmarkId] = useState('');
   const [bookmarkTitle, setBookmarkTitle] = useState('');
@@ -1229,6 +1321,28 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
     ? Array.from({ length: 2400 - 1900 + 1 }, (_, index) => 1900 + index)
     : Array.from({ length: 1700 - 1250 + 1 }, (_, index) => 1250 + index);
   const dayOptions = Array.from({ length: daysInMonth }, (_, index) => index + 1);
+  const differenceStartUtc = getDateFromCalendarFields(differenceStartDate);
+  const differenceEndUtc = getDateFromCalendarFields(differenceEndDate);
+  const differenceEarlierDate = differenceStartUtc.getTime() <= differenceEndUtc.getTime() ? differenceStartUtc : differenceEndUtc;
+  const differenceLaterDate = differenceStartUtc.getTime() <= differenceEndUtc.getTime() ? differenceEndUtc : differenceStartUtc;
+  const differenceDistance = calculateDateDistance(differenceEarlierDate, differenceLaterDate);
+  const differenceTotalDays = Math.round(Math.abs(differenceEndUtc.getTime() - differenceStartUtc.getTime()) / dayInMilliseconds);
+  const differenceDistanceLabel = language === 'fa'
+    ? `${formatLocaleNumber(differenceDistance.years, language)} سال ${formatLocaleNumber(differenceDistance.months, language)} ماه ${formatLocaleNumber(differenceDistance.days, language)} روز`
+    : `${formatLocaleNumber(differenceDistance.years, language)}y ${formatLocaleNumber(differenceDistance.months, language)}m ${formatLocaleNumber(differenceDistance.days, language)}d`;
+
+  const resetConverterDateForCalendar = (nextCalendarType) => {
+    const nextTodayDate = getZonedTodayDate(city.timeZone);
+    const nextParts = nextCalendarType === 'gregorian'
+      ? getCalendarPartsFromUtc(nextTodayDate, 'gregorian')
+      : getPersianDatePartsFromUtc(nextTodayDate);
+
+    resetBookmarkSelection();
+    setCalendarType(nextCalendarType);
+    setYear(nextParts.year);
+    setMonth(nextParts.month);
+    setDay(nextParts.day);
+  };
 
   useEffect(() => {
     setDay((current) => Math.min(current, daysInMonth));
@@ -1436,13 +1550,27 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
       { className: 'age-converter-card', 'aria-label': t.age_converter_title },
       h('div', { className: 'age-converter-card__header' },
         h('strong', null, t.age_converter_title),
-        h('div', { className: 'age-converter-card__header-actions' },
-          h('small', null, `${t.time_in} ${isFa ? (city.localFaLabel || city.label) : city.label}`),
+      ),
+      h('label', { className: 'age-converter-card__mode' }, t.calculator_mode,
+        h('select', {
+          value: calculatorMode,
+          onMouseDown: handleFocusIn,
+          onFocus: handleFocusIn,
+          onBlur: handleFocusOut,
+          onChange: (event) => {
+            resetBookmarkSelection();
+            setCalculatorMode(event.target.value);
+          },
+        },
+        h('option', { value: 'convert' }, t.date_conversion),
+        h('option', { value: 'difference' }, t.date_difference),
         ),
       ),
+      calculatorMode === 'convert'
+        ? [
       h('div', { className: 'age-converter-card__controls' },
         h('label', null, t.calendar_type,
-          h('select', { value: calendarType, onMouseDown: handleFocusIn, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setCalendarType(event.target.value); } },
+          h('select', { value: calendarType, onMouseDown: handleFocusIn, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => resetConverterDateForCalendar(event.target.value) },
             h('option', { value: 'persian' }, t.solar_hijri),
             h('option', { value: 'gregorian' }, t.gregorian),
           ),
@@ -1478,6 +1606,17 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
           { label: t.chinese_zodiac, value: chineseZodiac },
         ] }),
       ),
+        ]
+        : h('div', { className: 'date-difference-panel' },
+          h('div', { className: 'date-difference-panel__dates' },
+            h(DateFieldSet, { title: t.start_date, value: differenceStartDate, onChange: setDifferenceStartDate, t, onFocus: handleFocusIn, onBlur: handleFocusOut }),
+            h(DateFieldSet, { title: t.end_date, value: differenceEndDate, onChange: setDifferenceEndDate, t, onFocus: handleFocusIn, onBlur: handleFocusOut }),
+          ),
+          h('div', { className: 'date-difference-panel__result' },
+            h(InfoPill, { label: t.total_days, value: `${formatLocaleNumber(differenceTotalDays, language)} ${t.days}` }),
+            h(InfoPill, { label: t.difference_result, value: differenceDistanceLabel }),
+          ),
+        ),
     ),
     h(
       'section',

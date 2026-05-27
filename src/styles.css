@@ -2144,6 +2144,21 @@ button {
 }
 .age-converter-card__header { display:flex; justify-content:space-between; align-items:center; gap:.75rem; }
 .age-converter-card__header-actions { display:flex; align-items:center; justify-content:flex-end; gap:.65rem; flex-wrap:wrap; }
+.age-converter-card__mode {
+  display: grid;
+  gap: .35rem;
+  max-width: 24rem;
+  color: #475569;
+  font-size: .85rem;
+}
+.age-converter-card__mode select {
+  min-height: 2.55rem;
+  border: 1px solid rgba(148, 163, 184, .45);
+  border-radius: .7rem;
+  padding: .5rem .65rem;
+  background: #fff;
+  font: inherit;
+}
 .date-bookmarks-card__header {
   display: flex;
   align-items: baseline;
@@ -2189,6 +2204,68 @@ button {
 .age-converter-card__result .split-pill__grid {
   height: 100%;
   align-items: center;
+}
+.date-difference-panel {
+  display: grid;
+  gap: .85rem;
+}
+.date-difference-panel__dates {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+}
+.date-field-set {
+  display: grid;
+  gap: .7rem;
+  padding: .9rem;
+  border: 1px solid rgba(148, 163, 184, .32);
+  border-radius: 1rem;
+  background: rgba(248, 250, 252, .74);
+}
+.date-field-set__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+.date-field-set__header strong {
+  color: #0f172a;
+  font-size: .95rem;
+}
+.date-field-set__header span {
+  color: #64748b;
+  font-size: .78rem;
+  line-height: 1.7;
+}
+.date-field-set__controls {
+  display: grid;
+  grid-template-columns: 1.15fr repeat(3, minmax(0, .8fr));
+  gap: .55rem;
+}
+.date-field-set__controls label {
+  display: grid;
+  min-width: 0;
+  gap: .3rem;
+  color: #475569;
+  font-size: .8rem;
+}
+.date-field-set__controls select {
+  min-width: 0;
+  min-height: 2.45rem;
+  border: 1px solid rgba(148, 163, 184, .45);
+  border-radius: .7rem;
+  padding: .48rem .58rem;
+  background: #fff;
+  font: inherit;
+}
+.date-difference-panel__result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+  gap: .75rem;
+}
+.date-difference-panel__result .info-pill {
+  min-height: 5.05rem;
 }
 .selected-bookmark-timer {
   display: grid;
@@ -2460,8 +2537,12 @@ button {
   color: #7f1d1d;
 }
 @media (max-width: 900px) {
+  .age-converter-card__mode { max-width: 100%; }
   .age-converter-card__controls { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .age-converter-card__result { grid-template-columns: 1fr; }
+  .date-difference-panel__dates,
+  .date-difference-panel__result { grid-template-columns: 1fr; }
+  .date-field-set__controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .selected-bookmark-timer__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .date-bookmark-form { grid-template-columns: 1fr; }
   .age-converter-card__header { align-items:flex-start; flex-direction:column; }
