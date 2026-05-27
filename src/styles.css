@@ -119,6 +119,25 @@ button {
   color: #fff;
 }
 
+.clock-focus-button {
+  min-height: 2.24rem;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  border-radius: 0.75rem;
+  padding: 0.25rem 0.78rem;
+  background: rgba(255, 255, 255, 0.78);
+  color: #334155;
+  cursor: pointer;
+  font-weight: 850;
+}
+
+.clock-focus-button:hover,
+.clock-focus-button:focus-visible {
+  border-color: rgba(37, 99, 235, 0.48);
+  background: #0f172a;
+  color: #fff;
+  outline: none;
+}
+
 .page-shell--rtl {
   direction: rtl;
 }
@@ -220,6 +239,14 @@ button {
   align-items: stretch;
 }
 
+.split-pill--three .split-pill__grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.split-pill--many .split-pill__grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .split-pill__item {
   display: grid;
   gap: 0.28rem;
@@ -252,6 +279,16 @@ button {
   letter-spacing: 0.02em;
   overflow-wrap: normal;
   white-space: nowrap;
+}
+
+.split-pill--three:not(.split-pill--wide) .split-pill__item small {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.split-pill--many:not(.split-pill--wide) .split-pill__item small {
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .split-pill__item strong {
@@ -1940,6 +1977,88 @@ button {
   width: min(100%, 1440px);
 }
 
+.hero-panel:fullscreen {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  align-content: center;
+  justify-items: center;
+  gap: clamp(1.25rem, 4vw, 3rem);
+  padding: clamp(1.25rem, 5vw, 4rem);
+  border: 0;
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(30, 41, 59, .7), rgba(2, 6, 23, .96) 48%, #000 100%),
+    #020617;
+  color: #f8fafc;
+}
+
+.hero-panel:fullscreen::backdrop {
+  background: #000;
+}
+
+.hero-panel:fullscreen .top-bar {
+  justify-content: center;
+  width: min(100%, 78rem);
+}
+
+.hero-panel:fullscreen .hero-meta {
+  display: none;
+}
+
+.hero-panel:fullscreen .top-bar__controls {
+  position: absolute;
+  inset-block-start: clamp(1rem, 3vw, 2rem);
+  inset-inline-end: clamp(1rem, 3vw, 2rem);
+  display: inline-flex;
+  margin: 0;
+}
+
+.hero-panel:fullscreen .language-picker {
+  display: none;
+}
+
+.hero-panel:fullscreen .clock-focus-button {
+  min-height: 2.5rem;
+  border-color: rgba(226, 232, 240, .72);
+  background: rgba(248, 250, 252, .94);
+  color: #0f172a;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, .12), 0 10px 30px rgba(0, 0, 0, .28);
+}
+
+.hero-panel:fullscreen .eyebrow {
+  margin: 0;
+  color: #e5edf8;
+  text-align: center;
+  font-size: clamp(1.45rem, 4vw, 3.35rem);
+  font-weight: 900;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .88);
+}
+
+.hero-panel:fullscreen .eyebrow strong {
+  color: #ffffff;
+}
+
+.hero-panel:fullscreen .hero-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  width: min(100%, 88rem);
+}
+
+.hero-panel:fullscreen .clock {
+  padding: 0;
+  color: #f9fbff;
+  text-align: center;
+  font-size: clamp(5.5rem, 18vw, 17rem);
+  letter-spacing: -0.055em;
+  line-height: .86;
+  text-shadow:
+    0 .035em 0 rgba(96, 165, 250, .24),
+    0 0 22px rgba(226, 232, 240, .2),
+    0 18px 60px rgba(0, 0, 0, .72);
+}
+
 @media (max-height: 760px) and (min-width: 981px) {
   .monthly-calendars--synced {
     --synced-calendar-height: calc(100vh - 2rem);
@@ -2187,23 +2306,132 @@ button {
   background: #2563eb;
   outline: none;
 }
+.solar-year-card {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 2rem;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.86);
+  padding: 1.2rem;
+  display: grid;
+  gap: 1rem;
+}
+.solar-year-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .9rem;
+  flex-wrap: wrap;
+}
+.solar-year-card__header div {
+  display: grid;
+  gap: .22rem;
+}
+.solar-year-card__header span {
+  color: #64748b;
+  font-size: .82rem;
+  font-weight: 750;
+}
+.solar-year-card__header select {
+  min-height: 2.55rem;
+  min-width: 10rem;
+  border: 1px solid rgba(148, 163, 184, .45);
+  border-radius: .7rem;
+  padding: .5rem .65rem;
+  background: #fff;
+  font: inherit;
+}
+.solar-year-card__body {
+  display: grid;
+  grid-template-columns: minmax(8rem, .65fr) minmax(15rem, 1.25fr) minmax(14rem, 1.05fr) minmax(18rem, 1.45fr);
+  gap: .75rem;
+  align-items: stretch;
+}
+.solar-year-card__year {
+  display: grid;
+  align-content: center;
+  gap: .35rem;
+  min-height: 5.05rem;
+  padding: .78rem .9rem;
+  border: 1px solid rgba(37, 99, 235, .18);
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(239, 246, 255, .95), rgba(255, 255, 255, .78));
+}
+.solar-year-card__year span {
+  color: #64748b;
+  font-size: .72rem;
+  font-weight: 850;
+}
+.solar-year-card__year strong {
+  color: #0f172a;
+  font-size: clamp(1.55rem, 2.6vw, 2.35rem);
+  line-height: 1;
+}
 .age-converter-card__controls { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:.75rem; }
 .age-converter-card__controls label { display:grid; gap:.35rem; color:#475569; font-size:.85rem; }
 .age-converter-card__controls input,
 .age-converter-card__controls select { border:1px solid rgba(148,163,184,.45); border-radius:.7rem; padding:.5rem .6rem; font:inherit; background:#fff; }
 .age-converter-card__result {
   display:grid;
-  grid-template-columns: minmax(17rem, 1.35fr) minmax(11rem, .85fr) minmax(15rem, 1.1fr) minmax(14rem, 1fr);
-  gap:.75rem;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap:.6rem;
   align-items: stretch;
+}
+.age-converter-card__result > :nth-child(1),
+.age-converter-card__result > :nth-child(2),
+.age-converter-card__result > :nth-child(3),
+.age-converter-card__result > :nth-child(5) {
+  grid-column: span 2;
+}
+.age-converter-card__result > :nth-child(4) {
+  grid-column: span 4;
 }
 .age-converter-card__result .info-pill,
 .age-converter-card__result .split-pill {
-  min-height: 5.05rem;
+  min-height: 4.55rem;
+  gap: .24rem;
+  padding: .62rem .72rem;
+}
+.age-converter-card__result .info-pill span {
+  font-size: clamp(.44rem, .5vw, .53rem);
+  letter-spacing: .015em;
+  line-height: 1.05;
+}
+.age-converter-card__result .info-pill strong {
+  overflow: hidden;
+  max-width: 100%;
+  font-size: clamp(.7rem, .8vw, .86rem);
+  line-height: 1.08;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .age-converter-card__result .split-pill__grid {
   height: 100%;
   align-items: center;
+}
+.age-converter-card__result .split-pill__item {
+  gap: .16rem;
+}
+.age-converter-card__result .split-pill__item + .split-pill__item {
+  margin-inline-start: .24rem;
+  padding-inline-start: .24rem;
+}
+.age-converter-card__result .split-pill__item small {
+  font-size: clamp(.36rem, .44vw, .44rem);
+  letter-spacing: 0;
+  line-height: 1;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.age-converter-card__result .split-pill__item strong {
+  overflow: hidden;
+  max-width: 100%;
+  font-size: clamp(.68rem, .76vw, .82rem);
+  line-height: 1.08;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .date-difference-panel {
   display: grid;
@@ -2374,9 +2602,96 @@ button {
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit span {
   font-size: clamp(.9rem, 1.3vw, 1.3rem);
 }
+.bookmark-effect {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+.selected-bookmark-timer:not(:fullscreen) .bookmark-effect {
+  display: none;
+}
+.bookmark-effect span {
+  position: absolute;
+  left: var(--x);
+  animation-delay: var(--delay);
+  animation-duration: var(--duration);
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(.16, .68, .43, 1);
+}
+.bookmark-effect--color_ribbons span,
+.bookmark-effect--black_ribbons span {
+  top: -12vh;
+  width: clamp(.42rem, .8vw, .85rem);
+  height: clamp(1.4rem, 2.8vw, 2.65rem);
+  border-radius: .16rem;
+  transform: rotate(calc(var(--i) * 9deg));
+  animation-name: bookmark-ribbon-fall;
+}
+.bookmark-effect--color_ribbons span:nth-child(6n + 1) { background: #ef4444; }
+.bookmark-effect--color_ribbons span:nth-child(6n + 2) { background: #f59e0b; }
+.bookmark-effect--color_ribbons span:nth-child(6n + 3) { background: #22c55e; }
+.bookmark-effect--color_ribbons span:nth-child(6n + 4) { background: #06b6d4; }
+.bookmark-effect--color_ribbons span:nth-child(6n + 5) { background: #3b82f6; }
+.bookmark-effect--color_ribbons span:nth-child(6n + 6) { background: #d946ef; }
+.bookmark-effect--black_ribbons span:nth-child(3n + 1) { background: #020617; }
+.bookmark-effect--black_ribbons span:nth-child(3n + 2) { background: #334155; }
+.bookmark-effect--black_ribbons span:nth-child(3n + 3) { background: #64748b; }
+.bookmark-effect--balloons span {
+  bottom: -16vh;
+  width: clamp(2.2rem, 4vw, 4.1rem);
+  height: clamp(2.8rem, 5vw, 5.1rem);
+  border-radius: 52% 52% 48% 48%;
+  background: #38bdf8;
+  box-shadow: inset -.55rem -.75rem 0 rgba(15, 23, 42, .12), 0 1.2rem 2.2rem rgba(15, 23, 42, .12);
+  animation-name: bookmark-balloon-rise;
+}
+.bookmark-effect--balloons span::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 1px;
+  height: clamp(2.4rem, 5vw, 4.8rem);
+  background: rgba(71, 85, 105, .5);
+}
+.bookmark-effect--balloons span:nth-child(6n + 1) { background: #f87171; }
+.bookmark-effect--balloons span:nth-child(6n + 2) { background: #fbbf24; }
+.bookmark-effect--balloons span:nth-child(6n + 3) { background: #4ade80; }
+.bookmark-effect--balloons span:nth-child(6n + 4) { background: #60a5fa; }
+.bookmark-effect--balloons span:nth-child(6n + 5) { background: #c084fc; }
+.bookmark-effect--balloons span:nth-child(6n + 6) { background: #fb7185; }
+@keyframes bookmark-ribbon-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+  12% { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift), 115vh, 0) rotate(var(--spin));
+  }
+}
+@keyframes bookmark-balloon-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 10vh, 0) scale(.82);
+  }
+  14% { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift), -118vh, 0) scale(1.05);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bookmark-effect span {
+    animation-duration: 1ms;
+  }
+}
 .date-bookmark-form {
   display: grid;
-  grid-template-columns: minmax(13rem, .8fr) minmax(16rem, 1.2fr) auto;
+  grid-template-columns: minmax(12rem, .78fr) minmax(16rem, 1.16fr) minmax(12rem, .68fr) auto;
   align-items: end;
   gap: .7rem;
   min-width: 0;
@@ -2396,6 +2711,8 @@ button {
 .date-bookmark-form textarea,
 .date-bookmark__title-input,
 .date-bookmark__description-input,
+.date-bookmark-form select,
+.date-bookmark__effect-input select,
 .date-bookmark__edit-date-fields select {
   width: 100%;
   border: 1px solid rgba(148, 163, 184, .48);
@@ -2404,6 +2721,14 @@ button {
   font: inherit;
   background: #fff;
   resize: vertical;
+}
+.date-bookmark__effect-input {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: .35rem;
+  min-width: 0;
+  color: #475569;
+  font-size: .85rem;
 }
 .date-bookmark__edit-date-panel {
   display: grid;
@@ -2594,9 +2919,14 @@ button {
   color: #7f1d1d;
 }
 @media (max-width: 900px) {
+  .solar-year-card__body { grid-template-columns: 1fr; }
+  .solar-year-card__header { align-items:flex-start; flex-direction:column; }
+  .solar-year-card__header select { width: 100%; }
+  .split-pill--many .split-pill__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .age-converter-card__mode { max-width: 100%; }
   .age-converter-card__controls { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .age-converter-card__result { grid-template-columns: 1fr; }
+  .age-converter-card__result > :nth-child(n) { grid-column: 1 / -1; }
   .date-difference-panel__dates,
   .date-difference-panel__result { grid-template-columns: 1fr; }
   .date-field-set__controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }

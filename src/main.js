@@ -11,6 +11,7 @@ import islamicShiaOccasions from './data/calendar-files/islamic-shia-occasions-s
 import islamicSunniOccasions from './data/calendar-files/islamic-sunni-occasions-simple-max.json' with { type: 'json' };
 import islamicSharedOccasions from './data/calendar-files/islamic-shared-occasions-simple-max.json' with { type: 'json' };
 import yearOptionsData from './data/year-options.json' with { type: 'json' };
+import solarYearMomentsData from './data/solar-year-moments.json' with { type: 'json' };
 import i18n from './data/i18n.json' with { type: 'json' };
 import cityTranslationsFa from './data/city-translations-fa.json' with { type: 'json' };
 import occasionDescriptions from './data/occasion-descriptions.json' with { type: 'json' };
@@ -37,6 +38,11 @@ const savedOccasionFiltersKey = 'time-app-occasion-filters';
 const savedDateBookmarksKey = 'time-app-date-bookmarks';
 const userCitiesCustomizedKey = 'time-app-cities-customized';
 const defaultNtpHost = 'ntp.time.ir';
+const bookmarkEffectIds = ['none', 'color_ribbons', 'balloons', 'black_ribbons'];
+
+function normalizeBookmarkEffect(value) {
+  return bookmarkEffectIds.includes(value) ? value : 'none';
+}
 
 function getInitialLanguage() {
   const saved = localStorage.getItem(savedLanguageKey);
@@ -147,6 +153,7 @@ function getInitialDateBookmarks() {
         month: Number(bookmark.month),
         day: Number(bookmark.day),
         dateKey: String(bookmark.dateKey || ''),
+        effect: normalizeBookmarkEffect(bookmark.effect),
         createdAt: String(bookmark.createdAt || ''),
         updatedAt: String(bookmark.updatedAt || ''),
       }))
@@ -598,12 +605,64 @@ function getDaysInPersianMonth(year, month) {
 }
 
 
-const zodiacAnimalsEn = ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
-const zodiacAnimalsFa = ['موش', 'گاو', 'ببر', 'خرگوش', 'اژدها', 'مار', 'اسب', 'گوسفند', 'میمون', 'خروس', 'سگ', 'خوک'];
+const chineseZodiacAnimalsEn = ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat / Sheep', 'Monkey', 'Rooster', 'Dog', 'Pig'];
+const chineseZodiacAnimalsFa = ['موش', 'گاو', 'ببر', 'خرگوش', 'اژدها', 'مار', 'اسب', 'بز / گوسفند', 'میمون', 'خروس', 'سگ', 'خوک'];
+const iranianYearAnimalsEn = ['Rat', 'Ox', 'Tiger / Leopard', 'Rabbit', 'Dragon / Whale', 'Snake', 'Horse', 'Sheep', 'Monkey', 'Rooster / Hen', 'Dog', 'Pig'];
+const iranianYearAnimalsFa = ['موش', 'گاو', 'پلنگ / ببر', 'خرگوش', 'نهنگ / اژدها', 'مار', 'اسب', 'گوسفند', 'میمون', 'مرغ / خروس', 'سگ', 'خوک'];
+const solarMonthNamesEn = ['Farvardin', 'Ordibehesht', 'Khordad', 'Tir', 'Mordad', 'Shahrivar', 'Mehr', 'Aban', 'Azar', 'Dey', 'Bahman', 'Esfand'];
+const solarMonthNamesFa = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+const gregorianMonthNamesEn = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const gregorianMonthNamesFa = ['ژانویه', 'فوریه', 'مارس', 'آوریل', 'مه', 'ژوئن', 'ژوئیه', 'اوت', 'سپتامبر', 'اکتبر', 'نوامبر', 'دسامبر'];
+const solarZodiacSignsEn = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+const solarZodiacSignsFa = ['حمل', 'ثور', 'جوزا', 'سرطان', 'اسد', 'سنبله', 'میزان', 'عقرب', 'قوس', 'جدی', 'دلو', 'حوت'];
+const westernZodiacEquivalentsEn = ['Aries / Ram', 'Taurus / Bull', 'Gemini / Twins', 'Cancer / Crab', 'Leo / Lion', 'Virgo / Maiden', 'Libra / Scales', 'Scorpio / Scorpion', 'Sagittarius / Archer', 'Capricorn / Goat', 'Aquarius / Water Bearer', 'Pisces / Fish'];
+const westernZodiacEquivalentsFa = ['Aries / قوچ', 'Taurus / گاو', 'Gemini / دوپیکر', 'Cancer / خرچنگ', 'Leo / شیر', 'Virgo / خوشه', 'Libra / ترازو', 'Scorpio / کژدم', 'Sagittarius / کمان', 'Capricorn / بزغاله', 'Aquarius / آبریز', 'Pisces / ماهی'];
 
-function getZodiacAnimal(year, language = 'en') {
-  const normalized = ((year - 4) % 12 + 12) % 12;
-  return language === 'fa' ? zodiacAnimalsFa[normalized] : zodiacAnimalsEn[normalized];
+function getCycleIndex(year, baseYear) {
+  return ((year - baseYear) % 12 + 12) % 12;
+}
+
+function getSolarZodiacDetails(month, language = 'en') {
+  const index = Math.max(0, Math.min(month - 1, solarZodiacSignsEn.length - 1));
+
+  return {
+    month: language === 'fa' ? solarMonthNamesFa[index] : solarMonthNamesEn[index],
+    sign: language === 'fa' ? solarZodiacSignsFa[index] : solarZodiacSignsEn[index],
+    western: language === 'fa' ? westernZodiacEquivalentsFa[index] : westernZodiacEquivalentsEn[index],
+  };
+}
+
+function getGregorianMonthName(month, language = 'en') {
+  const index = Math.max(0, Math.min(month - 1, gregorianMonthNamesEn.length - 1));
+  return language === 'fa' ? gregorianMonthNamesFa[index] : gregorianMonthNamesEn[index];
+}
+
+function getIranianYearAnimal(year, language = 'en') {
+  const animals = language === 'fa' ? iranianYearAnimalsFa : iranianYearAnimalsEn;
+  return animals[getCycleIndex(year, 1399)];
+}
+
+function getChineseRelatedYear(date) {
+  try {
+    const parts = new Intl.DateTimeFormat('en-u-ca-chinese', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      timeZone: 'UTC',
+    }).formatToParts(date);
+    const relatedYear = parts.find((part) => part.type === 'relatedYear')?.value;
+
+    if (relatedYear) return Number(relatedYear);
+  } catch {
+    // Fall back to Gregorian year if the runtime does not support the Chinese calendar.
+  }
+
+  return date.getUTCFullYear();
+}
+
+function getChineseZodiacAnimal(date, language = 'en') {
+  const animals = language === 'fa' ? chineseZodiacAnimalsFa : chineseZodiacAnimalsEn;
+  return animals[getCycleIndex(getChineseRelatedYear(date), 4)];
 }
 
 function isGregorianLeapYear(year) {
@@ -1144,6 +1203,40 @@ function getDateKeyMidnightUtc(dateKey, timeZone) {
   return zonedDateTimeToUtc({ year, month, day, hour: 0, minute: 0, second: 0 }, timeZone);
 }
 
+function getCalendarDateKeyForParts(calendarType, year, month, day) {
+  const date = calendarType === 'gregorian'
+    ? new Date(Date.UTC(year, month - 1, day, 12))
+    : findGregorianDateForPersianDate(year, month, day);
+
+  return getCalendarDateKey(date);
+}
+
+function getBookmarkAnniversaryTargetUtc(bookmark, fromDate, timeZone) {
+  const originalTarget = getDateKeyMidnightUtc(bookmark.dateKey, timeZone);
+  const effectGraceMilliseconds = 10000;
+  if (originalTarget.getTime() >= fromDate.getTime() || fromDate.getTime() - originalTarget.getTime() <= effectGraceMilliseconds) {
+    return originalTarget;
+  }
+
+  const localParts = getZonedDateTimeParts(fromDate, timeZone);
+  const currentCalendarParts = bookmark.calendarType === 'gregorian'
+    ? { year: localParts.year }
+    : getPersianDateParts(fromDate, timeZone);
+
+  const getCandidate = (targetYear) => {
+    const maxDay = bookmark.calendarType === 'gregorian'
+      ? getDaysInGregorianMonth(targetYear, bookmark.month)
+      : getDaysInPersianMonth(targetYear, bookmark.month);
+    const dateKey = getCalendarDateKeyForParts(bookmark.calendarType, targetYear, bookmark.month, Math.min(bookmark.day, maxDay));
+    return getDateKeyMidnightUtc(dateKey, timeZone);
+  };
+
+  const candidate = getCandidate(currentCalendarParts.year);
+  return candidate.getTime() >= fromDate.getTime() || fromDate.getTime() - candidate.getTime() <= effectGraceMilliseconds
+    ? candidate
+    : getCandidate(currentCalendarParts.year + 1);
+}
+
 function getPreciseZonedDistance(fromDate, targetDate, timeZone) {
   const isFuture = targetDate.getTime() >= fromDate.getTime();
   const earlierDate = isFuture ? fromDate : targetDate;
@@ -1279,6 +1372,125 @@ function DateFieldSet({ className = '', title, value, onChange, t, onFocus, onBl
   );
 }
 
+const solarYearMomentRecords = [...solarYearMomentsData.moments].sort((first, second) => new Date(first.instantUtc).getTime() - new Date(second.instantUtc).getTime());
+
+function getNearestSolarYearMoment(now) {
+  return solarYearMomentRecords.find((record) => new Date(record.instantUtc).getTime() > now.getTime()) || solarYearMomentRecords[solarYearMomentRecords.length - 1];
+}
+
+function hasOfficialSolarYearMomentPrecision(record, date) {
+  return record.precision === 'official' || record.officialSecondConfirmed === true || date.getUTCSeconds() !== 0;
+}
+
+function formatYearNumber(value, language = 'en') {
+  const locale = language === 'fa' ? 'fa-IR' : 'en-US';
+  return new Intl.NumberFormat(locale, { useGrouping: false }).format(value);
+}
+
+function formatTwoDigitNumber(value, language = 'en') {
+  const locale = language === 'fa' ? 'fa-IR' : 'en-US';
+  return new Intl.NumberFormat(locale, { minimumIntegerDigits: 2, useGrouping: false }).format(value);
+}
+
+function formatZonedMoment(date, timeZone, language = 'en') {
+  return new Intl.DateTimeFormat(language === 'fa' ? 'fa-IR' : 'en-US', {
+    timeZone,
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).format(date);
+}
+
+function formatUtcMoment(date, language = 'en') {
+  return [
+    `${formatYearNumber(date.getUTCFullYear(), language)}/${formatTwoDigitNumber(date.getUTCMonth() + 1, language)}/${formatTwoDigitNumber(date.getUTCDate(), language)}`,
+    `${formatTwoDigitNumber(date.getUTCHours(), language)}:${formatTwoDigitNumber(date.getUTCMinutes(), language)}:${formatTwoDigitNumber(date.getUTCSeconds(), language)}`,
+  ].join(' ');
+}
+
+function getDurationParts(milliseconds) {
+  let seconds = Math.max(0, Math.floor(Math.abs(milliseconds) / 1000));
+  const days = Math.floor(seconds / 86400);
+  seconds -= days * 86400;
+  const hours = Math.floor(seconds / 3600);
+  seconds -= hours * 3600;
+  const minutes = Math.floor(seconds / 60);
+  seconds -= minutes * 60;
+
+  return { days, hours, minutes, seconds };
+}
+
+function SolarYearMomentCard({ now, t, language }) {
+  const nextMoment = getNearestSolarYearMoment(now);
+  const [selectedYear, setSelectedYear] = useState(nextMoment.persianYear);
+  const selectedMoment = solarYearMomentRecords.find((record) => record.persianYear === Number(selectedYear)) || nextMoment;
+  const selectedDate = new Date(selectedMoment.instantUtc);
+  const remainingMilliseconds = selectedDate.getTime() - now.getTime();
+  const durationParts = getDurationParts(remainingMilliseconds);
+  const durationTitle = remainingMilliseconds >= 0 ? t.time_remaining : t.time_elapsed;
+  const precisionLabel = hasOfficialSolarYearMomentPrecision(selectedMoment, selectedDate) ? t.official_precision : t.minute_precision;
+
+  return h(
+    'section',
+    { className: 'solar-year-card', 'aria-label': t.solar_year_moment_title },
+    h('div', { className: 'solar-year-card__header' },
+      h('div', null,
+        h('strong', null, t.solar_year_moment_title),
+        h('span', null, `${t.data_precision}: ${precisionLabel}`),
+      ),
+      h('select', {
+        value: selectedMoment.persianYear,
+        'aria-label': t.solar_year_select,
+        onChange: (event) => setSelectedYear(Number(event.target.value)),
+      },
+      solarYearMomentRecords.map((record) => h(
+        'option',
+        { key: record.persianYear, value: record.persianYear },
+        `${formatYearNumber(record.persianYear, language)} / ${formatYearNumber(record.gregorianYear, language)}`,
+      )),
+      ),
+    ),
+    h('div', { className: 'solar-year-card__body' },
+      h('div', { className: 'solar-year-card__year' },
+        h('span', null, t.solar_year),
+        h('strong', null, formatYearNumber(selectedMoment.persianYear, language)),
+      ),
+      h(InfoPill, { label: t.iran_time, value: formatZonedMoment(selectedDate, solarYearMomentsData.timeZone, language) }),
+      h(InfoPill, { label: t.utc_time, value: formatUtcMoment(selectedDate, language) }),
+      h(SplitPill, { label: durationTitle, items: [
+        { label: t.days, value: formatLocaleNumber(durationParts.days, language) },
+        { label: t.hour, value: formatLocaleNumber(durationParts.hours, language) },
+        { label: t.minute, value: formatLocaleNumber(durationParts.minutes, language) },
+        { label: t.second, value: formatLocaleNumber(durationParts.seconds, language) },
+      ] }),
+    ),
+  );
+}
+
+function BookmarkEffectOverlay({ effect }) {
+  const items = Array.from({ length: effect === 'balloons' ? 18 : 46 }, (_, index) => index);
+
+  return h(
+    'div',
+    { className: `bookmark-effect bookmark-effect--${effect}`, 'aria-hidden': 'true' },
+    items.map((index) => h('span', {
+      key: index,
+      style: {
+        '--i': String(index),
+        '--x': `${(index * 37) % 100}%`,
+        '--delay': `${(index % 12) * 0.08}s`,
+        '--duration': `${3.4 + (index % 7) * 0.22}s`,
+        '--spin': `${(index % 2 ? 1 : -1) * (140 + (index % 9) * 20)}deg`,
+        '--drift': `${((index % 7) - 3) * 2}vw`,
+      },
+    })),
+  );
+}
+
 function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChange = () => {} }) {
   const todayDate = getZonedTodayDate(city.timeZone);
   const todayPersian = getPersianDatePartsFromUtc(todayDate);
@@ -1293,10 +1505,12 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
   const [selectedBookmarkId, setSelectedBookmarkId] = useState('');
   const [bookmarkTitle, setBookmarkTitle] = useState('');
   const [bookmarkDescription, setBookmarkDescription] = useState('');
+  const [bookmarkEffect, setBookmarkEffect] = useState('none');
   const [activeBookmarkActionsId, setActiveBookmarkActionsId] = useState('');
   const [editingBookmarkId, setEditingBookmarkId] = useState('');
   const [editingBookmarkTitle, setEditingBookmarkTitle] = useState('');
   const [editingBookmarkDescription, setEditingBookmarkDescription] = useState('');
+  const [editingBookmarkEffect, setEditingBookmarkEffect] = useState('none');
   const [editingBookmarkCalendarType, setEditingBookmarkCalendarType] = useState('persian');
   const [editingBookmarkYear, setEditingBookmarkYear] = useState(todayPersian.year);
   const [editingBookmarkMonth, setEditingBookmarkMonth] = useState(todayPersian.month);
@@ -1305,6 +1519,9 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
   const [bookmarkNow, setBookmarkNow] = useState(() => new Date(Date.now() + timeOffset));
   const [isConverterPickerActive, setIsConverterPickerActive] = useState(false);
   const [isBookmarkTimerFullscreen, setIsBookmarkTimerFullscreen] = useState(false);
+  const [bookmarkEffectWatch, setBookmarkEffectWatch] = useState(null);
+  const [firedBookmarkEffectKey, setFiredBookmarkEffectKey] = useState('');
+  const [activeBookmarkEffect, setActiveBookmarkEffect] = useState(null);
   const handleFocusIn = () => {
     setIsConverterPickerActive(true);
     onInteractionChange(true);
@@ -1315,6 +1532,12 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
       onInteractionChange(false);
     }
   };
+  const bookmarkEffectOptions = [
+    { id: 'none', label: t.bookmark_effect_none },
+    { id: 'color_ribbons', label: t.bookmark_effect_color_ribbons },
+    { id: 'balloons', label: t.bookmark_effect_balloons },
+    { id: 'black_ribbons', label: t.bookmark_effect_black_ribbons },
+  ];
 
   const monthOptions = calendarType === 'gregorian' ? getCalendarMonthOptions('gregorian') : getCalendarMonthOptions('persian');
   const daysInMonth = calendarType === 'gregorian' ? getDaysInGregorianMonth(year, month) : getDaysInPersianMonth(year, month);
@@ -1418,13 +1641,16 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
   const leapYearLabel = calendarType === 'gregorian'
     ? (isGregorianLeapYear(gregorianParts.year) ? t.yes : t.no)
     : (isPersianLeapYear(persianParts.year) ? t.yes : t.no);
-  const iranZodiac = getZodiacAnimal(persianParts.year, language);
-  const chineseZodiac = getZodiacAnimal(gregorianParts.year, language);
+  const solarZodiacDetails = getSolarZodiacDetails(persianParts.month, language);
+  const gregorianMonthName = getGregorianMonthName(gregorianParts.month, language);
+  const iranianYearAnimal = getIranianYearAnimal(persianParts.year, language);
+  const chineseZodiac = getChineseZodiacAnimal(convertedDate, language);
   const selectedBookmark = dateBookmarks.find((bookmark) => bookmark.id === selectedBookmarkId);
   useEffect(() => {
     if (!selectedBookmark) return;
     setBookmarkTitle(selectedBookmark.title);
     setBookmarkDescription(selectedBookmark.description || '');
+    setBookmarkEffect(normalizeBookmarkEffect(selectedBookmark.effect));
   }, [selectedBookmark]);
   const selectedBookmarkTimer = selectedBookmark
     ? getPreciseZonedDistance(bookmarkNow, getDateKeyMidnightUtc(selectedBookmark.dateKey, city.timeZone), city.timeZone)
@@ -1434,6 +1660,39 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
       ? `${selectedBookmarkTimer.isFuture ? t.time_remaining : t.time_elapsed} برای ${selectedBookmark.title}`
       : `${selectedBookmarkTimer.isFuture ? t.time_remaining : t.time_elapsed} for ${selectedBookmark.title}`
     : '';
+  useEffect(() => {
+    if (!activeBookmarkEffect) return undefined;
+
+    const timer = window.setTimeout(() => setActiveBookmarkEffect(null), 6200);
+    return () => window.clearTimeout(timer);
+  }, [activeBookmarkEffect]);
+
+  useEffect(() => {
+    if (!selectedBookmark || !isBookmarkTimerFullscreen || normalizeBookmarkEffect(selectedBookmark.effect) === 'none') {
+      setBookmarkEffectWatch(null);
+      return;
+    }
+
+    const targetDate = getBookmarkAnniversaryTargetUtc(selectedBookmark, bookmarkNow, city.timeZone);
+    const targetTime = targetDate.getTime();
+    const remainingMilliseconds = targetTime - bookmarkNow.getTime();
+    const effect = normalizeBookmarkEffect(selectedBookmark.effect);
+    const effectKey = `${selectedBookmark.id}:${targetTime}:${effect}`;
+    const crossedZero = bookmarkEffectWatch?.key === effectKey
+      ? bookmarkEffectWatch.remainingMilliseconds > 0 && remainingMilliseconds <= 0
+      : remainingMilliseconds <= 0 && remainingMilliseconds > -1500;
+
+    if (crossedZero && firedBookmarkEffectKey !== effectKey) {
+      setFiredBookmarkEffectKey(effectKey);
+      setActiveBookmarkEffect({ id: effect, key: `${effectKey}:${Date.now()}` });
+    }
+
+    setBookmarkEffectWatch((current) => (
+      current?.key === effectKey && current.remainingMilliseconds === remainingMilliseconds
+        ? current
+        : { key: effectKey, remainingMilliseconds }
+    ));
+  }, [bookmarkNow, bookmarkEffectWatch, city.timeZone, firedBookmarkEffectKey, isBookmarkTimerFullscreen, selectedBookmark]);
   const timeDistanceLabel = language === 'fa'
     ? `${formatLocaleNumber(timeDistance.years, language)} سال ${formatLocaleNumber(timeDistance.months, language)} ماه ${formatLocaleNumber(timeDistance.days, language)} روز`
     : `${formatLocaleNumber(timeDistance.years, language)}y ${formatLocaleNumber(timeDistance.months, language)}m ${formatLocaleNumber(timeDistance.days, language)}d`;
@@ -1449,6 +1708,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
     month,
     day,
     dateKey: currentDateKey,
+    effect: normalizeBookmarkEffect(bookmarkEffect),
     createdAt,
     updatedAt: new Date().toISOString(),
   });
@@ -1481,6 +1741,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
     setConfirmingDeleteId('');
     setBookmarkTitle(nextBookmark.title);
     setBookmarkDescription(nextBookmark.description);
+    setBookmarkEffect(normalizeBookmarkEffect(nextBookmark.effect));
   };
 
   const selectBookmark = (bookmark) => {
@@ -1491,6 +1752,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
     setSelectedBookmarkId(bookmark.id);
     setBookmarkTitle(bookmark.title);
     setBookmarkDescription(bookmark.description || '');
+    setBookmarkEffect(normalizeBookmarkEffect(bookmark.effect));
     setEditingBookmarkId('');
     setConfirmingDeleteId('');
   };
@@ -1502,6 +1764,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
     setEditingBookmarkId(bookmark.id);
     setEditingBookmarkTitle(bookmark.title);
     setEditingBookmarkDescription(bookmark.description || '');
+    setEditingBookmarkEffect(normalizeBookmarkEffect(bookmark.effect));
     setEditingBookmarkCalendarType(bookmark.calendarType);
     setEditingBookmarkYear(bookmark.year);
     setEditingBookmarkMonth(bookmark.month);
@@ -1529,6 +1792,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
           month: editingBookmarkMonth,
           day: nextDay,
           dateKey: nextDateKey,
+          effect: normalizeBookmarkEffect(editingBookmarkEffect),
           updatedAt: new Date().toISOString(),
         }
         : item
@@ -1540,6 +1804,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
     setSelectedBookmarkId(bookmark.id);
     setBookmarkTitle(nextTitle);
     setBookmarkDescription(nextDescription);
+    setBookmarkEffect(normalizeBookmarkEffect(editingBookmarkEffect));
     setEditingBookmarkId('');
   };
 
@@ -1555,6 +1820,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
     setSelectedBookmarkId(bookmark.id);
     setBookmarkTitle(nextBookmark.title);
     setBookmarkDescription(nextBookmark.description);
+    setBookmarkEffect(normalizeBookmarkEffect(nextBookmark.effect));
     setEditingBookmarkId('');
     setActiveBookmarkActionsId('');
     setConfirmingDeleteId('');
@@ -1582,20 +1848,21 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
       { className: 'age-converter-card', 'aria-label': t.age_converter_title },
       h('div', { className: 'age-converter-card__header' },
         h('strong', null, t.age_converter_title),
-      ),
-      h('label', { className: 'age-converter-card__mode' }, t.calculator_mode,
-        h('select', {
-          value: calculatorMode,
-          onMouseDown: handleFocusIn,
-          onFocus: handleFocusIn,
-          onBlur: handleFocusOut,
-          onChange: (event) => {
-            resetBookmarkSelection();
-            setCalculatorMode(event.target.value);
+        h('label', { className: 'age-converter-card__mode' },
+          h('select', {
+            value: calculatorMode,
+            'aria-label': t.calculator_mode,
+            onMouseDown: handleFocusIn,
+            onFocus: handleFocusIn,
+            onBlur: handleFocusOut,
+            onChange: (event) => {
+              resetBookmarkSelection();
+              setCalculatorMode(event.target.value);
+            },
           },
-        },
-        h('option', { value: 'convert' }, t.date_conversion),
-        h('option', { value: 'difference' }, t.date_difference),
+          h('option', { value: 'convert' }, t.date_conversion),
+          h('option', { value: 'difference' }, t.date_difference),
+          ),
         ),
       ),
       calculatorMode === 'convert'
@@ -1633,8 +1900,14 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
           { label: t.weekday, value: weekdayLabel },
           { label: t.leap_year, value: leapYearLabel },
         ] }),
-        h(SplitPill, { label: t.zodiac, items: [
-          { label: t.iran_zodiac, value: iranZodiac },
+        h(SplitPill, { label: t.solar_zodiac_details, items: [
+          { label: t.gregorian_month, value: gregorianMonthName },
+          { label: t.solar_month, value: solarZodiacDetails.month },
+          { label: t.persian_zodiac_name, value: solarZodiacDetails.sign },
+          { label: t.western_zodiac, value: solarZodiacDetails.western },
+        ] }),
+        h(SplitPill, { label: t.animal_years, items: [
+          { label: t.iranian_year_animal, value: iranianYearAnimal },
           { label: t.chinese_zodiac, value: chineseZodiac },
         ] }),
       ),
@@ -1683,6 +1956,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
           h('span', null, label),
         )),
       ),
+      activeBookmarkEffect && h(BookmarkEffectOverlay, { effect: activeBookmarkEffect.id, key: activeBookmarkEffect.key }),
     ),
     h(
       'div',
@@ -1707,6 +1981,17 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
           rows: 2,
           placeholder: t.bookmark_description_placeholder,
         }),
+      ),
+      h('label', null, t.bookmark_effect,
+        h('select', {
+          value: bookmarkEffect,
+          onInput: (event) => setBookmarkEffect(normalizeBookmarkEffect(event.target.value)),
+          onChange: (event) => setBookmarkEffect(normalizeBookmarkEffect(event.target.value)),
+          onFocus: handleFocusIn,
+          onBlur: handleFocusOut,
+        },
+        bookmarkEffectOptions.map((option) => h('option', { key: option.id, value: option.id }, option.label)),
+        ),
       ),
       h('button', { type: 'button', className: 'date-bookmark-save', onClick: saveCurrentBookmark }, selectedBookmark ? t.update_bookmark : t.bookmark_date),
     ),
@@ -1776,6 +2061,17 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
                 rows: 2,
                 'aria-label': t.bookmark_description,
               }),
+              isEditing && h('label', { className: 'date-bookmark__effect-input' },
+                h('span', null, t.bookmark_effect),
+                h('select', {
+                  value: editingBookmarkEffect,
+                  onFocus: handleFocusIn,
+                  onBlur: handleFocusOut,
+                  onChange: (event) => setEditingBookmarkEffect(normalizeBookmarkEffect(event.target.value)),
+                },
+                bookmarkEffectOptions.map((option) => h('option', { key: option.id, value: option.id }, option.label)),
+                ),
+              ),
               isEditing && h(
                 'div',
                 { className: 'date-bookmark__edit-date-panel' },
@@ -2367,7 +2663,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
 function SplitPill({ label, items, wide = false }) {
   return h(
     'article',
-    { className: `info-pill split-pill${wide ? ' split-pill--wide' : ''}` },
+    { className: `info-pill split-pill${wide ? ' split-pill--wide' : ''}${items.length === 3 ? ' split-pill--three' : ''}${items.length > 3 ? ' split-pill--many' : ''}` },
     h('span', null, label),
     h(
       'div',
@@ -2404,6 +2700,7 @@ function App() {
   const [editMode, setEditMode] = useState(false);
   const [ntpHost, setNtpHost] = useState(defaultNtpHost);
   const [ntpStatus, setNtpStatus] = useState({ kind: 'local', label: i18n.en.local_clock, detail: i18n.en.using_device_clock, host: ntpHost, delay: i18n.en.not_measured });
+  const [isClockFullscreen, setIsClockFullscreen] = useState(false);
 
   const [draggingCityId, setDraggingCityId] = useState(null);
   const [language, setLanguage] = useState(getInitialLanguage);
@@ -2437,6 +2734,32 @@ function App() {
       localStorage.setItem(savedSelectedCityKey, selectedCityId);
     }
   }, [selectedCityId]);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsClockFullscreen(Boolean(document.fullscreenElement?.classList?.contains('hero-panel')));
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleClockFullscreen = () => {
+    const clockElement = document.querySelector('.hero-panel');
+    if (!clockElement) return;
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.();
+      return;
+    }
+
+    if (clockElement.requestFullscreen) {
+      clockElement.requestFullscreen().catch(() => {});
+      return;
+    }
+
+    window.alert((i18n[language] || i18n.en).fullscreen_unsupported);
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -2573,6 +2896,7 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
 
   const numberLocale = isFa ? 'fa-IR-u-nu-arabext' : 'en-US';
   const formatLocaleNumber = (value) => new Intl.NumberFormat(numberLocale).format(value);
+  const formatLocaleYear = (value) => new Intl.NumberFormat(numberLocale, { useGrouping: false }).format(value);
   const t = i18n[language] || i18n.en;
   const selectedCityView = selectedCity
     ? {
@@ -2584,8 +2908,8 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
         second: '2-digit',
         hourCycle: 'h23',
       }).format(now),
-      gregorianYear: formatLocaleNumber(selectedCity.gregorianYear),
-      persianYear: formatLocaleNumber(selectedCity.persianYear),
+      gregorianYear: formatLocaleYear(selectedCity.gregorianYear),
+      persianYear: formatLocaleYear(selectedCity.persianYear),
       gregorianWeek: formatLocaleNumber(selectedCity.gregorianWeek),
       jalaliWeek: formatLocaleNumber(selectedCity.jalaliWeek),
     }
@@ -2692,6 +3016,9 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
         { className: 'top-bar' },
         h('p', { className: 'eyebrow' }, language === 'fa' ? `${t.time_in} ${selectedCityView.country}، ` : `${t.time_in} `, h('strong', null, selectedCityView.label), language === 'fa' ? ` ${t.now_suffix}` : `, ${selectedCityView.country} ${t.now_suffix}`),
         h('div', { className: 'top-bar__controls' },
+          h('button', { type: 'button', className: 'clock-focus-button', onClick: toggleClockFullscreen },
+            isClockFullscreen ? t.exit_fullscreen : t.fullscreen,
+          ),
           h('div', { className: 'language-picker', role: 'group', 'aria-label': t.language },
             h('div', { className: 'language-picker__segmented' },
               h('button', { type: 'button', className: language === 'en' ? 'selected' : '', onClick: () => setLanguage('en'), 'aria-pressed': language === 'en' }, t.english),
@@ -2758,6 +3085,7 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
       }),
     ),
     h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes, occasionFilterOrder }),
+    h(SolarYearMomentCard, { now, t, language }),
     h(AgeConverterCard, { city: selectedCityConfig, t, language, timeOffset, onInteractionChange: setIsAgePickerActive }),  );
 }
 

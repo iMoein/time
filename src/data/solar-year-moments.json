@@ -1,0 +1,28 @@
+{
+  "precision": "minute",
+  "timeZone": "Asia/Tehran",
+  "source": "timeanddate.com seasons in UTC",
+  "moments": [
+    { "persianYear": 1395, "gregorianYear": 2016, "instantUtc": "2016-03-20T04:30:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1396, "gregorianYear": 2017, "instantUtc": "2017-03-20T10:28:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1397, "gregorianYear": 2018, "instantUtc": "2018-03-20T16:15:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1398, "gregorianYear": 2019, "instantUtc": "2019-03-20T21:58:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1399, "gregorianYear": 2020, "instantUtc": "2020-03-20T03:49:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1400, "gregorianYear": 2021, "instantUtc": "2021-03-20T09:37:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1401, "gregorianYear": 2022, "instantUtc": "2022-03-20T15:33:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1402, "gregorianYear": 2023, "instantUtc": "2023-03-20T21:24:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1403, "gregorianYear": 2024, "instantUtc": "2024-03-20T03:06:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1404, "gregorianYear": 2025, "instantUtc": "2025-03-20T09:01:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1405, "gregorianYear": 2026, "instantUtc": "2026-03-20T14:46:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1406, "gregorianYear": 2027, "instantUtc": "2027-03-20T20:24:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1407, "gregorianYear": 2028, "instantUtc": "2028-03-20T02:17:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1408, "gregorianYear": 2029, "instantUtc": "2029-03-20T08:02:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1409, "gregorianYear": 2030, "instantUtc": "2030-03-20T13:51:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1410, "gregorianYear": 2031, "instantUtc": "2031-03-20T19:41:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1411, "gregorianYear": 2032, "instantUtc": "2032-03-20T01:21:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1412, "gregorianYear": 2033, "instantUtc": "2033-03-20T07:22:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1413, "gregorianYear": 2034, "instantUtc": "2034-03-20T13:17:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1414, "gregorianYear": 2035, "instantUtc": "2035-03-20T19:02:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1415, "gregorianYear": 2036, "instantUtc": "2036-03-20T01:02:00Z", "officialSecondConfirmed": false }
+  ]
+}
