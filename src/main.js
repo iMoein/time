@@ -1037,19 +1037,19 @@ function getZonedTodayDate(timeZone) {
   return new Date(Date.UTC(Number(values.year), Number(values.month) - 1, Number(values.day), 12));
 }
 
-function calculateAgeFromDate(birthDate, todayDate) {
-  if (birthDate.getTime() > todayDate.getTime()) {
+function calculateDateDistance(startDate, endDate) {
+  if (endDate.getTime() <= startDate.getTime()) {
     return { years: 0, months: 0, days: 0 };
   }
 
-  let years = todayDate.getUTCFullYear() - birthDate.getUTCFullYear();
-  let months = todayDate.getUTCMonth() - birthDate.getUTCMonth();
-  let days = todayDate.getUTCDate() - birthDate.getUTCDate();
+  let years = endDate.getUTCFullYear() - startDate.getUTCFullYear();
+  let months = endDate.getUTCMonth() - startDate.getUTCMonth();
+  let days = endDate.getUTCDate() - startDate.getUTCDate();
 
   if (days < 0) {
     months -= 1;
-    const prevMonth = todayDate.getUTCMonth() === 0 ? 12 : todayDate.getUTCMonth();
-    const prevMonthYear = todayDate.getUTCMonth() === 0 ? todayDate.getUTCFullYear() - 1 : todayDate.getUTCFullYear();
+    const prevMonth = endDate.getUTCMonth() === 0 ? 12 : endDate.getUTCMonth();
+    const prevMonthYear = endDate.getUTCMonth() === 0 ? endDate.getUTCFullYear() - 1 : endDate.getUTCFullYear();
     days += getDaysInGregorianMonth(prevMonthYear, prevMonth);
   }
 
@@ -1093,16 +1093,19 @@ function AgeConverterCard({ city, t, language, onInteractionChange = () => {} })
 
   const gregorianParts = getCalendarPartsFromUtc(convertedDate, 'gregorian');
   const persianParts = getPersianDatePartsFromUtc(convertedDate);
-  const age = calculateAgeFromDate(convertedDate, todayDate);
+  const isFutureDate = convertedDate.getTime() > todayDate.getTime();
+  const isPastDate = convertedDate.getTime() < todayDate.getTime();
+  const timeDistance = isFutureDate ? calculateDateDistance(todayDate, convertedDate) : calculateDateDistance(convertedDate, todayDate);
+  const timeDistanceTitle = isPastDate ? t.time_elapsed : t.time_remaining;
   const weekdayLabel = new Intl.DateTimeFormat(language === 'fa' ? 'fa-IR' : 'en-US', { timeZone: city.timeZone, weekday: 'long' }).format(convertedDate);
   const leapYearLabel = calendarType === 'gregorian'
     ? (isGregorianLeapYear(gregorianParts.year) ? t.yes : t.no)
     : (isPersianLeapYear(persianParts.year) ? t.yes : t.no);
   const iranZodiac = getZodiacAnimal(persianParts.year, language);
   const chineseZodiac = getZodiacAnimal(gregorianParts.year, language);
-  const ageLabel = language === 'fa'
-    ? `${formatLocaleNumber(age.years, language)} سال ${formatLocaleNumber(age.months, language)} ماه ${formatLocaleNumber(age.days, language)} روز`
-    : `${formatLocaleNumber(age.years, language)}y ${formatLocaleNumber(age.months, language)}m ${formatLocaleNumber(age.days, language)}d`; 
+  const timeDistanceLabel = language === 'fa'
+    ? `${formatLocaleNumber(timeDistance.years, language)} سال ${formatLocaleNumber(timeDistance.months, language)} ماه ${formatLocaleNumber(timeDistance.days, language)} روز`
+    : `${formatLocaleNumber(timeDistance.years, language)}y ${formatLocaleNumber(timeDistance.months, language)}m ${formatLocaleNumber(timeDistance.days, language)}d`;
 
   return h(
     'section',
@@ -1139,7 +1142,7 @@ function AgeConverterCard({ city, t, language, onInteractionChange = () => {} })
         { label: t.gregorian, value: `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}` },
         { label: t.solar_hijri, value: `${persianParts.year}/${formatNumber(persianParts.month)}/${formatNumber(persianParts.day)}` },
       ] }),
-      h(InfoPill, { label: t.age, value: ageLabel }),
+      h(InfoPill, { label: timeDistanceTitle, value: timeDistanceLabel }),
       h(SplitPill, { label: t.converted_weekday, items: [
         { label: t.weekday, value: weekdayLabel },
         { label: t.leap_year, value: leapYearLabel },
