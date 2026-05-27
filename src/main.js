@@ -1211,8 +1211,17 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
   const [editingBookmarkDay, setEditingBookmarkDay] = useState(todayPersian.day);
   const [confirmingDeleteId, setConfirmingDeleteId] = useState('');
   const [bookmarkNow, setBookmarkNow] = useState(() => new Date(Date.now() + timeOffset));
-  const handleFocusIn = () => onInteractionChange(true);
-  const handleFocusOut = () => onInteractionChange(false);
+  const [isConverterPickerActive, setIsConverterPickerActive] = useState(false);
+  const handleFocusIn = () => {
+    setIsConverterPickerActive(true);
+    onInteractionChange(true);
+  };
+  const handleFocusOut = () => {
+    setIsConverterPickerActive(false);
+    if (!editingBookmarkId) {
+      onInteractionChange(false);
+    }
+  };
 
   const monthOptions = calendarType === 'gregorian' ? getCalendarMonthOptions('gregorian') : getCalendarMonthOptions('persian');
   const daysInMonth = calendarType === 'gregorian' ? getDaysInGregorianMonth(year, month) : getDaysInPersianMonth(year, month);
@@ -1230,7 +1239,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
   }, [dateBookmarks]);
 
   useEffect(() => {
-    if (editingBookmarkId) {
+    if (!selectedBookmark || editingBookmarkId || isConverterPickerActive) {
       return undefined;
     }
 
@@ -1239,7 +1248,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
     const timer = setInterval(updateBookmarkNow, 1000);
 
     return () => clearInterval(timer);
-  }, [editingBookmarkId, timeOffset]);
+  }, [editingBookmarkId, isConverterPickerActive, selectedBookmarkId, timeOffset]);
 
   useEffect(() => {
     if (!editingBookmarkId) {
@@ -1433,23 +1442,23 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
       ),
       h('div', { className: 'age-converter-card__controls' },
         h('label', null, t.calendar_type,
-          h('select', { value: calendarType, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setCalendarType(event.target.value); } },
+          h('select', { value: calendarType, onMouseDown: handleFocusIn, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setCalendarType(event.target.value); } },
             h('option', { value: 'persian' }, t.solar_hijri),
             h('option', { value: 'gregorian' }, t.gregorian),
           ),
         ),
         h('label', null, t.year,
-          h('select', { value: year, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setYear(Number(event.target.value)); } },
+          h('select', { value: year, onMouseDown: handleFocusIn, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setYear(Number(event.target.value)); } },
             yearOptions.map((optionYear) => h('option', { key: optionYear, value: optionYear }, optionYear)),
           ),
         ),
         h('label', null, t.month,
-          h('select', { value: month, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setMonth(Number(event.target.value)); } },
+          h('select', { value: month, onMouseDown: handleFocusIn, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setMonth(Number(event.target.value)); } },
             monthOptions.map((option) => h('option', { key: option.value, value: option.value }, option.label)),
           ),
         ),
         h('label', null, t.day,
-          h('select', { value: day, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setDay(Number(event.target.value)); } },
+          h('select', { value: day, onMouseDown: handleFocusIn, onFocus: handleFocusIn, onBlur: handleFocusOut, onChange: (event) => { resetBookmarkSelection(); setDay(Number(event.target.value)); } },
             dayOptions.map((optionDay) => h('option', { key: optionDay, value: optionDay }, optionDay)),
           ),
         ),
