@@ -1304,6 +1304,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
   const [confirmingDeleteId, setConfirmingDeleteId] = useState('');
   const [bookmarkNow, setBookmarkNow] = useState(() => new Date(Date.now() + timeOffset));
   const [isConverterPickerActive, setIsConverterPickerActive] = useState(false);
+  const [isBookmarkTimerFullscreen, setIsBookmarkTimerFullscreen] = useState(false);
   const handleFocusIn = () => {
     setIsConverterPickerActive(true);
     onInteractionChange(true);
@@ -1365,6 +1366,32 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
   }, [editingBookmarkId, isConverterPickerActive, selectedBookmarkId, timeOffset]);
 
   useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsBookmarkTimerFullscreen(Boolean(document.fullscreenElement?.classList?.contains('selected-bookmark-timer')));
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleBookmarkTimerFullscreen = () => {
+    const timerElement = document.querySelector('.selected-bookmark-timer');
+    if (!timerElement) return;
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.();
+      return;
+    }
+
+    if (timerElement.requestFullscreen) {
+      timerElement.requestFullscreen().catch(() => {});
+      return;
+    }
+
+    window.alert(t.fullscreen_unsupported);
+  };
+
+  useEffect(() => {
     if (!editingBookmarkId) {
       return undefined;
     }
@@ -1402,6 +1429,11 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
   const selectedBookmarkTimer = selectedBookmark
     ? getPreciseZonedDistance(bookmarkNow, getDateKeyMidnightUtc(selectedBookmark.dateKey, city.timeZone), city.timeZone)
     : null;
+  const selectedBookmarkTimerTitle = selectedBookmark && selectedBookmarkTimer
+    ? language === 'fa'
+      ? `${selectedBookmarkTimer.isFuture ? t.time_remaining : t.time_elapsed} برای ${selectedBookmark.title}`
+      : `${selectedBookmarkTimer.isFuture ? t.time_remaining : t.time_elapsed} for ${selectedBookmark.title}`
+    : '';
   const timeDistanceLabel = language === 'fa'
     ? `${formatLocaleNumber(timeDistance.years, language)} سال ${formatLocaleNumber(timeDistance.months, language)} ماه ${formatLocaleNumber(timeDistance.days, language)} روز`
     : `${formatLocaleNumber(timeDistance.years, language)}y ${formatLocaleNumber(timeDistance.months, language)}m ${formatLocaleNumber(timeDistance.days, language)}d`;
@@ -1629,8 +1661,12 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, onInteractionChan
       'div',
       { className: 'selected-bookmark-timer', 'aria-live': 'polite' },
       h('div', { className: 'selected-bookmark-timer__header' },
-        h('strong', null, selectedBookmarkTimer.isFuture ? t.time_remaining : t.time_elapsed),
-        h('small', null, `${selectedBookmark.title} · ${t.bookmark_midnight_basis}`),
+        h('div', { className: 'selected-bookmark-timer__headline' },
+          h('strong', null, selectedBookmarkTimerTitle),
+        ),
+        h('button', { type: 'button', className: 'selected-bookmark-timer__focus', onClick: toggleBookmarkTimerFullscreen },
+          isBookmarkTimerFullscreen ? t.exit_fullscreen : t.fullscreen,
+        ),
       ),
       h('div', { className: 'selected-bookmark-timer__grid' },
         [

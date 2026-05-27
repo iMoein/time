@@ -2277,14 +2277,34 @@ button {
 }
 .selected-bookmark-timer__header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: .75rem;
   flex-wrap: wrap;
 }
-.selected-bookmark-timer__header small {
-  color: #475569;
-  font-size: .84rem;
+.selected-bookmark-timer__headline {
+  display: grid;
+  min-width: 0;
+  gap: .15rem;
+}
+.selected-bookmark-timer__headline strong {
+  color: #0f172a;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.selected-bookmark-timer__focus {
+  min-height: 2.25rem;
+  border-radius: .7rem;
+  padding: .4rem .75rem;
+  background: #111827;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 850;
+}
+.selected-bookmark-timer__focus:hover,
+.selected-bookmark-timer__focus:focus-visible {
+  background: #2563eb;
+  outline: none;
 }
 .selected-bookmark-timer__grid {
   display: grid;
@@ -2316,6 +2336,43 @@ button {
   color: #64748b;
   font-size: .76rem;
   font-weight: 850;
+}
+.selected-bookmark-timer:fullscreen {
+  width: 100vw;
+  min-height: 100vh;
+  align-content: center;
+  padding: clamp(1.25rem, 5vw, 4rem);
+  border: 0;
+  border-radius: 0;
+  background: #f8fbff;
+}
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__header {
+  align-items: center;
+  margin: 0 auto;
+  width: min(100%, 86rem);
+}
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline strong {
+  font-size: clamp(1.5rem, 3vw, 3rem);
+}
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__focus {
+  min-height: 2.75rem;
+  padding-inline: 1rem;
+}
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid {
+  margin: 0 auto;
+  width: min(100%, 86rem);
+  gap: clamp(.65rem, 1.5vw, 1.2rem);
+}
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit {
+  min-height: clamp(7rem, 17vh, 13rem);
+  border-color: rgba(37, 99, 235, .18);
+  background: #fff;
+}
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit strong {
+  font-size: clamp(2.8rem, 8vw, 7.6rem);
+}
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit span {
+  font-size: clamp(.9rem, 1.3vw, 1.3rem);
 }
 .date-bookmark-form {
   display: grid;
@@ -2544,6 +2601,7 @@ button {
   .date-difference-panel__result { grid-template-columns: 1fr; }
   .date-field-set__controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .selected-bookmark-timer__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .date-bookmark-form { grid-template-columns: 1fr; }
   .age-converter-card__header { align-items:flex-start; flex-direction:column; }
   .age-converter-card__header-actions { justify-content:flex-start; }
