@@ -1,29 +1,45 @@
 {
-  "weekly": {
-    "persian": [
-      {
-        "weekday": "friday",
-        "title_fa": "تعطیلی هفتگی",
-        "title_en": "Weekly holiday"
-      }
-    ],
-    "gregorian": []
-  },
-  "fixedDates": {
-    "persian": [
-      { "month": 1, "day": 1, "title_fa": "نوروز", "title_en": "Nowruz" },
-      { "month": 1, "day": 2, "title_fa": "نوروز", "title_en": "Nowruz" },
-      { "month": 1, "day": 3, "title_fa": "نوروز", "title_en": "Nowruz" },
-      { "month": 1, "day": 4, "title_fa": "نوروز", "title_en": "Nowruz" },
-      { "month": 1, "day": 12, "title_fa": "روز جمهوری اسلامی", "title_en": "Islamic Republic Day" },
-      { "month": 1, "day": 13, "title_fa": "سیزده‌به‌در", "title_en": "Nature Day" },
-      { "month": 3, "day": 14, "title_fa": "رحلت امام خمینی", "title_en": "Imam Khomeini demise" },
-      { "month": 3, "day": 15, "title_fa": "قیام پانزده خرداد", "title_en": "15 Khordad uprising" },
-      { "month": 11, "day": 22, "title_fa": "پیروزی انقلاب اسلامی", "title_en": "Islamic Revolution victory" },
-      { "month": 12, "day": 29, "title_fa": "روز ملی شدن صنعت نفت", "title_en": "Oil nationalization day" }
-    ],
-    "gregorian": [
-      { "month": 1, "day": 1, "title_fa": "سال نوی میلادی", "title_en": "New Year's Day" }
-    ]
-  }
+  "weekly": [
+    {
+      "weekday": "friday",
+      "status": "holiday",
+      "displayOn": ["persian"],
+      "title_fa": "تعطیلی هفتگی",
+      "title_en": "Weekly holiday"
+    },
+    {
+      "weekday": "thursday",
+      "status": "partial",
+      "displayOn": ["persian"],
+      "title_fa": "نیمه‌تعطیل پایان هفته",
+      "title_en": "Partial weekend holiday"
+    },
+    {
+      "weekday": "sunday",
+      "status": "holiday",
+      "displayOn": ["gregorian"],
+      "title_fa": "تعطیلی هفتگی",
+      "title_en": "Weekly holiday"
+    },
+    {
+      "weekday": "saturday",
+      "status": "partial",
+      "displayOn": ["gregorian"],
+      "title_fa": "نیمه‌تعطیل پایان هفته",
+      "title_en": "Partial weekend holiday"
+    }
+  ],
+  "fixedDates": [
+    { "calendar": "persian", "displayOn": ["persian"], "status": "holiday", "month": 1, "day": 1, "title_fa": "نوروز", "title_en": "Nowruz" },
+    { "calendar": "persian", "displayOn": ["persian"], "status": "holiday", "month": 1, "day": 2, "title_fa": "نوروز", "title_en": "Nowruz" },
+    { "calendar": "persian", "displayOn": ["persian"], "status": "holiday", "month": 1, "day": 3, "title_fa": "نوروز", "title_en": "Nowruz" },
+    { "calendar": "persian", "displayOn": ["persian"], "status": "holiday", "month": 1, "day": 4, "title_fa": "نوروز", "title_en": "Nowruz" },
+    { "calendar": "persian", "displayOn": ["persian"], "status": "holiday", "month": 1, "day": 12, "title_fa": "روز جمهوری اسلامی", "title_en": "Islamic Republic Day" },
+    { "calendar": "persian", "displayOn": ["persian"], "status": "holiday", "month": 1, "day": 13, "title_fa": "سیزده‌به‌در", "title_en": "Nature Day" },
+    { "calendar": "persian", "displayOn": ["persian"], "status": "holiday", "month": 3, "day": 14, "title_fa": "رحلت امام خمینی", "title_en": "Imam Khomeini demise" },
+    { "calendar": "persian", "displayOn": ["persian"], "status": "holiday", "month": 3, "day": 15, "title_fa": "قیام پانزده خرداد", "title_en": "15 Khordad uprising" },
+    { "calendar": "persian", "displayOn": ["persian"], "status": "holiday", "month": 11, "day": 22, "title_fa": "پیروزی انقلاب اسلامی", "title_en": "Islamic Revolution victory" },
+    { "calendar": "persian", "displayOn": ["persian"], "status": "holiday", "month": 12, "day": 29, "title_fa": "روز ملی شدن صنعت نفت", "title_en": "Oil nationalization day" },
+    { "calendar": "gregorian", "displayOn": ["gregorian"], "status": "holiday", "month": 1, "day": 1, "title_fa": "سال نوی میلادی", "title_en": "New Year's Day" }
+  ]
 }

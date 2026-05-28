@@ -572,7 +572,7 @@ button {
 .day-night-card--afternoon {
   background:
     radial-gradient(circle at 16% 16%, rgba(255, 255, 255, 0.2), transparent 16rem),
-    linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(236, 72, 153, 0.86), rgba(79, 70, 229, 0.82));
+    linear-gradient(135deg, rgba(255, 134, 74, 0.96), rgba(236, 72, 153, 0.9), rgba(124, 58, 237, 0.86));
   --sun-chart-sky-top: #fb923c;
   --sun-chart-sky-bottom: #ec4899;
   --sun-chart-night: #432f48;
@@ -603,15 +603,17 @@ button {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: clamp(0.58rem, 1vw, 0.78rem);
-  align-items: start;
+  align-items: center;
   direction: ltr;
 }
 
 .day-night-card__event {
   display: flex;
   grid-column: 2;
+  grid-row: 1;
   gap: clamp(0.58rem, 1vw, 0.78rem);
   align-items: center;
+  align-self: start;
   justify-self: end;
   direction: rtl;
 }
@@ -628,6 +630,7 @@ button {
 
 .day-night-card__remaining {
   grid-column: 1;
+  grid-row: 1;
   align-self: start;
   justify-self: start;
   direction: rtl;
@@ -789,8 +792,16 @@ button {
   align-items: center;
 }
 
-.monthly-calendar__header span {
-  grid-column: 1 / -1;
+.monthly-calendar__title {
+  display: grid;
+  grid-column: 1;
+  grid-row: 1;
+  gap: 0.34rem;
+  min-width: 0;
+}
+
+.monthly-calendar__header span,
+.monthly-calendar__title span {
   color: #64748b;
   font-size: 0.72rem;
   font-weight: 900;
@@ -798,7 +809,8 @@ button {
   text-transform: uppercase;
 }
 
-.monthly-calendar__header strong {
+.monthly-calendar__header strong,
+.monthly-calendar__title strong {
   min-width: 0;
   color: #111827;
   font-size: clamp(1.35rem, 2.2vw, 2rem);
@@ -807,12 +819,17 @@ button {
   line-height: 1;
 }
 
-.monthly-calendar__header small {
-  grid-column: 1 / -1;
+.monthly-calendar__header small,
+.monthly-calendar__meta small {
   color: #475569;
   font-size: 0.82rem;
   font-weight: 850;
   line-height: 1.25;
+}
+
+.monthly-calendar__meta {
+  display: grid;
+  gap: 0.35rem;
 }
 
 .occasion-insights {
@@ -849,6 +866,8 @@ button {
 
 .monthly-calendar__toolbar {
   display: flex;
+  grid-column: 1 / -1;
+  grid-row: 2;
   flex-wrap: wrap;
   gap: 0.45rem;
   align-items: center;
@@ -1003,6 +1022,22 @@ button {
   opacity: 0.82;
 }
 
+.monthly-calendar__day--partial-holiday {
+  border-color: rgba(251, 113, 133, 0.18);
+  background: #fff7f9;
+  color: #be4560;
+}
+
+.monthly-calendar__day--partial-holiday:hover,
+.monthly-calendar__day--partial-holiday:focus-visible {
+  border-color: rgba(251, 113, 133, 0.3);
+  background: #fff1f4;
+}
+
+.monthly-calendar__day--outside.monthly-calendar__day--partial-holiday {
+  opacity: 0.76;
+}
+
 .monthly-calendar__day--today {
   border-color: rgba(249, 115, 22, 0.7);
   box-shadow: inset 0 0 0 2px rgba(249, 115, 22, 0.24);
@@ -1039,7 +1074,7 @@ button {
 
 .monthly-calendar--synced {
   align-content: stretch;
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   gap: clamp(0.8rem, 1.2vw, 1.2rem);
   height: var(--synced-calendar-height);
   min-height: 0;
@@ -1049,9 +1084,11 @@ button {
 
 .monthly-calendar__mode {
   display: inline-flex;
-  grid-column: 1 / -1;
+  grid-column: 2;
+  grid-row: 1;
   gap: 0.25rem;
-  justify-self: start;
+  align-self: start;
+  justify-self: end;
   padding: 0.16rem;
   border: 1px solid rgba(148, 163, 184, 0.22);
   border-radius: 999px;
@@ -1151,10 +1188,10 @@ button {
 
 .monthly-calendar__day--has-events::after {
   position: absolute;
+  top: 0.42rem;
   right: 0.46rem;
-  bottom: 0.42rem;
-  width: 0.38rem;
-  height: 0.38rem;
+  width: 0.36rem;
+  height: 0.36rem;
   border-radius: 999px;
   background: #047857;
   content: '';
@@ -2059,6 +2096,17 @@ button {
   inset-inline-end: clamp(1rem, 3vw, 2rem);
   display: inline-flex;
   margin: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-0.35rem);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.hero-panel.fullscreen-controls-visible:fullscreen .top-bar__controls,
+.hero-panel:fullscreen .top-bar__controls:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 .hero-panel:fullscreen .language-picker {
@@ -2421,7 +2469,7 @@ button {
   .day-night-card__header {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.55rem 0.7rem;
-    align-items: start;
+    align-items: center;
   }
 
   .day-night-card__icon {
@@ -2450,7 +2498,7 @@ button {
   .day-night-card__remaining {
     grid-column: 1;
     grid-row: 1;
-    align-self: start;
+    align-self: center;
     justify-self: start;
     font-size: 0.78rem;
     white-space: nowrap;
@@ -2501,22 +2549,19 @@ button {
     justify-self: start;
   }
 
-  .monthly-calendar__filters,
-  .monthly-calendar__mode {
+  .monthly-calendar__filters {
     grid-template-columns: 1fr;
   }
 
   .monthly-calendar__mode {
     grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-row: 1;
     justify-self: end;
     align-self: start;
   }
 
-  .monthly-calendar__header span,
-  .monthly-calendar__header strong,
-  .monthly-calendar__header small,
-  .monthly-calendar__occasion-description {
+  .monthly-calendar__title,
+  .monthly-calendar__meta {
     grid-column: 1;
   }
 
@@ -2934,21 +2979,47 @@ button {
   margin: 0 auto;
   width: min(100%, 86rem);
 }
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline {
+  justify-items: start;
+  text-align: start;
+}
+.selected-bookmark-timer:fullscreen:dir(rtl) .selected-bookmark-timer__headline,
+:root[dir="rtl"] .selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline {
+  justify-items: end;
+  text-align: right;
+}
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline strong {
   color: var(--fullscreen-strong);
   font-size: clamp(1.5rem, 3vw, 3rem);
   text-shadow: none;
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline small {
+  width: 100%;
   color: var(--fullscreen-muted);
   font-size: clamp(.95rem, 1.5vw, 1.35rem);
-  text-align: center;
+  justify-self: stretch;
+  text-align: start;
+}
+.selected-bookmark-timer:fullscreen:dir(rtl) .selected-bookmark-timer__headline small,
+:root[dir="rtl"] .selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline small {
+  justify-self: stretch;
+  text-align: right;
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions {
   position: absolute;
   inset-block-start: clamp(1rem, 3vw, 2rem);
   inset-inline-end: clamp(1rem, 3vw, 2rem);
   z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-0.35rem);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+.selected-bookmark-timer.fullscreen-controls-visible:fullscreen .selected-bookmark-timer__actions,
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__focus,
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__effect-button,
@@ -3003,8 +3074,7 @@ button {
   animation-timing-function: cubic-bezier(.16, .72, .22, 1);
   will-change: opacity, transform;
 }
-.bookmark-effect--color_ribbons span,
-.bookmark-effect--black_ribbons span {
+.bookmark-effect--ribbons span {
   top: -5.5rem;
   width: clamp(.48rem, .75vw, .9rem);
   height: clamp(2rem, 3.4vw, 3.8rem);
@@ -3015,33 +3085,78 @@ button {
   transform: rotate(calc(var(--i) * 9deg));
   animation-name: bookmark-ribbon-fall;
 }
-.bookmark-effect--color_ribbons span:nth-child(4n),
-.bookmark-effect--black_ribbons span:nth-child(4n) {
+.bookmark-effect--ribbons span:nth-child(4n) {
   width: clamp(.72rem, 1vw, 1.15rem);
   height: clamp(1.35rem, 2.3vw, 2.6rem);
 }
-.bookmark-effect--color_ribbons span:nth-child(5n),
-.bookmark-effect--black_ribbons span:nth-child(5n) {
+.bookmark-effect--ribbons span:nth-child(5n) {
   border-radius: 50%;
   width: clamp(.55rem, .85vw, 1rem);
   height: clamp(.55rem, .85vw, 1rem);
 }
-.bookmark-effect--color_ribbons span:nth-child(7n),
-.bookmark-effect--black_ribbons span:nth-child(7n) {
+.bookmark-effect--ribbons span:nth-child(7n) {
   width: clamp(.32rem, .52vw, .58rem);
   height: clamp(2.75rem, 4.6vw, 5.25rem);
 }
-.bookmark-effect--color_ribbons span:nth-child(6n + 1) { background: #ef4444; }
-.bookmark-effect--color_ribbons span:nth-child(6n + 2) { background: #f59e0b; }
-.bookmark-effect--color_ribbons span:nth-child(6n + 3) { background: #22c55e; }
-.bookmark-effect--color_ribbons span:nth-child(6n + 4) { background: #06b6d4; }
-.bookmark-effect--color_ribbons span:nth-child(6n + 5) { background: #3b82f6; }
-.bookmark-effect--color_ribbons span:nth-child(6n + 6) { background: #d946ef; }
-.bookmark-effect--black_ribbons span {
-  background: #050505;
+.bookmark-effect--ribbons span:nth-child(6n + 1),
+.bookmark-effect--balloons span:nth-child(6n + 1) { background: var(--effect-color-1); }
+.bookmark-effect--ribbons span:nth-child(6n + 2),
+.bookmark-effect--balloons span:nth-child(6n + 2) { background: var(--effect-color-2); }
+.bookmark-effect--ribbons span:nth-child(6n + 3),
+.bookmark-effect--balloons span:nth-child(6n + 3) { background: var(--effect-color-3); }
+.bookmark-effect--ribbons span:nth-child(6n + 4),
+.bookmark-effect--balloons span:nth-child(6n + 4) { background: var(--effect-color-4); }
+.bookmark-effect--ribbons span:nth-child(6n + 5),
+.bookmark-effect--balloons span:nth-child(6n + 5) { background: var(--effect-color-5); }
+.bookmark-effect--ribbons span:nth-child(6n + 6),
+.bookmark-effect--balloons span:nth-child(6n + 6) { background: var(--effect-color-6); }
+.bookmark-effect--palette-white_pink {
+  --effect-color-1: #ffffff;
+  --effect-color-2: #fbcfe8;
+  --effect-color-3: #fff7fb;
+  --effect-color-4: #f472b6;
+  --effect-color-5: #ffffff;
+  --effect-color-6: #f9a8d4;
 }
-.bookmark-effect--black_ribbons span:nth-child(4n) {
-  background: #171717;
+.bookmark-effect--palette-white_blue {
+  --effect-color-1: #ffffff;
+  --effect-color-2: #dbeafe;
+  --effect-color-3: #eff6ff;
+  --effect-color-4: #60a5fa;
+  --effect-color-5: #ffffff;
+  --effect-color-6: #93c5fd;
+}
+.bookmark-effect--palette-white_red {
+  --effect-color-1: #ffffff;
+  --effect-color-2: #fee2e2;
+  --effect-color-3: #fff7f7;
+  --effect-color-4: #ef4444;
+  --effect-color-5: #ffffff;
+  --effect-color-6: #f87171;
+}
+.bookmark-effect--palette-white_black {
+  --effect-color-1: #ffffff;
+  --effect-color-2: #f8fafc;
+  --effect-color-3: #111827;
+  --effect-color-4: #e5e7eb;
+  --effect-color-5: #020617;
+  --effect-color-6: #ffffff;
+}
+.bookmark-effect--palette-black {
+  --effect-color-1: #020617;
+  --effect-color-2: #111827;
+  --effect-color-3: #000000;
+  --effect-color-4: #1f2937;
+  --effect-color-5: #050505;
+  --effect-color-6: #171717;
+}
+.bookmark-effect--palette-multicolor {
+  --effect-color-1: #ef4444;
+  --effect-color-2: #f59e0b;
+  --effect-color-3: #22c55e;
+  --effect-color-4: #06b6d4;
+  --effect-color-5: #3b82f6;
+  --effect-color-6: #d946ef;
 }
 .bookmark-effect--balloons span {
   bottom: -13rem;
@@ -3078,12 +3193,6 @@ button {
   transform-origin: top;
   transform: translateX(-50%) rotate(calc((var(--i) - 9) * .85deg));
 }
-.bookmark-effect--balloons span:nth-child(6n + 1) { background: #f87171; }
-.bookmark-effect--balloons span:nth-child(6n + 2) { background: #fbbf24; }
-.bookmark-effect--balloons span:nth-child(6n + 3) { background: #4ade80; }
-.bookmark-effect--balloons span:nth-child(6n + 4) { background: #60a5fa; }
-.bookmark-effect--balloons span:nth-child(6n + 5) { background: #c084fc; }
-.bookmark-effect--balloons span:nth-child(6n + 6) { background: #fb7185; }
 .bookmark-effect--balloons span:nth-child(4n) {
   width: clamp(2.1rem, 4.1vw, 4.45rem);
   height: clamp(2.8rem, 5.2vw, 5.55rem);
@@ -3160,6 +3269,7 @@ button {
 .date-bookmark__description-input,
 .date-bookmark-form select,
 .date-bookmark__effect-input select,
+.date-bookmark__time-fields select,
 .date-bookmark__edit-date-fields select {
   width: 100%;
   border: 1px solid rgba(148, 163, 184, .48);
@@ -3227,6 +3337,34 @@ button {
   min-width: 0;
   color: #475569;
   font-size: .85rem;
+}
+.date-bookmark__effect-pair,
+.date-bookmark__time-fields {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: .7rem;
+  min-width: 0;
+}
+.date-bookmark-form > .date-bookmark__effect-pair {
+  grid-column: 3;
+  grid-row: 1;
+}
+.date-bookmark__effect-pair {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.date-bookmark__effect-pair label,
+.date-bookmark__time-fields label {
+  display: grid;
+  gap: .35rem;
+  min-width: 0;
+  color: #475569;
+  font-size: .85rem;
+}
+.date-bookmark__effect-pair .date-bookmark__effect-input {
+  grid-column: auto;
+}
+.date-bookmark__time-fields {
+  grid-template-columns: minmax(14rem, 1.65fr) repeat(3, minmax(4.8rem, .45fr));
 }
 .date-bookmark__edit-date-panel {
   display: grid;
@@ -3490,6 +3628,18 @@ button {
   .selected-bookmark-timer__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .date-bookmark-form { grid-template-columns: 1fr; }
+  .date-bookmark-form > .date-bookmark__effect-pair,
+  .date-bookmark__effect-pair,
+  .date-bookmark__time-fields {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .date-bookmark__time-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .date-bookmark__time-fields label:first-child {
+    grid-column: 1 / -1;
+  }
   .date-bookmark-save,
   .date-bookmark__checkbox {
     grid-column: 1;

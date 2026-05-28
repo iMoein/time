@@ -1,5 +1,5 @@
 {
-  "ntpHost": "ntp.time.ir",
+  "ntpHost": "time.apple.com",
   "adminUsername": "admin",
   "adminPassword": "admin",
   "passwordChanged": true,

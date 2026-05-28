@@ -41,7 +41,8 @@ const savedDateBookmarksKey = 'time-app-date-bookmarks';
 const userCitiesCustomizedKey = 'time-app-cities-customized';
 const savedFullscreenBackgroundKey = 'time-app-fullscreen-background';
 const defaultNtpHost = 'ntp.time.ir';
-const bookmarkEffectIds = ['none', 'color_ribbons', 'balloons', 'black_ribbons'];
+const bookmarkEffectIds = ['none', 'ribbons', 'balloons'];
+const bookmarkEffectPaletteIds = ['white_pink', 'white_blue', 'white_red', 'white_black', 'black', 'multicolor'];
 const defaultCardOrder = ['mainClock', 'sunAndTimezones', 'monthlyOccasions', 'solarYearMoment', 'dateTools'];
 const weekdayIds = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
@@ -66,10 +67,50 @@ function getConfiguredCardOrder(config = {}) {
 }
 
 function normalizeBookmarkEffect(value) {
+  if (value === 'color_ribbons' || value === 'black_ribbons') return 'ribbons';
   return bookmarkEffectIds.includes(value) ? value : 'none';
 }
 
-function getOfficialHolidayMatches(date) {
+function normalizeBookmarkEffectPalette(value) {
+  return bookmarkEffectPaletteIds.includes(value) ? value : 'multicolor';
+}
+
+function getBookmarkEffectType(bookmark = {}) {
+  return normalizeBookmarkEffect(bookmark.effectType || bookmark.effect);
+}
+
+function getBookmarkEffectPalette(bookmark = {}) {
+  if (bookmark.effectPalette) return normalizeBookmarkEffectPalette(bookmark.effectPalette);
+  if (bookmark.effect === 'black_ribbons') return 'black';
+  return 'multicolor';
+}
+
+function normalizeBookmarkTimePart(value, max) {
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.min(max, Math.max(0, Math.trunc(number))) : 0;
+}
+
+function shouldDisplayHolidayRule(rule, displayCalendar) {
+  const displayOn = Array.isArray(rule.displayOn)
+    ? rule.displayOn
+    : (rule.displayOn ? [rule.displayOn] : []);
+
+  return displayOn.includes('both') || displayOn.includes(displayCalendar);
+}
+
+function getConfiguredHolidayRules(section, calendarId = null) {
+  if (Array.isArray(section)) {
+    return calendarId ? section.filter((rule) => !rule.calendar || rule.calendar === calendarId) : section;
+  }
+
+  if (calendarId && Array.isArray(section?.[calendarId])) {
+    return section[calendarId].map((rule) => ({ ...rule, calendar: rule.calendar || calendarId, displayOn: rule.displayOn || [calendarId] }));
+  }
+
+  return [];
+}
+
+function getOfficialHolidayMatches(date, displayCalendar = 'persian') {
   const matches = [];
   const weekday = weekdayIds[date.getUTCDay()];
   const calendarParts = {
@@ -77,22 +118,20 @@ function getOfficialHolidayMatches(date) {
     persian: getCalendarPartsFromUtc(date, 'persian'),
   };
 
-  ['persian', 'gregorian'].forEach((calendarId) => {
-    const weeklyRules = Array.isArray(officialHolidaysConfig.weekly?.[calendarId])
-      ? officialHolidaysConfig.weekly[calendarId]
-      : [];
-    weeklyRules.forEach((rule) => {
-      if (String(rule.weekday || '').toLowerCase() === weekday) {
-        matches.push({ ...rule, calendar: calendarId, kind: 'weekly' });
-      }
-    });
+  getConfiguredHolidayRules(officialHolidaysConfig.weekly).forEach((rule) => {
+    if (shouldDisplayHolidayRule(rule, displayCalendar) && String(rule.weekday || '').toLowerCase() === weekday) {
+      matches.push({ ...rule, status: rule.status || 'holiday', kind: 'weekly' });
+    }
+  });
 
-    const fixedRules = Array.isArray(officialHolidaysConfig.fixedDates?.[calendarId])
-      ? officialHolidaysConfig.fixedDates[calendarId]
-      : [];
-    fixedRules.forEach((rule) => {
-      if (Number(rule.month) === calendarParts[calendarId].month && Number(rule.day) === calendarParts[calendarId].day) {
-        matches.push({ ...rule, calendar: calendarId, kind: 'fixedDate' });
+  ['persian', 'gregorian'].forEach((calendarId) => {
+    getConfiguredHolidayRules(officialHolidaysConfig.fixedDates, calendarId).forEach((rule) => {
+      if (
+        shouldDisplayHolidayRule(rule, displayCalendar)
+        && Number(rule.month) === calendarParts[calendarId].month
+        && Number(rule.day) === calendarParts[calendarId].day
+      ) {
+        matches.push({ ...rule, calendar: calendarId, status: rule.status || 'holiday', kind: 'fixedDate' });
       }
     });
   });
@@ -202,6 +241,8 @@ function getInitialDateBookmarks() {
   try {
     const saved = JSON.parse(localStorage.getItem(savedDateBookmarksKey) || '[]');
     if (!Array.isArray(saved)) return [];
+    const fallbackCityId = localStorage.getItem(savedSelectedCityKey) || defaultCityIds[0];
+    const fallbackTimeZone = allCities.find((city) => city.id === fallbackCityId)?.timeZone || defaultCities[0].timeZone;
 
     return saved
       .filter((bookmark) => bookmark && typeof bookmark === 'object')
@@ -214,7 +255,13 @@ function getInitialDateBookmarks() {
         month: Number(bookmark.month),
         day: Number(bookmark.day),
         dateKey: String(bookmark.dateKey || ''),
-        effect: normalizeBookmarkEffect(bookmark.effect),
+        hour: normalizeBookmarkTimePart(bookmark.hour, 23),
+        minute: normalizeBookmarkTimePart(bookmark.minute, 59),
+        second: normalizeBookmarkTimePart(bookmark.second, 59),
+        timeZone: String(bookmark.timeZone || fallbackTimeZone),
+        effect: getBookmarkEffectType(bookmark),
+        effectType: getBookmarkEffectType(bookmark),
+        effectPalette: getBookmarkEffectPalette(bookmark),
         showDescriptionInTimer: Boolean(bookmark.showDescriptionInTimer),
         createdAt: String(bookmark.createdAt || ''),
         updatedAt: String(bookmark.updatedAt || ''),
@@ -795,7 +842,7 @@ function getGregorianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
     days: Array.from({ length: 42 }, (_, index) => {
       const dayDate = addUtcDays(gridStart, index);
       const dateKey = getCalendarDateKey(dayDate);
-      const officialHolidays = getOfficialHolidayMatches(dayDate);
+      const officialHolidays = getOfficialHolidayMatches(dayDate, 'gregorian');
 
       return {
         id: `gregorian-${dateKey}`,
@@ -803,7 +850,8 @@ function getGregorianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
         dateKey,
         number: dayDate.getUTCDate(),
         isOutsideMonth: dayDate.getUTCMonth() !== monthStart.getUTCMonth(),
-        isHoliday: officialHolidays.length > 0,
+        isHoliday: officialHolidays.some((holiday) => holiday.status !== 'partial'),
+        isPartialHoliday: officialHolidays.some((holiday) => holiday.status === 'partial'),
         officialHolidays,
         isToday: isSameUtcDay(dayDate, cityDate),
         isSelected: selectedDateKey === dateKey,
@@ -832,7 +880,7 @@ function getPersianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
       const dayDate = addUtcDays(gridStart, index);
       const persianParts = getPersianDatePartsFromUtc(dayDate);
       const dateKey = getCalendarDateKey(dayDate);
-      const officialHolidays = getOfficialHolidayMatches(dayDate);
+      const officialHolidays = getOfficialHolidayMatches(dayDate, 'persian');
 
       return {
         id: `persian-${dateKey}`,
@@ -840,7 +888,8 @@ function getPersianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
         dateKey,
         number: persianParts.day,
         isOutsideMonth: persianParts.year !== targetMonth.year || persianParts.month !== targetMonth.month,
-        isHoliday: officialHolidays.length > 0,
+        isHoliday: officialHolidays.some((holiday) => holiday.status !== 'partial'),
+        isPartialHoliday: officialHolidays.some((holiday) => holiday.status === 'partial'),
         officialHolidays,
         isToday: isSameUtcDay(dayDate, cityDate),
         isSelected: selectedDateKey === dateKey,
@@ -980,23 +1029,6 @@ function getSelectedOccasionGroup(calendar) {
   return calendar.occasions.find((group) => group.dateKey === selectedDateKey) || null;
 }
 
-function getDisplayOccasionGroups(calendar) {
-  const selectedDateKey = calendar.days.find((day) => day.isSelected)?.dateKey;
-  if (!selectedDateKey) {
-    return calendar.occasions;
-  }
-
-  const selectedGroup = calendar.occasions.find((group) => group.dateKey === selectedDateKey);
-  if (!selectedGroup) {
-    return calendar.occasions;
-  }
-
-  return [
-    selectedGroup,
-    ...calendar.occasions.filter((group) => group.dateKey !== selectedDateKey),
-  ];
-}
-
 function getOccasionInsight(event, language) {
   const key = event.title_fa || event.fa || event.title;
   const knownDescription = occasionDescriptions[key];
@@ -1030,7 +1062,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     const dateKey = getCalendarDateKey(dayDate);
     const dayPrimaryParts = getCalendarPartsFromUtc(dayDate, primaryCalendar);
     const primaryDate = formatCompactCalendarDate(dayDate, primaryCalendar);
-    const officialHolidays = getOfficialHolidayMatches(dayDate);
+    const officialHolidays = getOfficialHolidayMatches(dayDate, primaryCalendar);
 
     return {
       id: `synced-${primaryCalendar}-${dateKey}`,
@@ -1038,7 +1070,8 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
       primaryDate,
       secondaryDate: formatCompactCalendarDate(dayDate, secondaryCalendar),
       events: getDateOccasions(dayDate, language, t),
-      isHoliday: officialHolidays.length > 0,
+      isHoliday: officialHolidays.some((holiday) => holiday.status !== 'partial'),
+      isPartialHoliday: officialHolidays.some((holiday) => holiday.status === 'partial'),
       officialHolidays,
       isOutsideMonth: dayPrimaryParts.year !== primaryParts.year || dayPrimaryParts.month !== primaryParts.month,
       isToday: isSameUtcDay(dayDate, cityDate),
@@ -1291,6 +1324,20 @@ function getDateKeyMidnightUtc(dateKey, timeZone) {
   return zonedDateTimeToUtc({ year, month, day, hour: 0, minute: 0, second: 0 }, timeZone);
 }
 
+function getBookmarkTargetUtc(bookmark, fallbackTimeZone) {
+  const [year, month, day] = String(bookmark.dateKey || '').split('-').map(Number);
+  const timeZone = bookmark.timeZone || fallbackTimeZone;
+
+  return zonedDateTimeToUtc({
+    year,
+    month,
+    day,
+    hour: normalizeBookmarkTimePart(bookmark.hour, 23),
+    minute: normalizeBookmarkTimePart(bookmark.minute, 59),
+    second: normalizeBookmarkTimePart(bookmark.second, 59),
+  }, timeZone);
+}
+
 function getCalendarDateKeyForParts(calendarType, year, month, day) {
   const date = calendarType === 'gregorian'
     ? new Date(Date.UTC(year, month - 1, day, 12))
@@ -1299,8 +1346,9 @@ function getCalendarDateKeyForParts(calendarType, year, month, day) {
   return getCalendarDateKey(date);
 }
 
-function getBookmarkAnniversaryTargetUtc(bookmark, fromDate, timeZone) {
-  const originalTarget = getDateKeyMidnightUtc(bookmark.dateKey, timeZone);
+function getBookmarkAnniversaryTargetUtc(bookmark, fromDate, fallbackTimeZone) {
+  const timeZone = bookmark.timeZone || fallbackTimeZone;
+  const originalTarget = getBookmarkTargetUtc(bookmark, timeZone);
   const effectGraceMilliseconds = 10000;
   if (originalTarget.getTime() >= fromDate.getTime() || fromDate.getTime() - originalTarget.getTime() <= effectGraceMilliseconds) {
     return originalTarget;
@@ -1316,7 +1364,7 @@ function getBookmarkAnniversaryTargetUtc(bookmark, fromDate, timeZone) {
       ? getDaysInGregorianMonth(targetYear, bookmark.month)
       : getDaysInPersianMonth(targetYear, bookmark.month);
     const dateKey = getCalendarDateKeyForParts(bookmark.calendarType, targetYear, bookmark.month, Math.min(bookmark.day, maxDay));
-    return getDateKeyMidnightUtc(dateKey, timeZone);
+    return getBookmarkTargetUtc({ ...bookmark, dateKey }, timeZone);
   };
 
   const candidate = getCandidate(currentCalendarParts.year);
@@ -1559,27 +1607,30 @@ function SolarYearMomentCard({ now, t, language }) {
   );
 }
 
-function BookmarkEffectOverlay({ effect }) {
-  const items = Array.from({ length: effect === 'balloons' ? 90 : 225 }, (_, index) => index);
+function BookmarkEffectOverlay({ effect, palette = 'multicolor' }) {
+  const isBalloons = effect === 'balloons';
+  const itemsPerWave = isBalloons ? 30 : 76;
+  const waves = 7;
+  const items = Array.from({ length: itemsPerWave * waves }, (_, index) => index);
 
   return h(
     'div',
-    { className: `bookmark-effect bookmark-effect--${effect}`, 'aria-hidden': 'true' },
+    { className: `bookmark-effect bookmark-effect--${effect} bookmark-effect--palette-${normalizeBookmarkEffectPalette(palette)}`, 'aria-hidden': 'true' },
     items.map((index) => h('span', {
       key: index,
       style: {
         '--i': String(index),
         '--x': `${2 + ((index * 37 + Math.floor(index / 12) * 11) % 96)}%`,
-        '--delay': `${Math.floor(index / (effect === 'balloons' ? 18 : 45)) * 0.82 + (index % 15) * 0.035 - 0.12}s`,
-        '--duration': `${effect === 'balloons' ? 7.4 + (index % 10) * 0.24 : 5.2 + (index % 11) * 0.22}s`,
+        '--delay': `${Math.floor(index / itemsPerWave) * 0.55 + (index % 18) * 0.018 - 0.08}s`,
+        '--duration': `${isBalloons ? 6 + (index % 10) * 0.08 : 5.8 + (index % 11) * 0.075}s`,
         '--spin': `${(index % 2 ? 1 : -1) * (180 + (index % 11) * 24)}deg`,
-        '--drift': `${((index % 11) - 5) * (effect === 'balloons' ? 3.4 : 2.8)}vw`,
+        '--drift': `${((index % 11) - 5) * (isBalloons ? 3.8 : 3)}vw`,
       },
     })),
   );
 }
 
-function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackground = 'dark', timeOfDay = 'night', onFullscreenBackgroundToggle = () => {}, onInteractionChange = () => {} }) {
+function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset = 0, fullscreenBackground = 'dark', timeOfDay = 'night', onFullscreenBackgroundToggle = () => {}, onInteractionChange = () => {} }) {
   const todayDate = getZonedTodayDate(city.timeZone);
   const todayPersian = getPersianDatePartsFromUtc(todayDate);
   const [calculatorMode, setCalculatorMode] = useState('convert');
@@ -1593,13 +1644,23 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
   const [selectedBookmarkId, setSelectedBookmarkId] = useState('');
   const [bookmarkTitle, setBookmarkTitle] = useState('');
   const [bookmarkDescription, setBookmarkDescription] = useState('');
+  const [bookmarkHour, setBookmarkHour] = useState(0);
+  const [bookmarkMinute, setBookmarkMinute] = useState(0);
+  const [bookmarkSecond, setBookmarkSecond] = useState(0);
+  const [bookmarkTimeZone, setBookmarkTimeZone] = useState(city.timeZone);
   const [bookmarkEffect, setBookmarkEffect] = useState('none');
+  const [bookmarkEffectPalette, setBookmarkEffectPalette] = useState('multicolor');
   const [bookmarkShowDescriptionInTimer, setBookmarkShowDescriptionInTimer] = useState(false);
   const [activeBookmarkActionsId, setActiveBookmarkActionsId] = useState('');
   const [editingBookmarkId, setEditingBookmarkId] = useState('');
   const [editingBookmarkTitle, setEditingBookmarkTitle] = useState('');
   const [editingBookmarkDescription, setEditingBookmarkDescription] = useState('');
+  const [editingBookmarkHour, setEditingBookmarkHour] = useState(0);
+  const [editingBookmarkMinute, setEditingBookmarkMinute] = useState(0);
+  const [editingBookmarkSecond, setEditingBookmarkSecond] = useState(0);
+  const [editingBookmarkTimeZone, setEditingBookmarkTimeZone] = useState(city.timeZone);
   const [editingBookmarkEffect, setEditingBookmarkEffect] = useState('none');
+  const [editingBookmarkEffectPalette, setEditingBookmarkEffectPalette] = useState('multicolor');
   const [editingBookmarkShowDescriptionInTimer, setEditingBookmarkShowDescriptionInTimer] = useState(false);
   const [editingBookmarkCalendarType, setEditingBookmarkCalendarType] = useState('persian');
   const [editingBookmarkYear, setEditingBookmarkYear] = useState(todayPersian.year);
@@ -1609,6 +1670,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
   const [bookmarkNow, setBookmarkNow] = useState(() => new Date(Date.now() + timeOffset));
   const [isConverterPickerActive, setIsConverterPickerActive] = useState(false);
   const [isBookmarkTimerFullscreen, setIsBookmarkTimerFullscreen] = useState(false);
+  const [bookmarkFullscreenControlsVisible, setBookmarkFullscreenControlsVisible] = useState(true);
   const [bookmarkEffectWatch, setBookmarkEffectWatch] = useState(null);
   const [firedBookmarkEffectKey, setFiredBookmarkEffectKey] = useState('');
   const [activeBookmarkEffect, setActiveBookmarkEffect] = useState(null);
@@ -1624,10 +1686,32 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
   };
   const bookmarkEffectOptions = [
     { id: 'none', label: t.bookmark_effect_none },
-    { id: 'color_ribbons', label: t.bookmark_effect_color_ribbons },
+    { id: 'ribbons', label: t.bookmark_effect_ribbons },
     { id: 'balloons', label: t.bookmark_effect_balloons },
-    { id: 'black_ribbons', label: t.bookmark_effect_black_ribbons },
   ];
+  const bookmarkEffectPaletteOptions = [
+    { id: 'white_pink', label: t.bookmark_effect_palette_white_pink },
+    { id: 'white_blue', label: t.bookmark_effect_palette_white_blue },
+    { id: 'white_red', label: t.bookmark_effect_palette_white_red },
+    { id: 'white_black', label: t.bookmark_effect_palette_white_black },
+    { id: 'black', label: t.bookmark_effect_palette_black },
+    { id: 'multicolor', label: t.bookmark_effect_palette_multicolor },
+  ];
+  const bookmarkTimeZoneOptions = [
+    city,
+    ...timeZoneOptions,
+  ].filter(Boolean).reduce((options, option) => {
+    if (!option.timeZone || options.some((item) => item.timeZone === option.timeZone)) return options;
+    options.push(option);
+    return options;
+  }, []);
+  const hourOptions = Array.from({ length: 24 }, (_, index) => index);
+  const minuteSecondOptions = Array.from({ length: 60 }, (_, index) => index);
+  const getTimeZoneOptionLabel = (option) => {
+    const label = language === 'fa' ? (option.localFaLabel || option.label) : option.label;
+    const country = language === 'fa' ? (option.localFaCountry || option.country) : option.country;
+    return country ? `${label}، ${country}` : label;
+  };
 
   const monthOptions = calendarType === 'gregorian' ? getCalendarMonthOptions('gregorian') : getCalendarMonthOptions('persian');
   const daysInMonth = calendarType === 'gregorian' ? getDaysInGregorianMonth(year, month) : getDaysInPersianMonth(year, month);
@@ -1680,12 +1764,42 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsBookmarkTimerFullscreen(Boolean(document.fullscreenElement?.classList?.contains('selected-bookmark-timer')));
+      const isFullscreen = Boolean(document.fullscreenElement?.classList?.contains('selected-bookmark-timer'));
+      setIsBookmarkTimerFullscreen(isFullscreen);
+      setBookmarkFullscreenControlsVisible(isFullscreen);
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
+
+  useEffect(() => {
+    if (!isBookmarkTimerFullscreen) {
+      setBookmarkFullscreenControlsVisible(true);
+      return undefined;
+    }
+
+    let hideTimer = null;
+    const revealControls = () => {
+      setBookmarkFullscreenControlsVisible(true);
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => setBookmarkFullscreenControlsVisible(false), 2600);
+    };
+
+    revealControls();
+    document.addEventListener('mousemove', revealControls);
+    document.addEventListener('pointerdown', revealControls);
+    document.addEventListener('keydown', revealControls);
+    document.addEventListener('touchstart', revealControls, { passive: true });
+
+    return () => {
+      clearTimeout(hideTimer);
+      document.removeEventListener('mousemove', revealControls);
+      document.removeEventListener('pointerdown', revealControls);
+      document.removeEventListener('keydown', revealControls);
+      document.removeEventListener('touchstart', revealControls);
+    };
+  }, [isBookmarkTimerFullscreen]);
 
   const toggleBookmarkTimerFullscreen = () => {
     const timerElement = document.querySelector('.selected-bookmark-timer');
@@ -1706,10 +1820,11 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
 
   const runSelectedBookmarkEffect = () => {
     if (!selectedBookmark || !isBookmarkTimerFullscreen) return;
-    const effect = normalizeBookmarkEffect(selectedBookmark.effect);
+    const effect = getBookmarkEffectType(selectedBookmark);
+    const palette = getBookmarkEffectPalette(selectedBookmark);
     if (effect === 'none') return;
 
-    setActiveBookmarkEffect({ id: effect, key: `manual:${selectedBookmark.id}:${effect}:${Date.now()}` });
+    setActiveBookmarkEffect({ id: effect, palette, key: `manual:${selectedBookmark.id}:${effect}:${palette}:${Date.now()}` });
   };
 
   useEffect(() => {
@@ -1720,6 +1835,12 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     onInteractionChange(true);
     return () => onInteractionChange(false);
   }, [editingBookmarkId]);
+
+  useEffect(() => {
+    if (!selectedBookmarkId && !editingBookmarkId) {
+      setBookmarkTimeZone(city.timeZone);
+    }
+  }, [city.timeZone, editingBookmarkId, selectedBookmarkId]);
 
   const convertedDate = useMemo(() => {
     if (calendarType === 'gregorian') {
@@ -1748,11 +1869,16 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     if (!selectedBookmark) return;
     setBookmarkTitle(selectedBookmark.title);
     setBookmarkDescription(selectedBookmark.description || '');
-    setBookmarkEffect(normalizeBookmarkEffect(selectedBookmark.effect));
+    setBookmarkHour(normalizeBookmarkTimePart(selectedBookmark.hour, 23));
+    setBookmarkMinute(normalizeBookmarkTimePart(selectedBookmark.minute, 59));
+    setBookmarkSecond(normalizeBookmarkTimePart(selectedBookmark.second, 59));
+    setBookmarkTimeZone(selectedBookmark.timeZone || city.timeZone);
+    setBookmarkEffect(getBookmarkEffectType(selectedBookmark));
+    setBookmarkEffectPalette(getBookmarkEffectPalette(selectedBookmark));
     setBookmarkShowDescriptionInTimer(Boolean(selectedBookmark.showDescriptionInTimer));
-  }, [selectedBookmark]);
+  }, [selectedBookmark, city.timeZone]);
   const selectedBookmarkTimer = selectedBookmark
-    ? getPreciseZonedDistance(bookmarkNow, getDateKeyMidnightUtc(selectedBookmark.dateKey, city.timeZone), city.timeZone)
+    ? getPreciseZonedDistance(bookmarkNow, getBookmarkTargetUtc(selectedBookmark, city.timeZone), selectedBookmark.timeZone || city.timeZone)
     : null;
   const selectedBookmarkTimerTitle = selectedBookmark && selectedBookmarkTimer
     ? language === 'fa'
@@ -1763,12 +1889,12 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
   useEffect(() => {
     if (!activeBookmarkEffect) return undefined;
 
-    const timer = window.setTimeout(() => setActiveBookmarkEffect(null), 12000);
+    const timer = window.setTimeout(() => setActiveBookmarkEffect(null), 11000);
     return () => window.clearTimeout(timer);
   }, [activeBookmarkEffect]);
 
   useEffect(() => {
-    if (!selectedBookmark || !isBookmarkTimerFullscreen || normalizeBookmarkEffect(selectedBookmark.effect) === 'none') {
+    if (!selectedBookmark || !isBookmarkTimerFullscreen || getBookmarkEffectType(selectedBookmark) === 'none') {
       setBookmarkEffectWatch(null);
       return;
     }
@@ -1776,15 +1902,16 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     const targetDate = getBookmarkAnniversaryTargetUtc(selectedBookmark, bookmarkNow, city.timeZone);
     const targetTime = targetDate.getTime();
     const remainingMilliseconds = targetTime - bookmarkNow.getTime();
-    const effect = normalizeBookmarkEffect(selectedBookmark.effect);
-    const effectKey = `${selectedBookmark.id}:${targetTime}:${effect}`;
+    const effect = getBookmarkEffectType(selectedBookmark);
+    const palette = getBookmarkEffectPalette(selectedBookmark);
+    const effectKey = `${selectedBookmark.id}:${targetTime}:${effect}:${palette}`;
     const crossedZero = bookmarkEffectWatch?.key === effectKey
       ? bookmarkEffectWatch.remainingMilliseconds > 0 && remainingMilliseconds <= 0
       : remainingMilliseconds <= 0 && remainingMilliseconds > -1500;
 
     if (crossedZero && firedBookmarkEffectKey !== effectKey) {
       setFiredBookmarkEffectKey(effectKey);
-      setActiveBookmarkEffect({ id: effect, key: `${effectKey}:${Date.now()}` });
+      setActiveBookmarkEffect({ id: effect, palette, key: `${effectKey}:${Date.now()}` });
     }
 
     setBookmarkEffectWatch((current) => (
@@ -1809,7 +1936,13 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     month,
     day,
     dateKey: currentDateKey,
+    hour: normalizeBookmarkTimePart(bookmarkHour, 23),
+    minute: normalizeBookmarkTimePart(bookmarkMinute, 59),
+    second: normalizeBookmarkTimePart(bookmarkSecond, 59),
+    timeZone: bookmarkTimeZone || city.timeZone,
     effect: normalizeBookmarkEffect(bookmarkEffect),
+    effectType: normalizeBookmarkEffect(bookmarkEffect),
+    effectPalette: normalizeBookmarkEffectPalette(bookmarkEffectPalette),
     createdAt,
     updatedAt: new Date().toISOString(),
   });
@@ -1842,7 +1975,12 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     setConfirmingDeleteId('');
     setBookmarkTitle(nextBookmark.title);
     setBookmarkDescription(nextBookmark.description);
-    setBookmarkEffect(normalizeBookmarkEffect(nextBookmark.effect));
+    setBookmarkHour(normalizeBookmarkTimePart(nextBookmark.hour, 23));
+    setBookmarkMinute(normalizeBookmarkTimePart(nextBookmark.minute, 59));
+    setBookmarkSecond(normalizeBookmarkTimePart(nextBookmark.second, 59));
+    setBookmarkTimeZone(nextBookmark.timeZone || city.timeZone);
+    setBookmarkEffect(getBookmarkEffectType(nextBookmark));
+    setBookmarkEffectPalette(getBookmarkEffectPalette(nextBookmark));
     setBookmarkShowDescriptionInTimer(Boolean(nextBookmark.showDescriptionInTimer));
   };
 
@@ -1864,7 +2002,12 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     setSelectedBookmarkId(bookmark.id);
     setBookmarkTitle(bookmark.title);
     setBookmarkDescription(bookmark.description || '');
-    setBookmarkEffect(normalizeBookmarkEffect(bookmark.effect));
+    setBookmarkHour(normalizeBookmarkTimePart(bookmark.hour, 23));
+    setBookmarkMinute(normalizeBookmarkTimePart(bookmark.minute, 59));
+    setBookmarkSecond(normalizeBookmarkTimePart(bookmark.second, 59));
+    setBookmarkTimeZone(bookmark.timeZone || city.timeZone);
+    setBookmarkEffect(getBookmarkEffectType(bookmark));
+    setBookmarkEffectPalette(getBookmarkEffectPalette(bookmark));
     setBookmarkShowDescriptionInTimer(Boolean(bookmark.showDescriptionInTimer));
     setEditingBookmarkId('');
     setConfirmingDeleteId('');
@@ -1877,7 +2020,12 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     setEditingBookmarkId(bookmark.id);
     setEditingBookmarkTitle(bookmark.title);
     setEditingBookmarkDescription(bookmark.description || '');
-    setEditingBookmarkEffect(normalizeBookmarkEffect(bookmark.effect));
+    setEditingBookmarkHour(normalizeBookmarkTimePart(bookmark.hour, 23));
+    setEditingBookmarkMinute(normalizeBookmarkTimePart(bookmark.minute, 59));
+    setEditingBookmarkSecond(normalizeBookmarkTimePart(bookmark.second, 59));
+    setEditingBookmarkTimeZone(bookmark.timeZone || city.timeZone);
+    setEditingBookmarkEffect(getBookmarkEffectType(bookmark));
+    setEditingBookmarkEffectPalette(getBookmarkEffectPalette(bookmark));
     setEditingBookmarkShowDescriptionInTimer(Boolean(bookmark.showDescriptionInTimer));
     setEditingBookmarkCalendarType(bookmark.calendarType);
     setEditingBookmarkYear(bookmark.year);
@@ -1906,7 +2054,13 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
           month: editingBookmarkMonth,
           day: nextDay,
           dateKey: nextDateKey,
+          hour: normalizeBookmarkTimePart(editingBookmarkHour, 23),
+          minute: normalizeBookmarkTimePart(editingBookmarkMinute, 59),
+          second: normalizeBookmarkTimePart(editingBookmarkSecond, 59),
+          timeZone: editingBookmarkTimeZone || city.timeZone,
           effect: normalizeBookmarkEffect(editingBookmarkEffect),
+          effectType: normalizeBookmarkEffect(editingBookmarkEffect),
+          effectPalette: normalizeBookmarkEffectPalette(editingBookmarkEffectPalette),
           showDescriptionInTimer: Boolean(editingBookmarkShowDescriptionInTimer),
           updatedAt: new Date().toISOString(),
         }
@@ -1919,7 +2073,12 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     setSelectedBookmarkId(bookmark.id);
     setBookmarkTitle(nextTitle);
     setBookmarkDescription(nextDescription);
+    setBookmarkHour(normalizeBookmarkTimePart(editingBookmarkHour, 23));
+    setBookmarkMinute(normalizeBookmarkTimePart(editingBookmarkMinute, 59));
+    setBookmarkSecond(normalizeBookmarkTimePart(editingBookmarkSecond, 59));
+    setBookmarkTimeZone(editingBookmarkTimeZone || city.timeZone);
     setBookmarkEffect(normalizeBookmarkEffect(editingBookmarkEffect));
+    setBookmarkEffectPalette(normalizeBookmarkEffectPalette(editingBookmarkEffectPalette));
     setBookmarkShowDescriptionInTimer(Boolean(editingBookmarkShowDescriptionInTimer));
     setEditingBookmarkId('');
   };
@@ -1937,7 +2096,12 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     setSelectedBookmarkId(bookmark.id);
     setBookmarkTitle(nextBookmark.title);
     setBookmarkDescription(nextBookmark.description);
-    setBookmarkEffect(normalizeBookmarkEffect(nextBookmark.effect));
+    setBookmarkHour(normalizeBookmarkTimePart(nextBookmark.hour, 23));
+    setBookmarkMinute(normalizeBookmarkTimePart(nextBookmark.minute, 59));
+    setBookmarkSecond(normalizeBookmarkTimePart(nextBookmark.second, 59));
+    setBookmarkTimeZone(nextBookmark.timeZone || city.timeZone);
+    setBookmarkEffect(getBookmarkEffectType(nextBookmark));
+    setBookmarkEffectPalette(getBookmarkEffectPalette(nextBookmark));
     setBookmarkShowDescriptionInTimer(Boolean(nextBookmark.showDescriptionInTimer));
     setEditingBookmarkId('');
     setActiveBookmarkActionsId('');
@@ -2050,7 +2214,11 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
       ),
     selectedBookmarkTimer && h(
       'div',
-      { className: `selected-bookmark-timer fullscreen-background--${fullscreenBackground === 'dark' ? 'dark' : 'light'}`, 'aria-live': 'polite' },
+      {
+        className: `selected-bookmark-timer fullscreen-background--${fullscreenBackground === 'dark' ? 'dark' : 'light'}${bookmarkFullscreenControlsVisible ? ' fullscreen-controls-visible' : ''}`,
+        onMouseMove: () => isBookmarkTimerFullscreen && setBookmarkFullscreenControlsVisible(true),
+        'aria-live': 'polite',
+      },
       h('div', { className: 'selected-bookmark-timer__header' },
         h('div', { className: 'selected-bookmark-timer__headline' },
           h('strong', null, selectedBookmarkTimerTitle),
@@ -2062,7 +2230,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
             { type: 'button', className: 'fullscreen-background-button', onClick: onFullscreenBackgroundToggle },
             fullscreenBackground === 'dark' ? t.light_background : t.dark_background,
           ),
-          isBookmarkTimerFullscreen && selectedBookmark && normalizeBookmarkEffect(selectedBookmark.effect) !== 'none' && h(
+          isBookmarkTimerFullscreen && selectedBookmark && getBookmarkEffectType(selectedBookmark) !== 'none' && h(
             'button',
             { type: 'button', className: 'selected-bookmark-timer__effect-button', onClick: runSelectedBookmarkEffect },
             t.run_bookmark_effect,
@@ -2087,7 +2255,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
           h('span', null, label),
         )),
       ),
-      activeBookmarkEffect && h(BookmarkEffectOverlay, { effect: activeBookmarkEffect.id, key: activeBookmarkEffect.key }),
+      activeBookmarkEffect && h(BookmarkEffectOverlay, { effect: activeBookmarkEffect.id, palette: activeBookmarkEffect.palette, key: activeBookmarkEffect.key }),
     ),
     h(
       'div',
@@ -2113,15 +2281,75 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
           placeholder: t.bookmark_description_placeholder,
         }),
       ),
-      h('label', null, t.bookmark_effect,
-        h('select', {
-          value: bookmarkEffect,
-          onInput: (event) => setBookmarkEffect(normalizeBookmarkEffect(event.target.value)),
-          onChange: (event) => setBookmarkEffect(normalizeBookmarkEffect(event.target.value)),
-          onFocus: handleFocusIn,
-          onBlur: handleFocusOut,
-        },
-        bookmarkEffectOptions.map((option) => h('option', { key: option.id, value: option.id }, option.label)),
+      h('div', { className: 'date-bookmark__effect-pair' },
+        h('label', null, t.bookmark_effect,
+          h('select', {
+            value: bookmarkEffect,
+            onInput: (event) => setBookmarkEffect(normalizeBookmarkEffect(event.target.value)),
+            onChange: (event) => setBookmarkEffect(normalizeBookmarkEffect(event.target.value)),
+            onFocus: handleFocusIn,
+            onBlur: handleFocusOut,
+          },
+          bookmarkEffectOptions.map((option) => h('option', { key: option.id, value: option.id }, option.label)),
+          ),
+        ),
+        h('label', null, t.bookmark_effect_palette,
+          h('select', {
+            value: bookmarkEffectPalette,
+            disabled: bookmarkEffect === 'none',
+            onInput: (event) => setBookmarkEffectPalette(normalizeBookmarkEffectPalette(event.target.value)),
+            onChange: (event) => setBookmarkEffectPalette(normalizeBookmarkEffectPalette(event.target.value)),
+            onFocus: handleFocusIn,
+            onBlur: handleFocusOut,
+          },
+          bookmarkEffectPaletteOptions.map((option) => h('option', { key: option.id, value: option.id }, option.label)),
+          ),
+        ),
+      ),
+      h('div', { className: 'date-bookmark__time-fields' },
+        h('label', null, t.bookmark_timezone,
+          h('select', {
+            value: bookmarkTimeZone,
+            onInput: (event) => setBookmarkTimeZone(event.target.value),
+            onChange: (event) => setBookmarkTimeZone(event.target.value),
+            onFocus: handleFocusIn,
+            onBlur: handleFocusOut,
+          },
+          bookmarkTimeZoneOptions.map((option) => h('option', { key: option.timeZone, value: option.timeZone }, getTimeZoneOptionLabel(option))),
+          ),
+        ),
+        h('label', null, t.hour,
+          h('select', {
+            value: bookmarkHour,
+            onInput: (event) => setBookmarkHour(normalizeBookmarkTimePart(event.target.value, 23)),
+            onChange: (event) => setBookmarkHour(normalizeBookmarkTimePart(event.target.value, 23)),
+            onFocus: handleFocusIn,
+            onBlur: handleFocusOut,
+          },
+          hourOptions.map((option) => h('option', { key: option, value: option }, formatNumber(option))),
+          ),
+        ),
+        h('label', null, t.minute,
+          h('select', {
+            value: bookmarkMinute,
+            onInput: (event) => setBookmarkMinute(normalizeBookmarkTimePart(event.target.value, 59)),
+            onChange: (event) => setBookmarkMinute(normalizeBookmarkTimePart(event.target.value, 59)),
+            onFocus: handleFocusIn,
+            onBlur: handleFocusOut,
+          },
+          minuteSecondOptions.map((option) => h('option', { key: option, value: option }, formatNumber(option))),
+          ),
+        ),
+        h('label', null, t.second,
+          h('select', {
+            value: bookmarkSecond,
+            onInput: (event) => setBookmarkSecond(normalizeBookmarkTimePart(event.target.value, 59)),
+            onChange: (event) => setBookmarkSecond(normalizeBookmarkTimePart(event.target.value, 59)),
+            onFocus: handleFocusIn,
+            onBlur: handleFocusOut,
+          },
+          minuteSecondOptions.map((option) => h('option', { key: option, value: option }, formatNumber(option))),
+          ),
         ),
       ),
       h('label', { className: 'date-bookmark__checkbox' },
@@ -2202,15 +2430,71 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
                 rows: 2,
                 'aria-label': t.bookmark_description,
               }),
-              isEditing && h('label', { className: 'date-bookmark__effect-input' },
-                h('span', null, t.bookmark_effect),
-                h('select', {
-                  value: editingBookmarkEffect,
-                  onFocus: handleFocusIn,
-                  onBlur: handleFocusOut,
-                  onChange: (event) => setEditingBookmarkEffect(normalizeBookmarkEffect(event.target.value)),
-                },
-                bookmarkEffectOptions.map((option) => h('option', { key: option.id, value: option.id }, option.label)),
+              isEditing && h('div', { className: 'date-bookmark__effect-pair date-bookmark__edit-effect-pair' },
+                h('label', { className: 'date-bookmark__effect-input' },
+                  h('span', null, t.bookmark_effect),
+                  h('select', {
+                    value: editingBookmarkEffect,
+                    onFocus: handleFocusIn,
+                    onBlur: handleFocusOut,
+                    onChange: (event) => setEditingBookmarkEffect(normalizeBookmarkEffect(event.target.value)),
+                  },
+                  bookmarkEffectOptions.map((option) => h('option', { key: option.id, value: option.id }, option.label)),
+                  ),
+                ),
+                h('label', { className: 'date-bookmark__effect-input' },
+                  h('span', null, t.bookmark_effect_palette),
+                  h('select', {
+                    value: editingBookmarkEffectPalette,
+                    disabled: editingBookmarkEffect === 'none',
+                    onFocus: handleFocusIn,
+                    onBlur: handleFocusOut,
+                    onChange: (event) => setEditingBookmarkEffectPalette(normalizeBookmarkEffectPalette(event.target.value)),
+                  },
+                  bookmarkEffectPaletteOptions.map((option) => h('option', { key: option.id, value: option.id }, option.label)),
+                  ),
+                ),
+              ),
+              isEditing && h('div', { className: 'date-bookmark__time-fields date-bookmark__edit-time-fields' },
+                h('label', null, t.bookmark_timezone,
+                  h('select', {
+                    value: editingBookmarkTimeZone,
+                    onFocus: handleFocusIn,
+                    onBlur: handleFocusOut,
+                    onChange: (event) => setEditingBookmarkTimeZone(event.target.value),
+                  },
+                  bookmarkTimeZoneOptions.map((option) => h('option', { key: option.timeZone, value: option.timeZone }, getTimeZoneOptionLabel(option))),
+                  ),
+                ),
+                h('label', null, t.hour,
+                  h('select', {
+                    value: editingBookmarkHour,
+                    onFocus: handleFocusIn,
+                    onBlur: handleFocusOut,
+                    onChange: (event) => setEditingBookmarkHour(normalizeBookmarkTimePart(event.target.value, 23)),
+                  },
+                  hourOptions.map((option) => h('option', { key: option, value: option }, formatNumber(option))),
+                  ),
+                ),
+                h('label', null, t.minute,
+                  h('select', {
+                    value: editingBookmarkMinute,
+                    onFocus: handleFocusIn,
+                    onBlur: handleFocusOut,
+                    onChange: (event) => setEditingBookmarkMinute(normalizeBookmarkTimePart(event.target.value, 59)),
+                  },
+                  minuteSecondOptions.map((option) => h('option', { key: option, value: option }, formatNumber(option))),
+                  ),
+                ),
+                h('label', null, t.second,
+                  h('select', {
+                    value: editingBookmarkSecond,
+                    onFocus: handleFocusIn,
+                    onBlur: handleFocusOut,
+                    onChange: (event) => setEditingBookmarkSecond(normalizeBookmarkTimePart(event.target.value, 59)),
+                  },
+                  minuteSecondOptions.map((option) => h('option', { key: option, value: option }, formatNumber(option))),
+                  ),
                 ),
               ),
               isEditing && h('label', { className: 'date-bookmark__checkbox date-bookmark__edit-checkbox' },
@@ -2571,7 +2855,6 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
   }
 
   const selectedOccasionGroup = getSelectedOccasionGroup(calendar);
-  const displayOccasionGroups = getDisplayOccasionGroups(calendar);
   const occasionTypeOrder = (Array.isArray(occasionFilterOrder) && occasionFilterOrder.length ? occasionFilterOrder : ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared']).filter((type)=>fallbackOccasionTypes.includes(type));
   const groupOccasionsByType = (events) => occasionTypeOrder.filter((type)=>allowedOccasionTypes.includes(type))
     .map((type) => {
@@ -2581,6 +2864,18 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
         : null;
     })
     .filter(Boolean);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      const list = document.querySelector('.monthly-occasions__list');
+      const selectedItem = list?.querySelector('.monthly-occasions__day--selected');
+      if (!list || !selectedItem) return;
+
+      list.scrollTop = Math.max(0, selectedItem.offsetTop - (list.clientHeight / 2) + (selectedItem.clientHeight / 2));
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [selectedDateKey, primaryCalendar, monthOffset, enabledOccasionTypes]);
 
   const moveMonth = (direction) => {
     setMonthOffset((offset) => getShiftedCalendarMonthOffset(primaryCalendar, city.cityDate, offset, direction));
@@ -2625,8 +2920,29 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
       h(
         'header',
         { className: 'monthly-calendar__header' },
-        h('span', null, calendar.eyebrow),
-        h('strong', null, calendar.title),
+        h('div', { className: 'monthly-calendar__title' },
+          h('span', null, calendar.eyebrow),
+          h('strong', null, calendar.title),
+        ),
+        h(
+          'div',
+          { className: 'monthly-calendar__mode', 'aria-label': t.choose_primary_calendar },
+          [
+            { id: 'persian', label: t.solar_hijri, shortLabel: t.solar_hijri },
+            { id: 'gregorian', label: t.gregorian, shortLabel: t.gregorian },
+          ].map((option) => h(
+            'button',
+            {
+              type: 'button',
+              className: option.id === primaryCalendar ? 'selected' : '',
+              onClick: () => switchPrimaryCalendar(option.id),
+              'aria-pressed': option.id === primaryCalendar,
+              'aria-label': `${option.label} primary`,
+              key: option.id,
+            },
+            option.shortLabel,
+          )),
+        ),
         h(
           'div',
           { className: 'monthly-calendar__toolbar' },
@@ -2668,27 +2984,6 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
             h('button', { type: 'button', onClick: () => moveMonth(1), 'aria-label': t.next_month }, '›'),
           ),
         ),
-        h('small', null, `${t.inside}: ${calendar.secondaryTitle} · ${t.selected}: ${calendar.selectedLabel}`),
-        h('small', { className: 'monthly-calendar__occasion-description' }, selectedOccasionDescription),
-        h(
-          'div',
-          { className: 'monthly-calendar__mode', 'aria-label': t.choose_primary_calendar },
-          [
-            { id: 'persian', label: t.solar_hijri, shortLabel: t.solar_hijri },
-            { id: 'gregorian', label: t.gregorian, shortLabel: t.gregorian },
-          ].map((option) => h(
-            'button',
-            {
-              type: 'button',
-              className: option.id === primaryCalendar ? 'selected' : '',
-              onClick: () => switchPrimaryCalendar(option.id),
-              'aria-pressed': option.id === primaryCalendar,
-              'aria-label': `${option.label} primary`,
-              key: option.id,
-            },
-            option.shortLabel,
-          )),
-        ),
       ),
       h(
         'div',
@@ -2702,7 +2997,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
           'button',
           {
             type: 'button',
-            className: `monthly-calendar__day monthly-calendar__day--overlay${day.events.length ? ' monthly-calendar__day--has-events' : ''}${day.isHoliday ? ' monthly-calendar__day--holiday' : ''}${day.isOutsideMonth ? ' monthly-calendar__day--outside' : ''}${day.isToday ? ' monthly-calendar__day--today' : ''}${day.isSelected ? ' monthly-calendar__day--selected' : ''}`,
+            className: `monthly-calendar__day monthly-calendar__day--overlay${day.events.length ? ' monthly-calendar__day--has-events' : ''}${day.isPartialHoliday ? ' monthly-calendar__day--partial-holiday' : ''}${day.isHoliday ? ' monthly-calendar__day--holiday' : ''}${day.isOutsideMonth ? ' monthly-calendar__day--outside' : ''}${day.isToday ? ' monthly-calendar__day--today' : ''}${day.isSelected ? ' monthly-calendar__day--selected' : ''}`,
             onClick: () => selectDay(day.dateKey),
             'aria-pressed': day.isSelected,
             title: day.officialHolidays?.length
@@ -2721,6 +3016,9 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
             `${day.secondaryDate.month}/${formatNumber(day.secondaryDate.day)}`,
           ),
         )),
+      ),
+      h('div', { className: 'monthly-calendar__meta' },
+        h('small', null, `${t.selected}: ${calendar.selectedLabel}`),
       ),
     ),
     h(
@@ -2760,7 +3058,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
         ? h(
           'div',
           { className: 'monthly-occasions__list' },
-          displayOccasionGroups.map((group) => h(
+          calendar.occasions.map((group) => h(
             'article',
             { className: `monthly-occasions__day${group.isSelected ? ' monthly-occasions__day--selected' : ''}`, key: group.id, onClick: () => selectDay(group.dateKey), role: 'button', tabIndex: 0, onKeyDown: (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectDay(group.dateKey); } } },
             h(
@@ -2860,6 +3158,7 @@ function App() {
   const [ntpHost, setNtpHost] = useState(defaultNtpHost);
   const [ntpStatus, setNtpStatus] = useState({ kind: 'local', label: i18n.en.local_clock, detail: i18n.en.using_device_clock, host: ntpHost, delay: i18n.en.not_measured });
   const [isClockFullscreen, setIsClockFullscreen] = useState(false);
+  const [clockFullscreenControlsVisible, setClockFullscreenControlsVisible] = useState(true);
   const [fullscreenBackground, setFullscreenBackground] = useState(getInitialFullscreenBackground);
 
   const [draggingCityId, setDraggingCityId] = useState(null);
@@ -2901,12 +3200,42 @@ function App() {
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsClockFullscreen(Boolean(document.fullscreenElement?.classList?.contains('hero-panel')));
+      const isFullscreen = Boolean(document.fullscreenElement?.classList?.contains('hero-panel'));
+      setIsClockFullscreen(isFullscreen);
+      setClockFullscreenControlsVisible(isFullscreen);
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
+
+  useEffect(() => {
+    if (!isClockFullscreen) {
+      setClockFullscreenControlsVisible(true);
+      return undefined;
+    }
+
+    let hideTimer = null;
+    const revealControls = () => {
+      setClockFullscreenControlsVisible(true);
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => setClockFullscreenControlsVisible(false), 2600);
+    };
+
+    revealControls();
+    document.addEventListener('mousemove', revealControls);
+    document.addEventListener('pointerdown', revealControls);
+    document.addEventListener('keydown', revealControls);
+    document.addEventListener('touchstart', revealControls, { passive: true });
+
+    return () => {
+      clearTimeout(hideTimer);
+      document.removeEventListener('mousemove', revealControls);
+      document.removeEventListener('pointerdown', revealControls);
+      document.removeEventListener('keydown', revealControls);
+      document.removeEventListener('touchstart', revealControls);
+    };
+  }, [isClockFullscreen]);
 
   const toggleClockFullscreen = () => {
     const clockElement = document.querySelector('.hero-panel');
@@ -3177,7 +3506,11 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
   const cardComponents = {
     mainClock: h(
       'section',
-      { className: `hero-panel fullscreen-background--${fullscreenBackground} fullscreen-time--${selectedCityView.timeOfDay}`, style: { '--accent': selectedCityView.accent } },
+      {
+        className: `hero-panel fullscreen-background--${fullscreenBackground} fullscreen-time--${selectedCityView.timeOfDay}${clockFullscreenControlsVisible ? ' fullscreen-controls-visible' : ''}`,
+        onMouseMove: () => isClockFullscreen && setClockFullscreenControlsVisible(true),
+        style: { '--accent': selectedCityView.accent },
+      },
       h(
         'div',
         { className: 'top-bar' },
@@ -3258,7 +3591,7 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
     ),
     monthlyOccasions: h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes, occasionFilterOrder }),
     solarYearMoment: h(SolarYearMomentCard, { now, t, language }),
-    dateTools: h(AgeConverterCard, { city: selectedCityConfig, t, language, timeOffset, fullscreenBackground, timeOfDay: selectedCityView.timeOfDay, onFullscreenBackgroundToggle: toggleFullscreenBackground, onInteractionChange: setIsAgePickerActive }),
+    dateTools: h(AgeConverterCard, { city: selectedCityConfig, timeZoneOptions: activeSnapshots, t, language, timeOffset, fullscreenBackground, timeOfDay: selectedCityView.timeOfDay, onFullscreenBackgroundToggle: toggleFullscreenBackground, onInteractionChange: setIsAgePickerActive }),
   };
 
   return h(
