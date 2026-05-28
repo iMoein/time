@@ -1630,6 +1630,49 @@ function BookmarkEffectOverlay({ effect, palette = 'multicolor' }) {
   );
 }
 
+const fullscreenControlsAutoHideDelay = 1400;
+
+function useFullscreenControlsAutoHide(isFullscreen, setControlsVisible) {
+  useEffect(() => {
+    if (!isFullscreen) {
+      setControlsVisible(true);
+      return undefined;
+    }
+
+    let hideTimer = null;
+    let revealFrame = 0;
+    const scheduleHide = () => {
+      window.clearTimeout(hideTimer);
+      hideTimer = window.setTimeout(() => setControlsVisible(false), fullscreenControlsAutoHideDelay);
+    };
+    const revealControls = () => {
+      if (revealFrame) return;
+      revealFrame = window.requestAnimationFrame(() => {
+        revealFrame = 0;
+        setControlsVisible(true);
+        scheduleHide();
+      });
+    };
+
+    revealControls();
+    document.addEventListener('pointermove', revealControls, { passive: true });
+    document.addEventListener('mousemove', revealControls, { passive: true });
+    document.addEventListener('pointerdown', revealControls);
+    document.addEventListener('keydown', revealControls);
+    document.addEventListener('touchstart', revealControls, { passive: true });
+
+    return () => {
+      window.clearTimeout(hideTimer);
+      if (revealFrame) window.cancelAnimationFrame(revealFrame);
+      document.removeEventListener('pointermove', revealControls);
+      document.removeEventListener('mousemove', revealControls);
+      document.removeEventListener('pointerdown', revealControls);
+      document.removeEventListener('keydown', revealControls);
+      document.removeEventListener('touchstart', revealControls);
+    };
+  }, [isFullscreen]);
+}
+
 function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset = 0, fullscreenBackground = 'dark', timeOfDay = 'night', onFullscreenBackgroundToggle = () => {}, onInteractionChange = () => {} }) {
   const todayDate = getZonedTodayDate(city.timeZone);
   const todayPersian = getPersianDatePartsFromUtc(todayDate);
@@ -1712,6 +1755,18 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
     const country = language === 'fa' ? (option.localFaCountry || option.country) : option.country;
     return country ? `${label}، ${country}` : label;
   };
+  const getBookmarkDescriptionValue = (bookmark) => String(bookmark?.description || '').trim();
+  const syncBookmarkFormState = (bookmark) => {
+    setBookmarkTitle(bookmark.title);
+    setBookmarkDescription(getBookmarkDescriptionValue(bookmark));
+    setBookmarkHour(normalizeBookmarkTimePart(bookmark.hour, 23));
+    setBookmarkMinute(normalizeBookmarkTimePart(bookmark.minute, 59));
+    setBookmarkSecond(normalizeBookmarkTimePart(bookmark.second, 59));
+    setBookmarkTimeZone(bookmark.timeZone || city.timeZone);
+    setBookmarkEffect(getBookmarkEffectType(bookmark));
+    setBookmarkEffectPalette(getBookmarkEffectPalette(bookmark));
+    setBookmarkShowDescriptionInTimer(Boolean(bookmark.showDescriptionInTimer));
+  };
 
   const monthOptions = calendarType === 'gregorian' ? getCalendarMonthOptions('gregorian') : getCalendarMonthOptions('persian');
   const daysInMonth = calendarType === 'gregorian' ? getDaysInGregorianMonth(year, month) : getDaysInPersianMonth(year, month);
@@ -1773,33 +1828,7 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  useEffect(() => {
-    if (!isBookmarkTimerFullscreen) {
-      setBookmarkFullscreenControlsVisible(true);
-      return undefined;
-    }
-
-    let hideTimer = null;
-    const revealControls = () => {
-      setBookmarkFullscreenControlsVisible(true);
-      clearTimeout(hideTimer);
-      hideTimer = setTimeout(() => setBookmarkFullscreenControlsVisible(false), 2600);
-    };
-
-    revealControls();
-    document.addEventListener('mousemove', revealControls);
-    document.addEventListener('pointerdown', revealControls);
-    document.addEventListener('keydown', revealControls);
-    document.addEventListener('touchstart', revealControls, { passive: true });
-
-    return () => {
-      clearTimeout(hideTimer);
-      document.removeEventListener('mousemove', revealControls);
-      document.removeEventListener('pointerdown', revealControls);
-      document.removeEventListener('keydown', revealControls);
-      document.removeEventListener('touchstart', revealControls);
-    };
-  }, [isBookmarkTimerFullscreen]);
+  useFullscreenControlsAutoHide(isBookmarkTimerFullscreen, setBookmarkFullscreenControlsVisible);
 
   const toggleBookmarkTimerFullscreen = () => {
     const timerElement = document.querySelector('.selected-bookmark-timer');
@@ -1867,15 +1896,7 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
   const selectedBookmark = dateBookmarks.find((bookmark) => bookmark.id === selectedBookmarkId);
   useEffect(() => {
     if (!selectedBookmark) return;
-    setBookmarkTitle(selectedBookmark.title);
-    setBookmarkDescription(selectedBookmark.description || '');
-    setBookmarkHour(normalizeBookmarkTimePart(selectedBookmark.hour, 23));
-    setBookmarkMinute(normalizeBookmarkTimePart(selectedBookmark.minute, 59));
-    setBookmarkSecond(normalizeBookmarkTimePart(selectedBookmark.second, 59));
-    setBookmarkTimeZone(selectedBookmark.timeZone || city.timeZone);
-    setBookmarkEffect(getBookmarkEffectType(selectedBookmark));
-    setBookmarkEffectPalette(getBookmarkEffectPalette(selectedBookmark));
-    setBookmarkShowDescriptionInTimer(Boolean(selectedBookmark.showDescriptionInTimer));
+    syncBookmarkFormState(selectedBookmark);
   }, [selectedBookmark, city.timeZone]);
   const selectedBookmarkTimer = selectedBookmark
     ? getPreciseZonedDistance(bookmarkNow, getBookmarkTargetUtc(selectedBookmark, city.timeZone), selectedBookmark.timeZone || city.timeZone)
@@ -1963,7 +1984,7 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
   const saveCurrentBookmark = () => {
     const existingBookmark = selectedBookmark || dateBookmarks.find((bookmark) => bookmark.dateKey === currentDateKey);
     const nextTitle = bookmarkTitle.trim() || existingBookmark?.title || getBookmarkTitle();
-    const nextDescription = bookmarkDescription.trim() || existingBookmark?.description || '';
+    const nextDescription = bookmarkDescription.trim();
     const nextBookmark = buildCurrentBookmark(existingBookmark?.id, nextTitle, nextDescription, existingBookmark?.createdAt);
 
     setDateBookmarks((bookmarks) => existingBookmark
@@ -1973,15 +1994,7 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
     setEditingBookmarkId('');
     setActiveBookmarkActionsId('');
     setConfirmingDeleteId('');
-    setBookmarkTitle(nextBookmark.title);
-    setBookmarkDescription(nextBookmark.description);
-    setBookmarkHour(normalizeBookmarkTimePart(nextBookmark.hour, 23));
-    setBookmarkMinute(normalizeBookmarkTimePart(nextBookmark.minute, 59));
-    setBookmarkSecond(normalizeBookmarkTimePart(nextBookmark.second, 59));
-    setBookmarkTimeZone(nextBookmark.timeZone || city.timeZone);
-    setBookmarkEffect(getBookmarkEffectType(nextBookmark));
-    setBookmarkEffectPalette(getBookmarkEffectPalette(nextBookmark));
-    setBookmarkShowDescriptionInTimer(Boolean(nextBookmark.showDescriptionInTimer));
+    syncBookmarkFormState(nextBookmark);
   };
 
   const selectBookmark = (bookmark) => {
@@ -2000,17 +2013,11 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
     setMonth(bookmark.month);
     setDay(bookmark.day);
     setSelectedBookmarkId(bookmark.id);
-    setBookmarkTitle(bookmark.title);
-    setBookmarkDescription(bookmark.description || '');
-    setBookmarkHour(normalizeBookmarkTimePart(bookmark.hour, 23));
-    setBookmarkMinute(normalizeBookmarkTimePart(bookmark.minute, 59));
-    setBookmarkSecond(normalizeBookmarkTimePart(bookmark.second, 59));
-    setBookmarkTimeZone(bookmark.timeZone || city.timeZone);
-    setBookmarkEffect(getBookmarkEffectType(bookmark));
-    setBookmarkEffectPalette(getBookmarkEffectPalette(bookmark));
-    setBookmarkShowDescriptionInTimer(Boolean(bookmark.showDescriptionInTimer));
+    syncBookmarkFormState(bookmark);
     setEditingBookmarkId('');
     setConfirmingDeleteId('');
+    setActiveBookmarkEffect(null);
+    setBookmarkEffectWatch(null);
   };
 
   const startEditingBookmark = (bookmark) => {
@@ -2087,22 +2094,14 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
     const nextBookmark = buildCurrentBookmark(
       bookmark.id,
       editingBookmarkTitle || bookmark.title,
-      editingBookmarkDescription || bookmark.description || '',
+      editingBookmarkDescription,
       bookmark.createdAt,
       editingBookmarkShowDescriptionInTimer,
     );
 
     setDateBookmarks((bookmarks) => bookmarks.map((item) => (item.id === bookmark.id ? nextBookmark : item)));
     setSelectedBookmarkId(bookmark.id);
-    setBookmarkTitle(nextBookmark.title);
-    setBookmarkDescription(nextBookmark.description);
-    setBookmarkHour(normalizeBookmarkTimePart(nextBookmark.hour, 23));
-    setBookmarkMinute(normalizeBookmarkTimePart(nextBookmark.minute, 59));
-    setBookmarkSecond(normalizeBookmarkTimePart(nextBookmark.second, 59));
-    setBookmarkTimeZone(nextBookmark.timeZone || city.timeZone);
-    setBookmarkEffect(getBookmarkEffectType(nextBookmark));
-    setBookmarkEffectPalette(getBookmarkEffectPalette(nextBookmark));
-    setBookmarkShowDescriptionInTimer(Boolean(nextBookmark.showDescriptionInTimer));
+    syncBookmarkFormState(nextBookmark);
     setEditingBookmarkId('');
     setActiveBookmarkActionsId('');
     setConfirmingDeleteId('');
@@ -2216,14 +2215,13 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
       'div',
       {
         className: `selected-bookmark-timer fullscreen-background--${fullscreenBackground === 'dark' ? 'dark' : 'light'}${bookmarkFullscreenControlsVisible ? ' fullscreen-controls-visible' : ''}`,
-        onMouseMove: () => isBookmarkTimerFullscreen && setBookmarkFullscreenControlsVisible(true),
         'aria-live': 'polite',
       },
       h('div', { className: 'selected-bookmark-timer__header' },
         h('div', { className: 'selected-bookmark-timer__headline', key: `headline-${selectedBookmark?.id || 'empty'}` },
           h('strong', null, selectedBookmarkTimerTitle),
           h('small', {
-            key: `description-${selectedBookmark?.id || 'empty'}-${selectedBookmarkTimerDescription ? 'visible' : 'hidden'}`,
+            className: 'selected-bookmark-timer__description',
             hidden: !selectedBookmarkTimerDescription,
           }, selectedBookmarkTimerDescription),
         ),
@@ -2393,6 +2391,7 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
             const editingPreviewDate = isEditing
               ? getBookmarkDateFromFields(editingBookmarkCalendarType, editingBookmarkYear, editingBookmarkMonth, editingSafeDay)
               : bookmarkDate;
+            const bookmarkDescriptionText = getBookmarkDescriptionValue(bookmark);
             const editingPreviewGregorian = getCalendarPartsFromUtc(editingPreviewDate, 'gregorian');
             const editingPreviewPersian = getPersianDatePartsFromUtc(editingPreviewDate);
             const updateEditingCalendarType = (nextCalendarType) => {
@@ -2412,7 +2411,7 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
               h('button', { type: 'button', className: 'date-bookmark__main', onClick: () => selectBookmark(bookmark) },
                 h('strong', null, bookmark.title),
                 h('span', null, `${t.gregorian} ${bookmarkGregorian.year}/${formatNumber(bookmarkGregorian.month)}/${formatNumber(bookmarkGregorian.day)} · ${t.solar_hijri} ${bookmarkPersian.year}/${formatNumber(bookmarkPersian.month)}/${formatNumber(bookmarkPersian.day)}`),
-                bookmark.description && h('small', null, bookmark.description),
+                h('small', { hidden: !bookmarkDescriptionText }, bookmarkDescriptionText),
               ),
               isEditing && h('input', {
                 className: 'date-bookmark__title-input',
@@ -3212,33 +3211,7 @@ function App() {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  useEffect(() => {
-    if (!isClockFullscreen) {
-      setClockFullscreenControlsVisible(true);
-      return undefined;
-    }
-
-    let hideTimer = null;
-    const revealControls = () => {
-      setClockFullscreenControlsVisible(true);
-      clearTimeout(hideTimer);
-      hideTimer = setTimeout(() => setClockFullscreenControlsVisible(false), 2600);
-    };
-
-    revealControls();
-    document.addEventListener('mousemove', revealControls);
-    document.addEventListener('pointerdown', revealControls);
-    document.addEventListener('keydown', revealControls);
-    document.addEventListener('touchstart', revealControls, { passive: true });
-
-    return () => {
-      clearTimeout(hideTimer);
-      document.removeEventListener('mousemove', revealControls);
-      document.removeEventListener('pointerdown', revealControls);
-      document.removeEventListener('keydown', revealControls);
-      document.removeEventListener('touchstart', revealControls);
-    };
-  }, [isClockFullscreen]);
+  useFullscreenControlsAutoHide(isClockFullscreen, setClockFullscreenControlsVisible);
 
   const toggleClockFullscreen = () => {
     const clockElement = document.querySelector('.hero-panel');
@@ -3511,7 +3484,6 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
       'section',
       {
         className: `hero-panel fullscreen-background--${fullscreenBackground} fullscreen-time--${selectedCityView.timeOfDay}${clockFullscreenControlsVisible ? ' fullscreen-controls-visible' : ''}`,
-        onMouseMove: () => isClockFullscreen && setClockFullscreenControlsVisible(true),
         style: { '--accent': selectedCityView.accent },
       },
       h(
