@@ -145,6 +145,11 @@ button {
   display: none;
 }
 
+html.app-viewport-fullscreen-active,
+body.app-viewport-fullscreen-active {
+  overflow: hidden;
+}
+
 .page-shell--rtl {
   direction: rtl;
 }
@@ -2114,7 +2119,8 @@ button {
   width: min(100%, 1440px);
 }
 
-.hero-panel:fullscreen {
+.hero-panel:fullscreen,
+.hero-panel.app-viewport-fullscreen {
   position: relative;
   --fullscreen-text: #f8fafc;
   --fullscreen-muted: #e5edf8;
@@ -2136,20 +2142,34 @@ button {
   color: var(--fullscreen-text);
 }
 
+.hero-panel.app-viewport-fullscreen,
+.selected-bookmark-timer.app-viewport-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  width: 100vw;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
 .hero-panel:fullscreen::backdrop {
   background: #000;
 }
 
-.hero-panel:fullscreen .top-bar {
+.hero-panel:fullscreen .top-bar,
+.hero-panel.app-viewport-fullscreen .top-bar {
   justify-content: center;
   width: min(100%, 78rem);
 }
 
-.hero-panel:fullscreen .hero-meta {
+.hero-panel:fullscreen .hero-meta,
+.hero-panel.app-viewport-fullscreen .hero-meta {
   display: none;
 }
 
-.hero-panel:fullscreen .top-bar__controls {
+.hero-panel:fullscreen .top-bar__controls,
+.hero-panel.app-viewport-fullscreen .top-bar__controls {
   position: absolute;
   inset-block-start: clamp(1rem, 3vw, 2rem);
   inset-inline-end: clamp(1rem, 3vw, 2rem);
@@ -2162,18 +2182,23 @@ button {
 }
 
 .hero-panel.fullscreen-controls-visible:fullscreen .top-bar__controls,
-.hero-panel:fullscreen .top-bar__controls:focus-within {
+.hero-panel.app-viewport-fullscreen.fullscreen-controls-visible .top-bar__controls,
+.hero-panel:fullscreen .top-bar__controls:focus-within,
+.hero-panel.app-viewport-fullscreen .top-bar__controls:focus-within {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
 }
 
-.hero-panel:fullscreen .language-picker {
+.hero-panel:fullscreen .language-picker,
+.hero-panel.app-viewport-fullscreen .language-picker {
   display: none;
 }
 
 .hero-panel:fullscreen .clock-focus-button,
-.hero-panel:fullscreen .fullscreen-background-button {
+.hero-panel:fullscreen .fullscreen-background-button,
+.hero-panel.app-viewport-fullscreen .clock-focus-button,
+.hero-panel.app-viewport-fullscreen .fullscreen-background-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2184,7 +2209,8 @@ button {
   box-shadow: 0 0 0 1px rgba(15, 23, 42, .12), 0 10px 30px rgba(0, 0, 0, .28);
 }
 
-.hero-panel:fullscreen .eyebrow {
+.hero-panel:fullscreen .eyebrow,
+.hero-panel.app-viewport-fullscreen .eyebrow {
   margin: 0;
   color: var(--fullscreen-muted);
   text-align: center;
@@ -2193,18 +2219,21 @@ button {
   text-shadow: none;
 }
 
-.hero-panel:fullscreen .eyebrow strong {
+.hero-panel:fullscreen .eyebrow strong,
+.hero-panel.app-viewport-fullscreen .eyebrow strong {
   color: var(--fullscreen-strong);
 }
 
-.hero-panel:fullscreen .hero-content {
+.hero-panel:fullscreen .hero-content,
+.hero-panel.app-viewport-fullscreen .hero-content {
   display: grid;
   grid-template-columns: 1fr;
   justify-items: center;
   width: min(100%, 88rem);
 }
 
-.hero-panel:fullscreen .clock {
+.hero-panel:fullscreen .clock,
+.hero-panel.app-viewport-fullscreen .clock {
   padding: 0;
   color: var(--fullscreen-clock);
   text-align: center;
@@ -2214,7 +2243,8 @@ button {
   text-shadow: none;
 }
 
-.hero-panel.fullscreen-background--daynight.fullscreen-time--dawn:fullscreen {
+.hero-panel.fullscreen-background--daynight.fullscreen-time--dawn:fullscreen,
+.hero-panel.app-viewport-fullscreen.fullscreen-background--daynight.fullscreen-time--dawn {
   --fullscreen-text: #172033;
   --fullscreen-muted: #334155;
   --fullscreen-strong: #0f172a;
@@ -2228,7 +2258,8 @@ button {
     linear-gradient(135deg, rgba(167, 139, 250, .96), rgba(251, 146, 60, .9));
 }
 
-.hero-panel.fullscreen-background--daynight.fullscreen-time--morning:fullscreen {
+.hero-panel.fullscreen-background--daynight.fullscreen-time--morning:fullscreen,
+.hero-panel.app-viewport-fullscreen.fullscreen-background--daynight.fullscreen-time--morning {
   --fullscreen-text: #0f172a;
   --fullscreen-muted: #334155;
   --fullscreen-strong: #0f172a;
@@ -2242,7 +2273,8 @@ button {
     linear-gradient(135deg, rgba(254, 249, 195, .96), rgba(125, 211, 252, .94), rgba(56, 189, 248, .88));
 }
 
-.hero-panel.fullscreen-background--daynight.fullscreen-time--noon:fullscreen {
+.hero-panel.fullscreen-background--daynight.fullscreen-time--noon:fullscreen,
+.hero-panel.app-viewport-fullscreen.fullscreen-background--daynight.fullscreen-time--noon {
   --fullscreen-text: #071526;
   --fullscreen-muted: #1e3a5f;
   --fullscreen-strong: #071526;
@@ -2256,7 +2288,8 @@ button {
     linear-gradient(135deg, rgba(186, 230, 253, .94), rgba(59, 130, 246, .88), rgba(14, 165, 233, .86));
 }
 
-.hero-panel.fullscreen-background--daynight.fullscreen-time--afternoon:fullscreen {
+.hero-panel.fullscreen-background--daynight.fullscreen-time--afternoon:fullscreen,
+.hero-panel.app-viewport-fullscreen.fullscreen-background--daynight.fullscreen-time--afternoon {
   --fullscreen-text: #fff7ed;
   --fullscreen-muted: rgba(255, 237, 213, .9);
   --fullscreen-strong: #ffffff;
@@ -2270,7 +2303,8 @@ button {
     linear-gradient(135deg, rgba(249, 115, 22, .94), rgba(236, 72, 153, .88), rgba(79, 70, 229, .82));
 }
 
-.hero-panel.fullscreen-background--daynight.fullscreen-time--evening:fullscreen {
+.hero-panel.fullscreen-background--daynight.fullscreen-time--evening:fullscreen,
+.hero-panel.app-viewport-fullscreen.fullscreen-background--daynight.fullscreen-time--evening {
   --fullscreen-text: #fff7ed;
   --fullscreen-muted: rgba(255, 237, 213, .86);
   --fullscreen-strong: #ffffff;
@@ -2284,7 +2318,8 @@ button {
     linear-gradient(135deg, #4338ca, #be185d 62%, #7c2d12);
 }
 
-.hero-panel.fullscreen-background--daynight.fullscreen-time--night:fullscreen {
+.hero-panel.fullscreen-background--daynight.fullscreen-time--night:fullscreen,
+.hero-panel.app-viewport-fullscreen.fullscreen-background--daynight.fullscreen-time--night {
   --fullscreen-text: #eef2ff;
   --fullscreen-muted: rgba(226, 232, 240, .82);
   --fullscreen-strong: #ffffff;
@@ -3010,10 +3045,12 @@ button {
   font-size: .76rem;
   font-weight: 850;
 }
-.selected-bookmark-timer:fullscreen {
+.selected-bookmark-timer:fullscreen,
+.selected-bookmark-timer.app-viewport-fullscreen {
   position: relative;
   width: 100vw;
   min-height: 100vh;
+  min-height: 100dvh;
   align-content: center;
   justify-items: center;
   padding: clamp(1.25rem, 5vw, 4rem);
@@ -3021,7 +3058,11 @@ button {
   border-radius: 0;
   color: var(--fullscreen-text);
 }
-.selected-bookmark-timer.fullscreen-background--dark:fullscreen {
+.selected-bookmark-timer.app-viewport-fullscreen {
+  position: fixed;
+}
+.selected-bookmark-timer.fullscreen-background--dark:fullscreen,
+.selected-bookmark-timer.app-viewport-fullscreen.fullscreen-background--dark {
   --fullscreen-text: #f8fafc;
   --fullscreen-muted: #e5edf8;
   --fullscreen-strong: #ffffff;
@@ -3035,7 +3076,9 @@ button {
     #020617;
 }
 .selected-bookmark-timer.fullscreen-background--light:fullscreen,
-.selected-bookmark-timer.fullscreen-background--daynight:fullscreen {
+.selected-bookmark-timer.fullscreen-background--daynight:fullscreen,
+.selected-bookmark-timer.app-viewport-fullscreen.fullscreen-background--light,
+.selected-bookmark-timer.app-viewport-fullscreen.fullscreen-background--daynight {
   --fullscreen-text: #0f172a;
   --fullscreen-muted: #475569;
   --fullscreen-strong: #0f172a;
@@ -3048,28 +3091,34 @@ button {
     radial-gradient(circle at 18% 16%, rgba(255, 255, 255, .92), transparent 18rem),
     linear-gradient(135deg, #f8fafc 0%, #edf3fb 48%, #e2e8f0 100%);
 }
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__header {
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__header,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__header {
   align-items: center;
   display: flex;
   justify-content: space-between;
   margin: 0 auto;
   width: min(100%, 86rem);
 }
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline {
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__headline {
   justify-items: start;
   text-align: start;
 }
 .selected-bookmark-timer:fullscreen:dir(rtl) .selected-bookmark-timer__headline,
-:root[dir="rtl"] .selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline {
+.selected-bookmark-timer.app-viewport-fullscreen:dir(rtl) .selected-bookmark-timer__headline,
+:root[dir="rtl"] .selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline,
+:root[dir="rtl"] .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__headline {
   justify-items: end;
   text-align: right;
 }
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline strong {
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline strong,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__headline strong {
   color: var(--fullscreen-strong);
   font-size: clamp(1.5rem, 3vw, 3rem);
   text-shadow: none;
 }
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline small {
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline small,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__headline small {
   width: 100%;
   color: var(--fullscreen-muted);
   font-size: clamp(.95rem, 1.5vw, 1.35rem);
@@ -3077,11 +3126,14 @@ button {
   text-align: start;
 }
 .selected-bookmark-timer:fullscreen:dir(rtl) .selected-bookmark-timer__headline small,
-:root[dir="rtl"] .selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline small {
+.selected-bookmark-timer.app-viewport-fullscreen:dir(rtl) .selected-bookmark-timer__headline small,
+:root[dir="rtl"] .selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline small,
+:root[dir="rtl"] .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__headline small {
   justify-self: stretch;
   text-align: right;
 }
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions {
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__actions {
   position: absolute;
   inset-block-start: clamp(1rem, 3vw, 2rem);
   inset-inline-end: clamp(1rem, 3vw, 2rem);
@@ -3092,14 +3144,19 @@ button {
   transition: opacity 180ms ease, transform 180ms ease;
 }
 .selected-bookmark-timer.fullscreen-controls-visible:fullscreen .selected-bookmark-timer__actions,
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions:focus-within {
+.selected-bookmark-timer.app-viewport-fullscreen.fullscreen-controls-visible .selected-bookmark-timer__actions,
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions:focus-within,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__actions:focus-within {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__focus,
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__effect-button,
-.selected-bookmark-timer:fullscreen .fullscreen-background-button {
+.selected-bookmark-timer:fullscreen .fullscreen-background-button,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__focus,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__effect-button,
+.selected-bookmark-timer.app-viewport-fullscreen .fullscreen-background-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3110,23 +3167,27 @@ button {
   color: var(--fullscreen-control-text);
   box-shadow: 0 0 0 1px rgba(15, 23, 42, .12), 0 10px 30px rgba(0, 0, 0, .28);
 }
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid {
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__grid {
   margin: 0 auto;
   width: min(100%, 86rem);
   gap: clamp(.65rem, 1.5vw, 1.2rem);
 }
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit {
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__unit {
   min-height: clamp(7rem, 17vh, 13rem);
   border-color: var(--fullscreen-unit-border);
   background: var(--fullscreen-unit-bg);
   backdrop-filter: blur(12px);
 }
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit strong {
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit strong,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__unit strong {
   color: var(--fullscreen-clock);
   font-size: clamp(2.8rem, 8vw, 7.6rem);
   text-shadow: none;
 }
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit span {
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__unit span,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__unit span {
   color: var(--fullscreen-muted);
   font-size: clamp(.9rem, 1.3vw, 1.3rem);
 }
@@ -3138,7 +3199,7 @@ button {
   overflow: hidden;
   isolation: isolate;
 }
-.selected-bookmark-timer:not(:fullscreen) .bookmark-effect {
+.selected-bookmark-timer:not(:fullscreen):not(.app-viewport-fullscreen) .bookmark-effect {
   display: none;
 }
 .bookmark-effect span {
@@ -3702,7 +3763,8 @@ button {
   .date-difference-panel__result { grid-template-columns: 1fr; }
   .date-field-set__controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .selected-bookmark-timer__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid,
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .date-bookmark-form { grid-template-columns: 1fr; }
   .date-bookmark-form > .date-bookmark__effect-pair,
   .date-bookmark__effect-pair,
@@ -3758,16 +3820,19 @@ button {
     width: 100%;
   }
 
-  .selected-bookmark-timer:fullscreen {
+  .selected-bookmark-timer:fullscreen,
+  .selected-bookmark-timer.app-viewport-fullscreen {
     display: grid;
     grid-template-areas: none;
   }
 
-  .selected-bookmark-timer:fullscreen .selected-bookmark-timer__header {
+  .selected-bookmark-timer:fullscreen .selected-bookmark-timer__header,
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__header {
     display: flex;
   }
 
-  .selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions {
+  .selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions,
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__actions {
     position: absolute;
     inset-block-start: 1rem;
     inset-inline-end: 1rem;
@@ -3775,7 +3840,8 @@ button {
     width: auto;
   }
 
-  .selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid {
+  .selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid,
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__grid {
     grid-area: auto;
   }
 }

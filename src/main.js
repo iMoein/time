@@ -1689,6 +1689,31 @@ function useFullscreenControlsAutoHide(isFullscreen, setControlsVisible) {
   }, [isFullscreen]);
 }
 
+function useFallbackFullscreenMode(isActive, onExit) {
+  useEffect(() => {
+    if (!isActive) {
+      return undefined;
+    }
+
+    document.documentElement.classList.add('app-viewport-fullscreen-active');
+    document.body.classList.add('app-viewport-fullscreen-active');
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onExit();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.documentElement.classList.remove('app-viewport-fullscreen-active');
+      document.body.classList.remove('app-viewport-fullscreen-active');
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isActive]);
+}
+
 function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset = 0, fullscreenBackground = 'dark', timeOfDay = 'night', onFullscreenBackgroundToggle = () => {}, onInteractionChange = () => {} }) {
   const todayDate = getZonedTodayDate(city.timeZone);
   const todayPersian = getPersianDatePartsFromUtc(todayDate);
@@ -1728,7 +1753,8 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
   const [confirmingDeleteId, setConfirmingDeleteId] = useState('');
   const [bookmarkNow, setBookmarkNow] = useState(() => new Date(Date.now() + timeOffset));
   const [isConverterPickerActive, setIsConverterPickerActive] = useState(false);
-  const [isBookmarkTimerFullscreen, setIsBookmarkTimerFullscreen] = useState(false);
+  const [isBookmarkTimerNativeFullscreen, setIsBookmarkTimerNativeFullscreen] = useState(false);
+  const [isBookmarkTimerFallbackFullscreen, setIsBookmarkTimerFallbackFullscreen] = useState(false);
   const [bookmarkFullscreenControlsVisible, setBookmarkFullscreenControlsVisible] = useState(true);
   const [bookmarkEffectWatch, setBookmarkEffectWatch] = useState(null);
   const [firedBookmarkEffectKey, setFiredBookmarkEffectKey] = useState('');
@@ -1756,6 +1782,7 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
     { id: 'black', label: t.bookmark_effect_palette_black },
     { id: 'multicolor', label: t.bookmark_effect_palette_multicolor },
   ];
+  const isBookmarkTimerFullscreen = isBookmarkTimerNativeFullscreen || isBookmarkTimerFallbackFullscreen;
   const bookmarkTimeZoneOptions = [
     city,
     ...timeZoneOptions,
@@ -1838,7 +1865,10 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
   useEffect(() => {
     const handleFullscreenChange = () => {
       const isFullscreen = Boolean(document.fullscreenElement?.classList?.contains('selected-bookmark-timer'));
-      setIsBookmarkTimerFullscreen(isFullscreen);
+      setIsBookmarkTimerNativeFullscreen(isFullscreen);
+      if (document.fullscreenElement) {
+        setIsBookmarkTimerFallbackFullscreen(false);
+      }
       setBookmarkFullscreenControlsVisible(isFullscreen);
     };
 
@@ -1846,6 +1876,7 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  useFallbackFullscreenMode(isBookmarkTimerFallbackFullscreen, () => setIsBookmarkTimerFallbackFullscreen(false));
   useFullscreenControlsAutoHide(isBookmarkTimerFullscreen, setBookmarkFullscreenControlsVisible);
 
   const toggleBookmarkTimerFullscreen = () => {
@@ -1857,12 +1888,21 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
       return;
     }
 
-    if (timerElement.requestFullscreen) {
-      timerElement.requestFullscreen().catch(() => {});
+    if (isBookmarkTimerFallbackFullscreen) {
+      setIsBookmarkTimerFallbackFullscreen(false);
       return;
     }
 
-    window.alert(t.fullscreen_unsupported);
+    if (timerElement.requestFullscreen) {
+      timerElement.requestFullscreen().catch(() => {
+        setIsBookmarkTimerFallbackFullscreen(true);
+        setBookmarkFullscreenControlsVisible(true);
+      });
+      return;
+    }
+
+    setIsBookmarkTimerFallbackFullscreen(true);
+    setBookmarkFullscreenControlsVisible(true);
   };
 
   const runSelectedBookmarkEffect = () => {
@@ -2234,7 +2274,7 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
     selectedBookmarkTimer && h(
       'div',
       {
-        className: `selected-bookmark-timer fullscreen-background--${fullscreenBackground === 'dark' ? 'dark' : 'light'}${bookmarkFullscreenControlsVisible ? ' fullscreen-controls-visible' : ''}`,
+        className: `selected-bookmark-timer fullscreen-background--${fullscreenBackground === 'dark' ? 'dark' : 'light'}${isBookmarkTimerFullscreen ? ' app-viewport-fullscreen' : ''}${bookmarkFullscreenControlsVisible ? ' fullscreen-controls-visible' : ''}`,
         'aria-live': 'polite',
       },
       h('div', { className: 'selected-bookmark-timer__header' },
@@ -3177,7 +3217,8 @@ function App() {
   const [editMode, setEditMode] = useState(false);
   const [ntpHost, setNtpHost] = useState(defaultNtpHost);
   const [ntpStatus, setNtpStatus] = useState({ kind: 'local', label: i18n.en.local_clock, detail: i18n.en.using_device_clock, host: ntpHost, delay: i18n.en.not_measured });
-  const [isClockFullscreen, setIsClockFullscreen] = useState(false);
+  const [isClockNativeFullscreen, setIsClockNativeFullscreen] = useState(false);
+  const [isClockFallbackFullscreen, setIsClockFallbackFullscreen] = useState(false);
   const [clockFullscreenControlsVisible, setClockFullscreenControlsVisible] = useState(true);
   const [fullscreenBackground, setFullscreenBackground] = useState(getInitialFullscreenBackground);
 
@@ -3187,6 +3228,7 @@ function App() {
   const [visibleOccasionTypes, setVisibleOccasionTypes] = useState(globalThis.__visibleOccasionTypes || null);
   const [occasionFilterOrder, setOccasionFilterOrder] = useState(globalThis.__occasionFilterOrder || null);
   const isFa = language === 'fa';
+  const isClockFullscreen = isClockNativeFullscreen || isClockFallbackFullscreen;
 
   useEffect(() => {
     const updateClock = () => {
@@ -3221,7 +3263,10 @@ function App() {
   useEffect(() => {
     const handleFullscreenChange = () => {
       const isFullscreen = Boolean(document.fullscreenElement?.classList?.contains('hero-panel'));
-      setIsClockFullscreen(isFullscreen);
+      setIsClockNativeFullscreen(isFullscreen);
+      if (document.fullscreenElement) {
+        setIsClockFallbackFullscreen(false);
+      }
       setClockFullscreenControlsVisible(isFullscreen);
     };
 
@@ -3229,6 +3274,7 @@ function App() {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  useFallbackFullscreenMode(isClockFallbackFullscreen, () => setIsClockFallbackFullscreen(false));
   useFullscreenControlsAutoHide(isClockFullscreen, setClockFullscreenControlsVisible);
 
   const toggleClockFullscreen = () => {
@@ -3240,12 +3286,21 @@ function App() {
       return;
     }
 
-    if (clockElement.requestFullscreen) {
-      clockElement.requestFullscreen().catch(() => {});
+    if (isClockFallbackFullscreen) {
+      setIsClockFallbackFullscreen(false);
       return;
     }
 
-    window.alert((i18n[language] || i18n.en).fullscreen_unsupported);
+    if (clockElement.requestFullscreen) {
+      clockElement.requestFullscreen().catch(() => {
+        setIsClockFallbackFullscreen(true);
+        setClockFullscreenControlsVisible(true);
+      });
+      return;
+    }
+
+    setIsClockFallbackFullscreen(true);
+    setClockFullscreenControlsVisible(true);
   };
 
   const toggleFullscreenBackground = () => {
@@ -3501,7 +3556,7 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
     mainClock: h(
       'section',
       {
-        className: `hero-panel fullscreen-background--${fullscreenBackground} fullscreen-time--${selectedCityView.timeOfDay}${clockFullscreenControlsVisible ? ' fullscreen-controls-visible' : ''}`,
+        className: `hero-panel fullscreen-background--${fullscreenBackground} fullscreen-time--${selectedCityView.timeOfDay}${isClockFullscreen ? ' app-viewport-fullscreen' : ''}${clockFullscreenControlsVisible ? ' fullscreen-controls-visible' : ''}`,
         style: { '--accent': selectedCityView.accent },
       },
       h(
