@@ -601,9 +601,37 @@ button {
 
 .day-night-card__header {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(0.58rem, 1vw, 0.78rem);
+  align-items: start;
+  direction: ltr;
+}
+
+.day-night-card__event {
+  display: flex;
+  grid-column: 2;
   gap: clamp(0.58rem, 1vw, 0.78rem);
   align-items: center;
+  justify-self: end;
+  direction: rtl;
+}
+
+.day-night-card__event-copy {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  align-items: baseline;
+  min-width: 0;
+  direction: rtl;
+  white-space: nowrap;
+}
+
+.day-night-card__remaining {
+  grid-column: 1;
+  align-self: start;
+  justify-self: start;
+  direction: rtl;
+  text-align: right;
 }
 
 .day-night-card__icon {
@@ -617,20 +645,13 @@ button {
   font-size: 1.45rem;
 }
 
-.day-night-card__header div {
-  display: flex;
-  gap: 0.5rem;
-  align-items: baseline;
-  min-width: 0;
-}
-
 .day-night-card__header span,
 .day-night-card__header p {
   color: rgba(248, 250, 252, 0.62);
   font-weight: 900;
 }
 
-.day-night-card__header div > span {
+.day-night-card__event-copy > span {
   color: #fff;
   font-size: clamp(0.92rem, 1.45vw, 1.25rem);
 }
@@ -643,7 +664,6 @@ button {
 }
 
 .day-night-card__header p {
-  justify-self: end;
   margin: 0;
   font-size: clamp(0.78rem, 1.05vw, 0.94rem);
 }
@@ -967,6 +987,22 @@ button {
   opacity: 0.66;
 }
 
+.monthly-calendar__day--holiday {
+  border-color: rgba(244, 63, 94, 0.32);
+  background: #ffe4ec;
+  color: #9f1239;
+}
+
+.monthly-calendar__day--holiday:hover,
+.monthly-calendar__day--holiday:focus-visible {
+  border-color: rgba(225, 29, 72, 0.5);
+  background: #fecdd8;
+}
+
+.monthly-calendar__day--outside.monthly-calendar__day--holiday {
+  opacity: 0.82;
+}
+
 .monthly-calendar__day--today {
   border-color: rgba(249, 115, 22, 0.7);
   box-shadow: inset 0 0 0 2px rgba(249, 115, 22, 0.24);
@@ -979,6 +1015,12 @@ button {
   box-shadow: 0 12px 26px rgba(15, 23, 42, 0.16);
   transform: translateY(-2px);
   opacity: 1;
+}
+
+.monthly-calendar__day--selected.monthly-calendar__day--holiday {
+  border-color: rgba(244, 63, 94, 0.76);
+  background: #be123c;
+  color: #fff;
 }
 
 .monthly-calendar--persian .monthly-calendar__day--selected {
@@ -2214,12 +2256,15 @@ button {
     justify-content: flex-start;
   }
 
-  .day-night-card__header,
   .day-night-card__details {
     grid-template-columns: 1fr;
   }
 
-  .day-night-card__header p {
+  .day-night-card__header {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .day-night-card__remaining {
     justify-self: start;
   }
 
@@ -2374,34 +2419,38 @@ button {
   }
 
   .day-night-card__header {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.55rem 0.7rem;
-    align-items: center;
+    align-items: start;
   }
 
   .day-night-card__icon {
-    grid-column: 1;
-    grid-row: 1 / span 2;
+    width: 2.2rem;
+    height: 2.2rem;
+    font-size: 1.25rem;
   }
 
-  .day-night-card__header div {
+  .day-night-card__event {
     grid-column: 2;
     grid-row: 1;
     flex-wrap: nowrap;
-    justify-content: flex-start;
+    justify-content: flex-end;
+    justify-self: end;
   }
 
-  .day-night-card__header div > span {
+  .day-night-card__event-copy > span {
     white-space: nowrap;
   }
 
   .day-night-card__header strong {
+    font-size: clamp(1.55rem, 7.6vw, 2.55rem);
     white-space: nowrap;
   }
 
-  .day-night-card__header p {
-    grid-column: 2;
-    grid-row: 2;
+  .day-night-card__remaining {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
     justify-self: start;
     font-size: 0.78rem;
     white-space: nowrap;
@@ -2486,10 +2535,7 @@ button {
     border-radius: 0.7rem;
   }
 
-  .day-night-card__header div {
-    display: grid;
-    gap: 0.25rem;
-  }
+  .day-night-card__event-copy { gap: 0.32rem; }
 
   .sun-chart svg {
     min-height: 12rem;
@@ -3146,6 +3192,14 @@ button {
   font-weight: 850;
   justify-self: start;
 }
+.date-bookmark-form .date-bookmark__checkbox,
+.date-bookmark__edit-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .5rem;
+  line-height: 1;
+}
 .date-bookmark__checkbox input,
 .date-bookmark-form .date-bookmark__checkbox input {
   flex: 0 0 auto;
@@ -3153,11 +3207,13 @@ button {
   height: 1.05rem;
   min-height: 1.05rem;
   margin: 0;
+  align-self: center;
   accent-color: #2563eb;
 }
 .date-bookmark__checkbox span {
   display: inline-flex;
   align-items: center;
+  align-self: center;
   min-height: 1.05rem;
   line-height: 1;
 }
@@ -3387,36 +3443,37 @@ button {
   }
   .split-pill--many .split-pill__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .age-converter-card__result .split-pill--month-info {
-    min-height: auto;
+    min-height: 5rem;
   }
   .age-converter-card__result .split-pill--month-info .split-pill__grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0;
-    align-items: stretch;
+    align-items: center;
   }
   .age-converter-card__result .split-pill--month-info .split-pill__item {
-    min-height: 4rem;
-    align-content: center;
-    gap: .26rem;
-    margin: 0;
-    padding: .32rem .34rem;
+    min-height: auto;
+    align-content: start;
+    justify-items: stretch;
+    gap: .24rem;
+    margin-inline-start: 0;
+    padding-inline-start: 0;
     border: 0;
     border-radius: 0;
     background: transparent;
   }
   .age-converter-card__result .split-pill--month-info .split-pill__item + .split-pill__item {
-    margin: 0;
-    padding: .32rem .34rem;
+    margin-inline-start: .34rem;
+    padding-inline-start: .34rem;
     border-inline-start: 1px solid rgba(148, 163, 184, .28);
   }
   .age-converter-card__result .split-pill--month-info .split-pill__item small {
     font-size: clamp(.5rem, .58vw, .6rem);
-    line-height: 1.15;
+    line-height: 1.08;
     white-space: normal;
   }
   .age-converter-card__result .split-pill--month-info .split-pill__item strong {
     font-size: clamp(.88rem, .96vw, 1.05rem);
-    line-height: 1.25;
+    line-height: 1.12;
     white-space: normal;
     text-overflow: clip;
   }
@@ -3503,14 +3560,14 @@ button {
   }
 
   .age-converter-card__result .split-pill--month-info .split-pill__item {
-    min-height: 3.7rem;
-    margin: 0;
-    padding: .42rem .58rem;
+    min-height: auto;
+    margin-inline-start: 0;
+    padding-inline-start: 0;
   }
 
   .age-converter-card__result .split-pill--month-info .split-pill__item + .split-pill__item {
-    margin: 0;
-    padding: .42rem .58rem;
+    margin-inline-start: .34rem;
+    padding-inline-start: .34rem;
   }
 
   .age-converter-card__result .split-pill--month-info .split-pill__item:nth-child(even) {
@@ -3519,6 +3576,8 @@ button {
 
   .age-converter-card__result .split-pill--month-info .split-pill__item:nth-child(odd) {
     border-inline-start: 0;
+    margin-inline-start: 0;
+    padding-inline-start: 0;
   }
 
   .age-converter-card__result .split-pill--month-info .split-pill__item:nth-child(n + 3) {

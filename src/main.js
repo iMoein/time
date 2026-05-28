@@ -13,6 +13,7 @@ import islamicSharedOccasions from './data/calendar-files/islamic-shared-occasio
 import yearOptionsData from './data/year-options.json' with { type: 'json' };
 import solarYearMomentsData from './data/solar-year-moments.json' with { type: 'json' };
 import cardOrderConfig from './data/card-order.json' with { type: 'json' };
+import officialHolidaysConfig from './data/official-holidays.json' with { type: 'json' };
 import i18n from './data/i18n.json' with { type: 'json' };
 import cityTranslationsFa from './data/city-translations-fa.json' with { type: 'json' };
 import occasionDescriptions from './data/occasion-descriptions.json' with { type: 'json' };
@@ -42,6 +43,7 @@ const savedFullscreenBackgroundKey = 'time-app-fullscreen-background';
 const defaultNtpHost = 'ntp.time.ir';
 const bookmarkEffectIds = ['none', 'color_ribbons', 'balloons', 'black_ribbons'];
 const defaultCardOrder = ['mainClock', 'sunAndTimezones', 'monthlyOccasions', 'solarYearMoment', 'dateTools'];
+const weekdayIds = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 function getConfiguredCardOrder(config = {}) {
   const configuredOrder = Array.isArray(config.order) ? config.order : [];
@@ -65,6 +67,37 @@ function getConfiguredCardOrder(config = {}) {
 
 function normalizeBookmarkEffect(value) {
   return bookmarkEffectIds.includes(value) ? value : 'none';
+}
+
+function getOfficialHolidayMatches(date) {
+  const matches = [];
+  const weekday = weekdayIds[date.getUTCDay()];
+  const calendarParts = {
+    gregorian: getCalendarPartsFromUtc(date, 'gregorian'),
+    persian: getCalendarPartsFromUtc(date, 'persian'),
+  };
+
+  ['persian', 'gregorian'].forEach((calendarId) => {
+    const weeklyRules = Array.isArray(officialHolidaysConfig.weekly?.[calendarId])
+      ? officialHolidaysConfig.weekly[calendarId]
+      : [];
+    weeklyRules.forEach((rule) => {
+      if (String(rule.weekday || '').toLowerCase() === weekday) {
+        matches.push({ ...rule, calendar: calendarId, kind: 'weekly' });
+      }
+    });
+
+    const fixedRules = Array.isArray(officialHolidaysConfig.fixedDates?.[calendarId])
+      ? officialHolidaysConfig.fixedDates[calendarId]
+      : [];
+    fixedRules.forEach((rule) => {
+      if (Number(rule.month) === calendarParts[calendarId].month && Number(rule.day) === calendarParts[calendarId].day) {
+        matches.push({ ...rule, calendar: calendarId, kind: 'fixedDate' });
+      }
+    });
+  });
+
+  return matches;
 }
 
 function getInitialLanguage() {
@@ -762,6 +795,7 @@ function getGregorianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
     days: Array.from({ length: 42 }, (_, index) => {
       const dayDate = addUtcDays(gridStart, index);
       const dateKey = getCalendarDateKey(dayDate);
+      const officialHolidays = getOfficialHolidayMatches(dayDate);
 
       return {
         id: `gregorian-${dateKey}`,
@@ -769,6 +803,8 @@ function getGregorianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
         dateKey,
         number: dayDate.getUTCDate(),
         isOutsideMonth: dayDate.getUTCMonth() !== monthStart.getUTCMonth(),
+        isHoliday: officialHolidays.length > 0,
+        officialHolidays,
         isToday: isSameUtcDay(dayDate, cityDate),
         isSelected: selectedDateKey === dateKey,
       };
@@ -796,6 +832,7 @@ function getPersianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
       const dayDate = addUtcDays(gridStart, index);
       const persianParts = getPersianDatePartsFromUtc(dayDate);
       const dateKey = getCalendarDateKey(dayDate);
+      const officialHolidays = getOfficialHolidayMatches(dayDate);
 
       return {
         id: `persian-${dateKey}`,
@@ -803,6 +840,8 @@ function getPersianMonthCalendar(cityDate, monthOffset, selectedDateKey) {
         dateKey,
         number: persianParts.day,
         isOutsideMonth: persianParts.year !== targetMonth.year || persianParts.month !== targetMonth.month,
+        isHoliday: officialHolidays.length > 0,
+        officialHolidays,
         isToday: isSameUtcDay(dayDate, cityDate),
         isSelected: selectedDateKey === dateKey,
       };
@@ -941,6 +980,23 @@ function getSelectedOccasionGroup(calendar) {
   return calendar.occasions.find((group) => group.dateKey === selectedDateKey) || null;
 }
 
+function getDisplayOccasionGroups(calendar) {
+  const selectedDateKey = calendar.days.find((day) => day.isSelected)?.dateKey;
+  if (!selectedDateKey) {
+    return calendar.occasions;
+  }
+
+  const selectedGroup = calendar.occasions.find((group) => group.dateKey === selectedDateKey);
+  if (!selectedGroup) {
+    return calendar.occasions;
+  }
+
+  return [
+    selectedGroup,
+    ...calendar.occasions.filter((group) => group.dateKey !== selectedDateKey),
+  ];
+}
+
 function getOccasionInsight(event, language) {
   const key = event.title_fa || event.fa || event.title;
   const knownDescription = occasionDescriptions[key];
@@ -974,6 +1030,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     const dateKey = getCalendarDateKey(dayDate);
     const dayPrimaryParts = getCalendarPartsFromUtc(dayDate, primaryCalendar);
     const primaryDate = formatCompactCalendarDate(dayDate, primaryCalendar);
+    const officialHolidays = getOfficialHolidayMatches(dayDate);
 
     return {
       id: `synced-${primaryCalendar}-${dateKey}`,
@@ -981,6 +1038,8 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
       primaryDate,
       secondaryDate: formatCompactCalendarDate(dayDate, secondaryCalendar),
       events: getDateOccasions(dayDate, language, t),
+      isHoliday: officialHolidays.length > 0,
+      officialHolidays,
       isOutsideMonth: dayPrimaryParts.year !== primaryParts.year || dayPrimaryParts.month !== primaryParts.month,
       isToday: isSameUtcDay(dayDate, cityDate),
       isSelected: selectedDateKey === dateKey,
@@ -2393,9 +2452,13 @@ function DayNightCard({ city, t }) {
     h(
       'div',
       { className: 'day-night-card__header' },
-      h('span', { className: 'day-night-card__icon', 'aria-hidden': 'true' }, timeline.isDaylight ? '☀️' : timeline.isTwilight ? '🌅' : '🌙'),
-      h('div', null, h('span', null, localizedEventLabel), h('strong', null, timeline.eventTime)),
-      h('p', null, `${localizedStatus}: ${timeline.remaining}${timeline.isEstimated ? ` · ${t.estimated}` : ''}`),
+      h(
+        'div',
+        { className: 'day-night-card__event' },
+        h('span', { className: 'day-night-card__icon', 'aria-hidden': 'true' }, timeline.isDaylight ? '☀️' : timeline.isTwilight ? '🌅' : '🌙'),
+        h('div', { className: 'day-night-card__event-copy' }, h('span', null, localizedEventLabel), h('strong', null, timeline.eventTime)),
+      ),
+      h('p', { className: 'day-night-card__remaining' }, `${localizedStatus}: ${timeline.remaining}${timeline.isEstimated ? ` · ${t.estimated}` : ''}`),
     ),
     h(
       'div',
@@ -2508,6 +2571,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
   }
 
   const selectedOccasionGroup = getSelectedOccasionGroup(calendar);
+  const displayOccasionGroups = getDisplayOccasionGroups(calendar);
   const occasionTypeOrder = (Array.isArray(occasionFilterOrder) && occasionFilterOrder.length ? occasionFilterOrder : ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared']).filter((type)=>fallbackOccasionTypes.includes(type));
   const groupOccasionsByType = (events) => occasionTypeOrder.filter((type)=>allowedOccasionTypes.includes(type))
     .map((type) => {
@@ -2638,9 +2702,12 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
           'button',
           {
             type: 'button',
-            className: `monthly-calendar__day monthly-calendar__day--overlay${day.events.length ? ' monthly-calendar__day--has-events' : ''}${day.isOutsideMonth ? ' monthly-calendar__day--outside' : ''}${day.isToday ? ' monthly-calendar__day--today' : ''}${day.isSelected ? ' monthly-calendar__day--selected' : ''}`,
+            className: `monthly-calendar__day monthly-calendar__day--overlay${day.events.length ? ' monthly-calendar__day--has-events' : ''}${day.isHoliday ? ' monthly-calendar__day--holiday' : ''}${day.isOutsideMonth ? ' monthly-calendar__day--outside' : ''}${day.isToday ? ' monthly-calendar__day--today' : ''}${day.isSelected ? ' monthly-calendar__day--selected' : ''}`,
             onClick: () => selectDay(day.dateKey),
             'aria-pressed': day.isSelected,
+            title: day.officialHolidays?.length
+              ? day.officialHolidays.map((holiday) => language === 'fa' ? (holiday.title_fa || holiday.title_en || '') : (holiday.title_en || holiday.title_fa || '')).filter(Boolean).join('، ')
+              : undefined,
             key: day.id,
           },
           h(
@@ -2693,7 +2760,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
         ? h(
           'div',
           { className: 'monthly-occasions__list' },
-          calendar.occasions.map((group) => h(
+          displayOccasionGroups.map((group) => h(
             'article',
             { className: `monthly-occasions__day${group.isSelected ? ' monthly-occasions__day--selected' : ''}`, key: group.id, onClick: () => selectDay(group.dateKey), role: 'button', tabIndex: 0, onKeyDown: (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectDay(group.dateKey); } } },
             h(
