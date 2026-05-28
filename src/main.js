@@ -805,6 +805,14 @@ function formatSelectedCalendarDate(date, calendarId, language = 'en') {
   return `${weekday} ${year}/${formatNumber(month)}/${formatNumber(day)}`;
 }
 
+function formatSyncedSelectedCalendarDate(date, primaryCalendarId, language = 'en', t = i18n.en) {
+  const secondaryCalendarId = primaryCalendarId === 'gregorian' ? 'persian' : 'gregorian';
+  const secondaryParts = getCalendarPartsFromUtc(date, secondaryCalendarId);
+  const secondaryLabel = secondaryCalendarId === 'gregorian' ? t.gregorian : t.solar_hijri;
+
+  return `${formatSelectedCalendarDate(date, primaryCalendarId, language)} · ${secondaryLabel} ${secondaryParts.year}/${formatNumber(secondaryParts.month)}/${formatNumber(secondaryParts.day)}`;
+}
+
 function buildYearOptions(calendarId, selectedYear) {
   const configuredYears = yearOptionsData[calendarId] || [];
 
@@ -1011,17 +1019,23 @@ function getDateOccasions(date, language, t) {
 
 function getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes = ['iran', 'iranCurrent', 'iranAncient', 'international', 'globalOfficial', 'marketing', 'islamic', 'islamicShia', 'islamicSunni', 'islamicShared'], selectedDateKey = '') {
   return days
-    .filter((day) => !day.isOutsideMonth && day.events.length > 0)
-    .map((day) => ({
-      id: `occasion-${day.dateKey}`,
-      dateKey: day.dateKey,
-      primaryDate: day.primaryDate,
-      secondaryDate: day.secondaryDate,
-      title: `${day.primaryDate.month}/${formatNumber(day.primaryDate.day)}`,
-      isSelected: day.dateKey === selectedDateKey,
-      events: day.events.filter((event) => enabledOccasionTypes.includes(event.type)),
-    }))
-    .filter((group) => group.events.length > 0);
+    .map((day) => {
+      const events = Array.isArray(day.visibleEvents)
+        ? day.visibleEvents
+        : day.events.filter((event) => enabledOccasionTypes.includes(event.type));
+
+      return {
+        id: `occasion-${day.dateKey}`,
+        dateKey: day.dateKey,
+        primaryDate: day.primaryDate,
+        secondaryDate: day.secondaryDate,
+        title: `${day.primaryDate.month}/${formatNumber(day.primaryDate.day)}`,
+        isOutsideMonth: day.isOutsideMonth,
+        isSelected: day.dateKey === selectedDateKey,
+        events,
+      };
+    })
+    .filter((group) => !group.isOutsideMonth && group.events.length > 0);
 }
 
 function getSelectedOccasionGroup(calendar) {
@@ -1063,13 +1077,15 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     const dayPrimaryParts = getCalendarPartsFromUtc(dayDate, primaryCalendar);
     const primaryDate = formatCompactCalendarDate(dayDate, primaryCalendar);
     const officialHolidays = getOfficialHolidayMatches(dayDate, primaryCalendar);
+    const events = getDateOccasions(dayDate, language, t);
 
     return {
       id: `synced-${primaryCalendar}-${dateKey}`,
       dateKey,
       primaryDate,
       secondaryDate: formatCompactCalendarDate(dayDate, secondaryCalendar),
-      events: getDateOccasions(dayDate, language, t),
+      events,
+      visibleEvents: events.filter((event) => enabledOccasionTypes.includes(event.type)),
       isHoliday: officialHolidays.some((holiday) => holiday.status !== 'partial'),
       isPartialHoliday: officialHolidays.some((holiday) => holiday.status === 'partial'),
       officialHolidays,
@@ -1090,7 +1106,7 @@ function getSyncedMonthCalendar(cityDate, primaryCalendar, monthOffset, selected
     monthOptions: getCalendarMonthOptions(primaryCalendar),
     yearValue: primaryParts.year,
     yearOptions: buildYearOptions(primaryCalendar, primaryParts.year),
-    selectedLabel: formatSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, primaryCalendar, language),
+    selectedLabel: formatSyncedSelectedCalendarDate(selectedDateKey ? new Date(`${selectedDateKey}T12:00:00Z`) : cityDate, primaryCalendar, language, t),
     days,
     occasions: getMonthOccasionGroups(days, primaryCalendar, enabledOccasionTypes, selectedDateKey),
   };
@@ -1780,6 +1796,8 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
   const differenceLaterDate = differenceStartUtc.getTime() <= differenceEndUtc.getTime() ? differenceEndUtc : differenceStartUtc;
   const differenceDistance = calculateDateDistance(differenceEarlierDate, differenceLaterDate);
   const differenceTotalDays = Math.round(Math.abs(differenceEndUtc.getTime() - differenceStartUtc.getTime()) / dayInMilliseconds);
+  const differenceTotalWeeks = Math.floor(differenceTotalDays / 7);
+  const differenceTotalMonths = differenceDistance.years * 12 + differenceDistance.months;
   const differenceDistanceLabel = language === 'fa'
     ? `${formatLocaleNumber(differenceDistance.years, language)} سال ${formatLocaleNumber(differenceDistance.months, language)} ماه ${formatLocaleNumber(differenceDistance.days, language)} روز`
     : `${formatLocaleNumber(differenceDistance.years, language)}y ${formatLocaleNumber(differenceDistance.months, language)}m ${formatLocaleNumber(differenceDistance.days, language)}d`;
@@ -2200,6 +2218,8 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
           ),
           h('div', { className: 'date-difference-panel__result' },
             h(InfoPill, { label: t.total_days, value: `${formatLocaleNumber(differenceTotalDays, language)} ${t.days}` }),
+            h(InfoPill, { label: t.total_weeks, value: `${formatLocaleNumber(differenceTotalWeeks, language)} ${t.weeks_unit}` }),
+            h(InfoPill, { label: t.total_months, value: `${formatLocaleNumber(differenceTotalMonths, language)} ${t.months_unit}` }),
             h(InfoPill, { label: t.difference_result, value: differenceDistanceLabel }),
           ),
         ),
@@ -2922,10 +2942,8 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
       h(
         'header',
         { className: 'monthly-calendar__header' },
-        h('div', { className: 'monthly-calendar__title' },
-          h('span', null, calendar.eyebrow),
-          h('strong', null, calendar.title),
-        ),
+        h('span', { className: 'monthly-calendar__eyebrow' }, calendar.eyebrow),
+        h('strong', { className: 'monthly-calendar__month-title' }, calendar.title),
         h(
           'div',
           { className: 'monthly-calendar__mode', 'aria-label': t.choose_primary_calendar },
@@ -2999,7 +3017,7 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
           'button',
           {
             type: 'button',
-            className: `monthly-calendar__day monthly-calendar__day--overlay${day.events.length ? ' monthly-calendar__day--has-events' : ''}${day.isPartialHoliday ? ' monthly-calendar__day--partial-holiday' : ''}${day.isHoliday ? ' monthly-calendar__day--holiday' : ''}${day.isOutsideMonth ? ' monthly-calendar__day--outside' : ''}${day.isToday ? ' monthly-calendar__day--today' : ''}${day.isSelected ? ' monthly-calendar__day--selected' : ''}`,
+            className: `monthly-calendar__day monthly-calendar__day--overlay${day.visibleEvents.length ? ' monthly-calendar__day--has-events' : ''}${day.isPartialHoliday ? ' monthly-calendar__day--partial-holiday' : ''}${day.isHoliday ? ' monthly-calendar__day--holiday' : ''}${day.isOutsideMonth ? ' monthly-calendar__day--outside' : ''}${day.isToday ? ' monthly-calendar__day--today' : ''}${day.isSelected ? ' monthly-calendar__day--selected' : ''}`,
             onClick: () => selectDay(day.dateKey),
             'aria-pressed': day.isSelected,
             title: day.officialHolidays?.length

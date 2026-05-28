@@ -604,18 +604,17 @@ button {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: clamp(0.58rem, 1vw, 0.78rem);
   align-items: center;
-  direction: ltr;
 }
 
 .day-night-card__event {
   display: flex;
-  grid-column: 2;
+  grid-column: 1;
   grid-row: 1;
   gap: clamp(0.58rem, 1vw, 0.78rem);
   align-items: center;
-  align-self: start;
-  justify-self: end;
-  direction: rtl;
+  align-self: center;
+  justify-self: start;
+  direction: ltr;
 }
 
 .day-night-card__event-copy {
@@ -624,14 +623,31 @@ button {
   gap: 0.5rem;
   align-items: baseline;
   min-width: 0;
-  direction: rtl;
+  direction: ltr;
   white-space: nowrap;
 }
 
 .day-night-card__remaining {
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 1;
-  align-self: start;
+  align-self: center;
+  justify-self: end;
+  direction: ltr;
+  text-align: left;
+}
+
+:root[dir="rtl"] .day-night-card__event {
+  grid-column: 2;
+  justify-self: end;
+  direction: rtl;
+}
+
+:root[dir="rtl"] .day-night-card__event-copy {
+  direction: rtl;
+}
+
+:root[dir="rtl"] .day-night-card__remaining {
+  grid-column: 1;
   justify-self: start;
   direction: rtl;
   text-align: right;
@@ -792,16 +808,15 @@ button {
   align-items: center;
 }
 
-.monthly-calendar__title {
-  display: grid;
+.monthly-calendar__eyebrow {
   grid-column: 1;
   grid-row: 1;
-  gap: 0.34rem;
+  align-self: center;
   min-width: 0;
 }
 
-.monthly-calendar__header span,
-.monthly-calendar__title span {
+.monthly-calendar__eyebrow,
+.monthly-calendar__header span {
   color: #64748b;
   font-size: 0.72rem;
   font-weight: 900;
@@ -809,8 +824,10 @@ button {
   text-transform: uppercase;
 }
 
-.monthly-calendar__header strong,
-.monthly-calendar__title strong {
+.monthly-calendar__month-title {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: center;
   min-width: 0;
   color: #111827;
   font-size: clamp(1.35rem, 2.2vw, 2rem);
@@ -866,11 +883,12 @@ button {
 
 .monthly-calendar__toolbar {
   display: flex;
-  grid-column: 1 / -1;
+  grid-column: 2;
   grid-row: 2;
   flex-wrap: wrap;
   gap: 0.45rem;
   align-items: center;
+  align-self: center;
   justify-content: flex-end;
   min-width: min(100%, 28rem);
 }
@@ -1052,9 +1070,24 @@ button {
   opacity: 1;
 }
 
+.monthly-calendar__day--selected:hover,
+.monthly-calendar__day--selected:focus-visible {
+  border-color: rgba(96, 165, 250, 0.92);
+  background: #1e293b;
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.2), inset 0 0 0 2px rgba(255, 255, 255, 0.14);
+}
+
 .monthly-calendar__day--selected.monthly-calendar__day--holiday {
   border-color: rgba(244, 63, 94, 0.76);
   background: #be123c;
+  color: #fff;
+}
+
+.monthly-calendar__day--selected.monthly-calendar__day--holiday:hover,
+.monthly-calendar__day--selected.monthly-calendar__day--holiday:focus-visible {
+  border-color: rgba(251, 113, 133, 0.92);
+  background: #9f1239;
   color: #fff;
 }
 
@@ -1087,7 +1120,7 @@ button {
   grid-column: 2;
   grid-row: 1;
   gap: 0.25rem;
-  align-self: start;
+  align-self: center;
   justify-self: end;
   padding: 0.16rem;
   border: 1px solid rgba(148, 163, 184, 0.22);
@@ -1337,22 +1370,48 @@ button {
   overflow-y: auto;
   overscroll-behavior: contain;
   padding-right: 0.32rem;
-  scrollbar-color: rgba(4, 120, 87, 0.52) rgba(226, 232, 240, 0.7);
-  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: none;
 }
 
 .monthly-occasions__list::-webkit-scrollbar {
-  width: 0.55rem;
+  width: 0;
 }
 
 .monthly-occasions__list::-webkit-scrollbar-track {
   border-radius: 999px;
-  background: rgba(226, 232, 240, 0.7);
+  background: transparent;
 }
 
 .monthly-occasions__list::-webkit-scrollbar-thumb {
-  border: 2px solid rgba(226, 232, 240, 0.7);
+  border: 2px solid transparent;
   border-radius: 999px;
+  background: transparent;
+}
+
+.monthly-occasions__list:hover,
+.monthly-occasions__list:focus,
+.monthly-occasions__list:focus-within {
+  scrollbar-color: rgba(4, 120, 87, 0.52) rgba(226, 232, 240, 0.7);
+  scrollbar-width: thin;
+}
+
+.monthly-occasions__list:hover::-webkit-scrollbar,
+.monthly-occasions__list:focus::-webkit-scrollbar,
+.monthly-occasions__list:focus-within::-webkit-scrollbar {
+  width: 0.55rem;
+}
+
+.monthly-occasions__list:hover::-webkit-scrollbar-track,
+.monthly-occasions__list:focus::-webkit-scrollbar-track,
+.monthly-occasions__list:focus-within::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.7);
+}
+
+.monthly-occasions__list:hover::-webkit-scrollbar-thumb,
+.monthly-occasions__list:focus::-webkit-scrollbar-thumb,
+.monthly-occasions__list:focus-within::-webkit-scrollbar-thumb {
+  border-color: rgba(226, 232, 240, 0.7);
   background: rgba(4, 120, 87, 0.68);
 }
 
@@ -2313,6 +2372,10 @@ button {
   }
 
   .day-night-card__remaining {
+    justify-self: end;
+  }
+
+  :root[dir="rtl"] .day-night-card__remaining {
     justify-self: start;
   }
 
@@ -2479,9 +2542,15 @@ button {
   }
 
   .day-night-card__event {
-    grid-column: 2;
+    grid-column: 1;
     grid-row: 1;
     flex-wrap: nowrap;
+    justify-content: flex-start;
+    justify-self: start;
+  }
+
+  :root[dir="rtl"] .day-night-card__event {
+    grid-column: 2;
     justify-content: flex-end;
     justify-self: end;
   }
@@ -2496,12 +2565,17 @@ button {
   }
 
   .day-night-card__remaining {
-    grid-column: 1;
+    grid-column: 2;
     grid-row: 1;
     align-self: center;
-    justify-self: start;
+    justify-self: end;
     font-size: 0.78rem;
     white-space: nowrap;
+  }
+
+  :root[dir="rtl"] .day-night-card__remaining {
+    grid-column: 1;
+    justify-self: start;
   }
 
   .day-night-card__row {
@@ -2541,6 +2615,7 @@ button {
 
   .monthly-calendar__toolbar {
     grid-column: 1 / -1;
+    grid-row: 3;
     justify-content: flex-start;
     min-width: 0;
   }
@@ -2557,10 +2632,11 @@ button {
     grid-column: 2;
     grid-row: 1;
     justify-self: end;
-    align-self: start;
+    align-self: center;
   }
 
-  .monthly-calendar__title,
+  .monthly-calendar__eyebrow,
+  .monthly-calendar__month-title,
   .monthly-calendar__meta {
     grid-column: 1;
   }
@@ -2835,7 +2911,7 @@ button {
 }
 .date-difference-panel__result {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: .75rem;
 }
 .date-difference-panel__result .info-pill {
