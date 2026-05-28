@@ -182,7 +182,7 @@ button {
   font-weight: 950;
   letter-spacing: -0.08em;
   line-height: 0.86;
-  text-shadow: 0.035em 0.035em 0 rgba(148, 163, 184, 0.15);
+  text-shadow: none;
   white-space: nowrap;
 }
 
@@ -2258,8 +2258,69 @@ button {
     flex-direction: column;
   }
 
+  .timezone-manager__heading {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .timezone-manager__heading .heading-actions {
+    align-items: center;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .timezone-manager__heading .edit-toggle {
+    min-height: 2.35rem;
+    padding: 0.45rem 0.9rem;
+  }
+
+  .hero-panel {
+    gap: 1.05rem;
+    padding: 0.95rem 0.82rem 1rem;
+  }
+
+  .hero-panel .top-bar {
+    display: contents;
+  }
+
+  .hero-panel .top-bar__controls {
+    order: 0;
+    gap: 0.45rem;
+    justify-content: center;
+    justify-self: center;
+    width: 100%;
+    margin-bottom: 1.35rem;
+    margin-inline-start: 0;
+  }
+
+  .hero-panel .language-picker__segmented button {
+    min-width: 3.65rem;
+    min-height: 2.05rem;
+  }
+
+  .hero-panel .clock-focus-button {
+    min-width: 5.7rem;
+    min-height: 2.25rem;
+  }
+
+  .hero-panel .eyebrow {
+    order: 1;
+    max-width: 100%;
+    text-align: center;
+    font-size: clamp(1.04rem, 4.4vw, 1.45rem);
+    line-height: 1.42;
+    margin-top: 0.1rem;
+  }
+
+  .hero-panel .hero-content {
+    order: 2;
+    gap: 0.82rem;
+  }
+
   .clock {
-    font-size: clamp(4.4rem, 22vw, 7.2rem);
+    font-size: clamp(4.2rem, 20.5vw, 6.8rem);
+    padding-top: 0.08rem;
+    text-align: center;
   }
 
   .search-panel {
@@ -2274,25 +2335,115 @@ button {
     width: 100%;
   }
 
-  .hero-meta,
   .city-tabs,
   .weekly-calendar__days {
     grid-template-columns: 1fr;
   }
 
-  .monthly-calendar__header {
-    grid-template-columns: 1fr;
+  .hero-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+    padding: 0;
+  }
+
+  :root[lang="fa"] .hero-meta {
+    padding: 0;
+  }
+
+  .hero-meta .info-pill {
+    min-height: 4.2rem;
+    padding: 0.68rem 0.76rem;
+    border-radius: 0.9rem;
+  }
+
+  .hero-meta .info-pill span {
+    font-size: 0.66rem;
+    line-height: 1.15;
+  }
+
+  .hero-meta .info-pill strong {
+    font-size: clamp(0.95rem, 3.6vw, 1.08rem);
+  }
+
+  .hero-meta .split-pill--wide {
+    grid-column: 1 / -1;
+  }
+
+  .day-night-card__details {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .day-night-card__header {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.55rem 0.7rem;
+    align-items: center;
+  }
+
+  .day-night-card__icon {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .day-night-card__header div {
+    grid-column: 2;
+    grid-row: 1;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+
+  .day-night-card__header div > span {
+    white-space: nowrap;
+  }
+
+  .day-night-card__header strong {
+    white-space: nowrap;
+  }
+
+  .day-night-card__header p {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .day-night-card__row {
+    grid-column: span 2;
+    min-height: 4.1rem;
+    border: 0;
+  }
+
+  .day-night-card__row + .day-night-card__row {
+    border-top: 0;
+    border-left: 0;
+  }
+
+  .day-night-card__row:nth-child(n + 4) {
+    grid-column: span 3;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .day-night-card__row:nth-child(2),
+  .day-night-card__row:nth-child(3),
+  .day-night-card__row:nth-child(5) {
+    border-inline-start: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .monthly-occasions {
+    max-height: 31rem;
+  }
+
+  .monthly-occasions__list {
+    max-height: min(22rem, 48vh);
   }
 
   .monthly-calendar__header {
-    grid-template-columns: 1fr;
-  }
-
-  .monthly-calendar__header {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
   }
 
   .monthly-calendar__toolbar {
+    grid-column: 1 / -1;
     justify-content: flex-start;
     min-width: 0;
   }
@@ -2304,6 +2455,20 @@ button {
   .monthly-calendar__filters,
   .monthly-calendar__mode {
     grid-template-columns: 1fr;
+  }
+
+  .monthly-calendar__mode {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    justify-self: end;
+    align-self: start;
+  }
+
+  .monthly-calendar__header span,
+  .monthly-calendar__header strong,
+  .monthly-calendar__header small,
+  .monthly-calendar__occasion-description {
+    grid-column: 1;
   }
 
   .monthly-calendar__weekdays,
@@ -2603,6 +2768,7 @@ button {
 .selected-bookmark-timer__actions {
   display: inline-flex;
   align-items: center;
+  justify-self: start;
   gap: .55rem;
   flex-wrap: wrap;
 }
@@ -2615,6 +2781,12 @@ button {
   color: #0f172a;
   font-size: 1rem;
   line-height: 1.7;
+}
+.selected-bookmark-timer__headline small {
+  color: #64748b;
+  font-size: .78rem;
+  font-weight: 750;
+  line-height: 1.65;
 }
 .selected-bookmark-timer__focus,
 .selected-bookmark-timer__effect-button {
@@ -2695,6 +2867,7 @@ button {
     radial-gradient(circle at 50% 42%, rgba(30, 41, 59, .7), rgba(2, 6, 23, .96) 48%, #000 100%),
     #020617;
 }
+.selected-bookmark-timer.fullscreen-background--light:fullscreen,
 .selected-bookmark-timer.fullscreen-background--daynight:fullscreen {
   --fullscreen-text: #0f172a;
   --fullscreen-muted: #475569;
@@ -2710,6 +2883,8 @@ button {
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__header {
   align-items: center;
+  display: flex;
+  justify-content: space-between;
   margin: 0 auto;
   width: min(100%, 86rem);
 }
@@ -2717,6 +2892,11 @@ button {
   color: var(--fullscreen-strong);
   font-size: clamp(1.5rem, 3vw, 3rem);
   text-shadow: none;
+}
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__headline small {
+  color: var(--fullscreen-muted);
+  font-size: clamp(.95rem, 1.5vw, 1.35rem);
+  text-align: center;
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions {
   position: absolute;
@@ -2774,12 +2954,12 @@ button {
   animation-delay: var(--delay);
   animation-duration: var(--duration);
   animation-fill-mode: both;
-  animation-timing-function: cubic-bezier(.18, .78, .2, 1);
+  animation-timing-function: cubic-bezier(.16, .72, .22, 1);
   will-change: opacity, transform;
 }
 .bookmark-effect--color_ribbons span,
 .bookmark-effect--black_ribbons span {
-  top: -2.5rem;
+  top: -5.5rem;
   width: clamp(.48rem, .75vw, .9rem);
   height: clamp(2rem, 3.4vw, 3.8rem);
   border-radius: .18rem .18rem .42rem .42rem;
@@ -2800,6 +2980,11 @@ button {
   width: clamp(.55rem, .85vw, 1rem);
   height: clamp(.55rem, .85vw, 1rem);
 }
+.bookmark-effect--color_ribbons span:nth-child(7n),
+.bookmark-effect--black_ribbons span:nth-child(7n) {
+  width: clamp(.32rem, .52vw, .58rem);
+  height: clamp(2.75rem, 4.6vw, 5.25rem);
+}
 .bookmark-effect--color_ribbons span:nth-child(6n + 1) { background: #ef4444; }
 .bookmark-effect--color_ribbons span:nth-child(6n + 2) { background: #f59e0b; }
 .bookmark-effect--color_ribbons span:nth-child(6n + 3) { background: #22c55e; }
@@ -2813,7 +2998,7 @@ button {
   background: #171717;
 }
 .bookmark-effect--balloons span {
-  bottom: -7rem;
+  bottom: -13rem;
   width: clamp(2.6rem, 4.8vw, 5.2rem);
   height: clamp(3.35rem, 6vw, 6.45rem);
   border-radius: 50% 50% 46% 46%;
@@ -2853,38 +3038,51 @@ button {
 .bookmark-effect--balloons span:nth-child(6n + 4) { background: #60a5fa; }
 .bookmark-effect--balloons span:nth-child(6n + 5) { background: #c084fc; }
 .bookmark-effect--balloons span:nth-child(6n + 6) { background: #fb7185; }
+.bookmark-effect--balloons span:nth-child(4n) {
+  width: clamp(2.1rem, 4.1vw, 4.45rem);
+  height: clamp(2.8rem, 5.2vw, 5.55rem);
+}
+.bookmark-effect--balloons span:nth-child(5n) {
+  width: clamp(3.05rem, 5.6vw, 6rem);
+  height: clamp(3.85rem, 6.8vw, 7.15rem);
+}
 @keyframes bookmark-ribbon-fall {
   0% {
-    opacity: 1;
-    transform: translate3d(0, -1rem, 0) rotate(0deg) scale(.95);
+    opacity: 0;
+    transform: translate3d(0, -5rem, 0) rotate(0deg) scale(.88);
   }
-  12% {
-    transform: translate3d(calc(var(--drift) * -.35), 14vh, 0) rotate(calc(var(--spin) * .22)) scale(1);
-  }
-  58% {
+  8% {
     opacity: 1;
-    transform: translate3d(var(--drift), 68vh, 0) rotate(calc(var(--spin) * .72)) scale(1);
+    transform: translate3d(calc(var(--drift) * -.15), 8vh, 0) rotate(calc(var(--spin) * .12)) scale(.98);
+  }
+  24% {
+    transform: translate3d(calc(var(--drift) * -.38), 28vh, 0) rotate(calc(var(--spin) * .32)) scale(1);
+  }
+  70% {
+    opacity: 1;
+    transform: translate3d(var(--drift), 82vh, 0) rotate(calc(var(--spin) * .82)) scale(1);
   }
   100% {
-    opacity: .08;
-    transform: translate3d(calc(var(--drift) * 1.4), 112vh, 0) rotate(var(--spin)) scale(.9);
+    opacity: 0;
+    transform: translate3d(calc(var(--drift) * 1.5), 122vh, 0) rotate(var(--spin)) scale(.9);
   }
 }
 @keyframes bookmark-balloon-rise {
   0% {
-    opacity: 1;
-    transform: translate3d(0, 3rem, 0) rotate(-2deg) scale(.84);
+    opacity: 0;
+    transform: translate3d(0, 10rem, 0) rotate(-2deg) scale(.82);
   }
-  12% {
-    transform: translate3d(calc(var(--drift) * -.35), -7vh, 0) rotate(3deg) scale(.98);
-  }
-  68% {
+  10% {
     opacity: 1;
-    transform: translate3d(var(--drift), -72vh, 0) rotate(-4deg) scale(1.03);
+    transform: translate3d(calc(var(--drift) * -.2), -5vh, 0) rotate(3deg) scale(.96);
+  }
+  72% {
+    opacity: 1;
+    transform: translate3d(var(--drift), -82vh, 0) rotate(-4deg) scale(1.03);
   }
   100% {
-    opacity: .05;
-    transform: translate3d(calc(var(--drift) * 1.25), -120vh, 0) rotate(4deg) scale(1.06);
+    opacity: 0;
+    transform: translate3d(calc(var(--drift) * 1.25), -135vh, 0) rotate(4deg) scale(1.06);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2931,6 +3129,40 @@ button {
 .date-bookmark-save {
   height: 2.75rem;
   min-height: 2.75rem;
+}
+.date-bookmark-save {
+  grid-column: 4;
+  grid-row: 1;
+}
+.date-bookmark__checkbox {
+  display: inline-flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .5rem;
+  min-height: 2.25rem;
+  color: #475569;
+  font-size: .84rem;
+  font-weight: 850;
+  justify-self: start;
+}
+.date-bookmark__checkbox input,
+.date-bookmark-form .date-bookmark__checkbox input {
+  flex: 0 0 auto;
+  width: 1.05rem;
+  height: 1.05rem;
+  min-height: 1.05rem;
+  margin: 0;
+  accent-color: #2563eb;
+}
+.date-bookmark__checkbox span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.05rem;
+  line-height: 1;
+}
+.date-bookmark__edit-checkbox {
+  grid-column: 1 / -1;
 }
 .date-bookmark__effect-input {
   display: grid;
@@ -3130,10 +3362,68 @@ button {
 }
 @media (max-width: 900px) {
   .solar-year-card__body { grid-template-columns: 1fr; }
-  .solar-year-card__header { align-items:flex-start; flex-direction:column; }
-  .solar-year-card__header select { width: 100%; }
+  .solar-year-card__header {
+    align-items: flex-start;
+    flex-direction: row;
+  }
+  .solar-year-card__header div {
+    min-width: 0;
+  }
+  .solar-year-card__header select {
+    width: auto;
+    max-width: 52%;
+    min-width: min(10rem, 46vw);
+  }
+  .solar-year-card .split-pill--many .split-pill__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .solar-year-card .split-pill__item + .split-pill__item {
+    margin-inline-start: .34rem;
+    padding-inline-start: .34rem;
+  }
+  .solar-year-card .split-pill__item small {
+    font-size: .62rem;
+  }
+  .solar-year-card .split-pill__item strong {
+    font-size: clamp(1rem, 4.2vw, 1.25rem);
+  }
   .split-pill--many .split-pill__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .age-converter-card__mode { max-width: 100%; }
+  .age-converter-card__result .split-pill--month-info {
+    min-height: auto;
+  }
+  .age-converter-card__result .split-pill--month-info .split-pill__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    align-items: stretch;
+  }
+  .age-converter-card__result .split-pill--month-info .split-pill__item {
+    min-height: 4rem;
+    align-content: center;
+    gap: .26rem;
+    margin: 0;
+    padding: .32rem .34rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .age-converter-card__result .split-pill--month-info .split-pill__item + .split-pill__item {
+    margin: 0;
+    padding: .32rem .34rem;
+    border-inline-start: 1px solid rgba(148, 163, 184, .28);
+  }
+  .age-converter-card__result .split-pill--month-info .split-pill__item small {
+    font-size: clamp(.5rem, .58vw, .6rem);
+    line-height: 1.15;
+    white-space: normal;
+  }
+  .age-converter-card__result .split-pill--month-info .split-pill__item strong {
+    font-size: clamp(.88rem, .96vw, 1.05rem);
+    line-height: 1.25;
+    white-space: normal;
+    text-overflow: clip;
+  }
+  .age-converter-card__mode {
+    max-width: 52%;
+    min-width: min(10rem, 46vw);
+  }
   .age-converter-card__controls { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .age-converter-card__result { grid-template-columns: 1fr; }
   .age-converter-card__result > :nth-child(n) { grid-column: 1 / -1; }
@@ -3143,9 +3433,95 @@ button {
   .selected-bookmark-timer__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .date-bookmark-form { grid-template-columns: 1fr; }
-  .age-converter-card__header { align-items:flex-start; flex-direction:column; }
+  .date-bookmark-save,
+  .date-bookmark__checkbox {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .age-converter-card__header {
+    align-items: flex-start;
+    flex-direction: row;
+  }
   .age-converter-card__header-actions { justify-content:flex-start; }
   .date-bookmark { grid-template-columns: 1fr; }
   .date-bookmark__edit-date-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .date-bookmark__actions { justify-content:flex-start; }
+}
+
+@media (max-width: 640px) {
+  .selected-bookmark-timer {
+    grid-template-areas:
+      "headline"
+      "timer"
+      "actions";
+  }
+
+  .selected-bookmark-timer__header {
+    display: contents;
+  }
+
+  .selected-bookmark-timer__headline {
+    grid-area: headline;
+    text-align: center;
+  }
+
+  .selected-bookmark-timer__grid {
+    grid-area: timer;
+  }
+
+  .selected-bookmark-timer__actions {
+    grid-area: actions;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .selected-bookmark-timer:fullscreen {
+    display: grid;
+    grid-template-areas: none;
+  }
+
+  .selected-bookmark-timer:fullscreen .selected-bookmark-timer__header {
+    display: flex;
+  }
+
+  .selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions {
+    position: absolute;
+    inset-block-start: 1rem;
+    inset-inline-end: 1rem;
+    justify-content: flex-end;
+    width: auto;
+  }
+
+  .selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid {
+    grid-area: auto;
+  }
+}
+
+@media (max-width: 430px) {
+  .age-converter-card__result .split-pill--month-info .split-pill__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .age-converter-card__result .split-pill--month-info .split-pill__item {
+    min-height: 3.7rem;
+    margin: 0;
+    padding: .42rem .58rem;
+  }
+
+  .age-converter-card__result .split-pill--month-info .split-pill__item + .split-pill__item {
+    margin: 0;
+    padding: .42rem .58rem;
+  }
+
+  .age-converter-card__result .split-pill--month-info .split-pill__item:nth-child(even) {
+    border-inline-start: 1px solid rgba(148, 163, 184, .28);
+  }
+
+  .age-converter-card__result .split-pill--month-info .split-pill__item:nth-child(odd) {
+    border-inline-start: 0;
+  }
+
+  .age-converter-card__result .split-pill--month-info .split-pill__item:nth-child(n + 3) {
+    border-top: 1px solid rgba(148, 163, 184, .28);
+  }
 }

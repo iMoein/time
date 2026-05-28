@@ -12,6 +12,7 @@ import islamicSunniOccasions from './data/calendar-files/islamic-sunni-occasions
 import islamicSharedOccasions from './data/calendar-files/islamic-shared-occasions-simple-max.json' with { type: 'json' };
 import yearOptionsData from './data/year-options.json' with { type: 'json' };
 import solarYearMomentsData from './data/solar-year-moments.json' with { type: 'json' };
+import cardOrderConfig from './data/card-order.json' with { type: 'json' };
 import i18n from './data/i18n.json' with { type: 'json' };
 import cityTranslationsFa from './data/city-translations-fa.json' with { type: 'json' };
 import occasionDescriptions from './data/occasion-descriptions.json' with { type: 'json' };
@@ -40,6 +41,27 @@ const userCitiesCustomizedKey = 'time-app-cities-customized';
 const savedFullscreenBackgroundKey = 'time-app-fullscreen-background';
 const defaultNtpHost = 'ntp.time.ir';
 const bookmarkEffectIds = ['none', 'color_ribbons', 'balloons', 'black_ribbons'];
+const defaultCardOrder = ['mainClock', 'sunAndTimezones', 'monthlyOccasions', 'solarYearMoment', 'dateTools'];
+
+function getConfiguredCardOrder(config = {}) {
+  const configuredOrder = Array.isArray(config.order) ? config.order : [];
+  const validCards = new Set(defaultCardOrder);
+  const orderedCards = [];
+
+  configuredOrder.forEach((cardId) => {
+    if (validCards.has(cardId) && !orderedCards.includes(cardId)) {
+      orderedCards.push(cardId);
+    }
+  });
+
+  defaultCardOrder.forEach((cardId) => {
+    if (!orderedCards.includes(cardId)) {
+      orderedCards.push(cardId);
+    }
+  });
+
+  return orderedCards;
+}
 
 function normalizeBookmarkEffect(value) {
   return bookmarkEffectIds.includes(value) ? value : 'none';
@@ -160,6 +182,7 @@ function getInitialDateBookmarks() {
         day: Number(bookmark.day),
         dateKey: String(bookmark.dateKey || ''),
         effect: normalizeBookmarkEffect(bookmark.effect),
+        showDescriptionInTimer: Boolean(bookmark.showDescriptionInTimer),
         createdAt: String(bookmark.createdAt || ''),
         updatedAt: String(bookmark.updatedAt || ''),
       }))
@@ -1478,7 +1501,7 @@ function SolarYearMomentCard({ now, t, language }) {
 }
 
 function BookmarkEffectOverlay({ effect }) {
-  const items = Array.from({ length: effect === 'balloons' ? 26 : 76 }, (_, index) => index);
+  const items = Array.from({ length: effect === 'balloons' ? 90 : 225 }, (_, index) => index);
 
   return h(
     'div',
@@ -1487,11 +1510,11 @@ function BookmarkEffectOverlay({ effect }) {
       key: index,
       style: {
         '--i': String(index),
-        '--x': `${3 + ((index * 37) % 94)}%`,
-        '--delay': `${(index % 12) * 0.045 - 0.18}s`,
-        '--duration': `${effect === 'balloons' ? 5.4 + (index % 8) * 0.22 : 3.8 + (index % 9) * 0.2}s`,
-        '--spin': `${(index % 2 ? 1 : -1) * (140 + (index % 9) * 20)}deg`,
-        '--drift': `${((index % 9) - 4) * (effect === 'balloons' ? 2.8 : 2.1)}vw`,
+        '--x': `${2 + ((index * 37 + Math.floor(index / 12) * 11) % 96)}%`,
+        '--delay': `${Math.floor(index / (effect === 'balloons' ? 18 : 45)) * 0.82 + (index % 15) * 0.035 - 0.12}s`,
+        '--duration': `${effect === 'balloons' ? 7.4 + (index % 10) * 0.24 : 5.2 + (index % 11) * 0.22}s`,
+        '--spin': `${(index % 2 ? 1 : -1) * (180 + (index % 11) * 24)}deg`,
+        '--drift': `${((index % 11) - 5) * (effect === 'balloons' ? 3.4 : 2.8)}vw`,
       },
     })),
   );
@@ -1512,11 +1535,13 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
   const [bookmarkTitle, setBookmarkTitle] = useState('');
   const [bookmarkDescription, setBookmarkDescription] = useState('');
   const [bookmarkEffect, setBookmarkEffect] = useState('none');
+  const [bookmarkShowDescriptionInTimer, setBookmarkShowDescriptionInTimer] = useState(false);
   const [activeBookmarkActionsId, setActiveBookmarkActionsId] = useState('');
   const [editingBookmarkId, setEditingBookmarkId] = useState('');
   const [editingBookmarkTitle, setEditingBookmarkTitle] = useState('');
   const [editingBookmarkDescription, setEditingBookmarkDescription] = useState('');
   const [editingBookmarkEffect, setEditingBookmarkEffect] = useState('none');
+  const [editingBookmarkShowDescriptionInTimer, setEditingBookmarkShowDescriptionInTimer] = useState(false);
   const [editingBookmarkCalendarType, setEditingBookmarkCalendarType] = useState('persian');
   const [editingBookmarkYear, setEditingBookmarkYear] = useState(todayPersian.year);
   const [editingBookmarkMonth, setEditingBookmarkMonth] = useState(todayPersian.month);
@@ -1665,19 +1690,21 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     setBookmarkTitle(selectedBookmark.title);
     setBookmarkDescription(selectedBookmark.description || '');
     setBookmarkEffect(normalizeBookmarkEffect(selectedBookmark.effect));
+    setBookmarkShowDescriptionInTimer(Boolean(selectedBookmark.showDescriptionInTimer));
   }, [selectedBookmark]);
   const selectedBookmarkTimer = selectedBookmark
     ? getPreciseZonedDistance(bookmarkNow, getDateKeyMidnightUtc(selectedBookmark.dateKey, city.timeZone), city.timeZone)
     : null;
   const selectedBookmarkTimerTitle = selectedBookmark && selectedBookmarkTimer
     ? language === 'fa'
-      ? `${selectedBookmarkTimer.isFuture ? t.time_remaining : t.time_elapsed} برای ${selectedBookmark.title}`
-      : `${selectedBookmarkTimer.isFuture ? t.time_remaining : t.time_elapsed} for ${selectedBookmark.title}`
+      ? `${selectedBookmarkTimer.isFuture ? t.time_remaining : t.time_elapsed} ${selectedBookmarkTimer.isFuture ? 'برای' : 'از'} ${selectedBookmark.title}`
+      : `${selectedBookmarkTimer.isFuture ? t.time_remaining : t.time_elapsed} ${selectedBookmarkTimer.isFuture ? 'for' : 'since'} ${selectedBookmark.title}`
     : '';
+  const selectedBookmarkTimerDescription = selectedBookmark?.showDescriptionInTimer ? selectedBookmark.description : '';
   useEffect(() => {
     if (!activeBookmarkEffect) return undefined;
 
-    const timer = window.setTimeout(() => setActiveBookmarkEffect(null), 6200);
+    const timer = window.setTimeout(() => setActiveBookmarkEffect(null), 12000);
     return () => window.clearTimeout(timer);
   }, [activeBookmarkEffect]);
 
@@ -1713,10 +1740,11 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
   const currentDateKey = getCalendarDateKey(convertedDate);
   const currentDateTitle = `${gregorianParts.year}/${formatNumber(gregorianParts.month)}/${formatNumber(gregorianParts.day)}`;
   const getBookmarkTitle = () => `${t.bookmark_default_title} ${currentDateTitle}`;
-  const buildCurrentBookmark = (id = `date-${Date.now()}`, title = getBookmarkTitle(), description = '', createdAt = new Date().toISOString()) => ({
+  const buildCurrentBookmark = (id = `date-${Date.now()}`, title = getBookmarkTitle(), description = '', createdAt = new Date().toISOString(), showDescriptionInTimer = bookmarkShowDescriptionInTimer) => ({
     id,
     title: title.trim() || getBookmarkTitle(),
     description: description.trim(),
+    showDescriptionInTimer: Boolean(showDescriptionInTimer),
     calendarType,
     year,
     month,
@@ -1756,6 +1784,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     setBookmarkTitle(nextBookmark.title);
     setBookmarkDescription(nextBookmark.description);
     setBookmarkEffect(normalizeBookmarkEffect(nextBookmark.effect));
+    setBookmarkShowDescriptionInTimer(Boolean(nextBookmark.showDescriptionInTimer));
   };
 
   const selectBookmark = (bookmark) => {
@@ -1777,6 +1806,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     setBookmarkTitle(bookmark.title);
     setBookmarkDescription(bookmark.description || '');
     setBookmarkEffect(normalizeBookmarkEffect(bookmark.effect));
+    setBookmarkShowDescriptionInTimer(Boolean(bookmark.showDescriptionInTimer));
     setEditingBookmarkId('');
     setConfirmingDeleteId('');
   };
@@ -1789,6 +1819,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     setEditingBookmarkTitle(bookmark.title);
     setEditingBookmarkDescription(bookmark.description || '');
     setEditingBookmarkEffect(normalizeBookmarkEffect(bookmark.effect));
+    setEditingBookmarkShowDescriptionInTimer(Boolean(bookmark.showDescriptionInTimer));
     setEditingBookmarkCalendarType(bookmark.calendarType);
     setEditingBookmarkYear(bookmark.year);
     setEditingBookmarkMonth(bookmark.month);
@@ -1817,6 +1848,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
           day: nextDay,
           dateKey: nextDateKey,
           effect: normalizeBookmarkEffect(editingBookmarkEffect),
+          showDescriptionInTimer: Boolean(editingBookmarkShowDescriptionInTimer),
           updatedAt: new Date().toISOString(),
         }
         : item
@@ -1829,6 +1861,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     setBookmarkTitle(nextTitle);
     setBookmarkDescription(nextDescription);
     setBookmarkEffect(normalizeBookmarkEffect(editingBookmarkEffect));
+    setBookmarkShowDescriptionInTimer(Boolean(editingBookmarkShowDescriptionInTimer));
     setEditingBookmarkId('');
   };
 
@@ -1838,6 +1871,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
       editingBookmarkTitle || bookmark.title,
       editingBookmarkDescription || bookmark.description || '',
       bookmark.createdAt,
+      editingBookmarkShowDescriptionInTimer,
     );
 
     setDateBookmarks((bookmarks) => bookmarks.map((item) => (item.id === bookmark.id ? nextBookmark : item)));
@@ -1845,6 +1879,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
     setBookmarkTitle(nextBookmark.title);
     setBookmarkDescription(nextBookmark.description);
     setBookmarkEffect(normalizeBookmarkEffect(nextBookmark.effect));
+    setBookmarkShowDescriptionInTimer(Boolean(nextBookmark.showDescriptionInTimer));
     setEditingBookmarkId('');
     setActiveBookmarkActionsId('');
     setConfirmingDeleteId('');
@@ -1924,7 +1959,7 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
           { label: t.weekday, value: weekdayLabel },
           { label: t.leap_year, value: leapYearLabel },
         ] }),
-        h(SplitPill, { label: t.solar_zodiac_details, items: [
+        h(SplitPill, { label: t.solar_zodiac_details, className: 'split-pill--month-info', items: [
           { label: t.gregorian_month, value: gregorianMonthName },
           { label: t.solar_month, value: solarZodiacDetails.month },
           { label: t.persian_zodiac_name, value: solarZodiacDetails.sign },
@@ -1956,10 +1991,11 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
       ),
     selectedBookmarkTimer && h(
       'div',
-      { className: `selected-bookmark-timer fullscreen-background--${fullscreenBackground} fullscreen-time--${timeOfDay}`, 'aria-live': 'polite' },
+      { className: `selected-bookmark-timer fullscreen-background--${fullscreenBackground === 'dark' ? 'dark' : 'light'}`, 'aria-live': 'polite' },
       h('div', { className: 'selected-bookmark-timer__header' },
         h('div', { className: 'selected-bookmark-timer__headline' },
           h('strong', null, selectedBookmarkTimerTitle),
+          selectedBookmarkTimerDescription && h('small', null, selectedBookmarkTimerDescription),
         ),
         h('div', { className: 'selected-bookmark-timer__actions' },
           isBookmarkTimerFullscreen && h(
@@ -2028,6 +2064,16 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
         },
         bookmarkEffectOptions.map((option) => h('option', { key: option.id, value: option.id }, option.label)),
         ),
+      ),
+      h('label', { className: 'date-bookmark__checkbox' },
+        h('input', {
+          type: 'checkbox',
+          checked: bookmarkShowDescriptionInTimer,
+          onChange: (event) => setBookmarkShowDescriptionInTimer(event.target.checked),
+          onFocus: handleFocusIn,
+          onBlur: handleFocusOut,
+        }),
+        h('span', null, t.bookmark_show_description_in_timer),
       ),
       h('button', { type: 'button', className: 'date-bookmark-save', onClick: saveCurrentBookmark }, selectedBookmark ? t.update_bookmark : t.bookmark_date),
     ),
@@ -2107,6 +2153,16 @@ function AgeConverterCard({ city, t, language, timeOffset = 0, fullscreenBackgro
                 },
                 bookmarkEffectOptions.map((option) => h('option', { key: option.id, value: option.id }, option.label)),
                 ),
+              ),
+              isEditing && h('label', { className: 'date-bookmark__checkbox date-bookmark__edit-checkbox' },
+                h('input', {
+                  type: 'checkbox',
+                  checked: editingBookmarkShowDescriptionInTimer,
+                  onFocus: handleFocusIn,
+                  onBlur: handleFocusOut,
+                  onChange: (event) => setEditingBookmarkShowDescriptionInTimer(event.target.checked),
+                }),
+                h('span', null, t.bookmark_show_description_in_timer),
               ),
               isEditing && h(
                 'div',
@@ -2696,10 +2752,10 @@ function MonthlyCalendarCard({ city, t, language, initialOccasionTypes, visibleO
   );
 }
 
-function SplitPill({ label, items, wide = false }) {
+function SplitPill({ label, items, wide = false, className = '' }) {
   return h(
     'article',
-    { className: `info-pill split-pill${wide ? ' split-pill--wide' : ''}${items.length === 3 ? ' split-pill--three' : ''}${items.length > 3 ? ' split-pill--many' : ''}` },
+    { className: `info-pill split-pill${wide ? ' split-pill--wide' : ''}${items.length === 3 ? ' split-pill--three' : ''}${items.length > 3 ? ' split-pill--many' : ''}${className ? ` ${className}` : ''}` },
     h('span', null, label),
     h(
       'div',
@@ -3050,10 +3106,9 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
     setDraggingCityId(null);
   };
 
-  return h(
-    'main',
-    { className: `page-shell${isFa ? ' page-shell--rtl' : ''}`, 'aria-label': `${t.time_in} ${selectedCityView.label}` },
-    h(
+  const cardOrder = getConfiguredCardOrder(cardOrderConfig);
+  const cardComponents = {
+    mainClock: h(
       'section',
       { className: `hero-panel fullscreen-background--${fullscreenBackground} fullscreen-time--${selectedCityView.timeOfDay}`, style: { '--accent': selectedCityView.accent } },
       h(
@@ -3111,7 +3166,7 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
         ),
       ),
     ),
-    h(
+    sunAndTimezones: h(
       'section',
       { className: 'solar-timezone-grid', 'aria-label': t.sun_status_timezone },
       h(DayNightCard, { city: selectedCityView, t }),
@@ -3134,9 +3189,16 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
         language,
       }),
     ),
-    h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes, occasionFilterOrder }),
-    h(SolarYearMomentCard, { now, t, language }),
-    h(AgeConverterCard, { city: selectedCityConfig, t, language, timeOffset, fullscreenBackground, timeOfDay: selectedCityView.timeOfDay, onFullscreenBackgroundToggle: toggleFullscreenBackground, onInteractionChange: setIsAgePickerActive }),  );
+    monthlyOccasions: h(MonthlyCalendarCard, { city: selectedCityView, t, language, initialOccasionTypes: defaultOccasionTypes, visibleOccasionTypes, occasionFilterOrder }),
+    solarYearMoment: h(SolarYearMomentCard, { now, t, language }),
+    dateTools: h(AgeConverterCard, { city: selectedCityConfig, t, language, timeOffset, fullscreenBackground, timeOfDay: selectedCityView.timeOfDay, onFullscreenBackgroundToggle: toggleFullscreenBackground, onInteractionChange: setIsAgePickerActive }),
+  };
+
+  return h(
+    'main',
+    { className: `page-shell${isFa ? ' page-shell--rtl' : ''}`, 'aria-label': `${t.time_in} ${selectedCityView.label}` },
+    cardOrder.map((cardId) => cardComponents[cardId]),
+  );
 }
 
 

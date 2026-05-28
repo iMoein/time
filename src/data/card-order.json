@@ -1,0 +1,36 @@
+{
+  "order": [
+    "mainClock",
+    "sunAndTimezones",
+    "monthlyOccasions",
+    "solarYearMoment",
+    "dateTools"
+  ],
+  "availableCards": [
+    {
+      "id": "mainClock",
+      "fa": "ساعت اصلی شهر انتخاب‌شده",
+      "en": "Main selected-city clock"
+    },
+    {
+      "id": "sunAndTimezones",
+      "fa": "وضعیت خورشید و مدیریت منطقه‌های زمانی",
+      "en": "Sun status and timezone manager"
+    },
+    {
+      "id": "monthlyOccasions",
+      "fa": "مناسبت‌های ماه",
+      "en": "Monthly occasions"
+    },
+    {
+      "id": "solarYearMoment",
+      "fa": "لحظه تغییر سال خورشیدی",
+      "en": "Solar year change moment"
+    },
+    {
+      "id": "dateTools",
+      "fa": "تبدیل تاریخ، فاصله دو تاریخ و بوک‌مارک‌ها",
+      "en": "Date tools and bookmarks"
+    }
+  ]
+}
