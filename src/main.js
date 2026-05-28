@@ -1885,7 +1885,7 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
       ? `${selectedBookmarkTimer.isFuture ? t.time_remaining : t.time_elapsed} ${selectedBookmarkTimer.isFuture ? 'برای' : 'از'} ${selectedBookmark.title}`
       : `${selectedBookmarkTimer.isFuture ? t.time_remaining : t.time_elapsed} ${selectedBookmarkTimer.isFuture ? 'for' : 'since'} ${selectedBookmark.title}`
     : '';
-  const selectedBookmarkTimerDescription = selectedBookmark?.showDescriptionInTimer ? selectedBookmark.description : '';
+  const selectedBookmarkTimerDescription = selectedBookmark?.showDescriptionInTimer ? String(selectedBookmark.description || '').trim() : '';
   useEffect(() => {
     if (!activeBookmarkEffect) return undefined;
 
@@ -2220,9 +2220,12 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
         'aria-live': 'polite',
       },
       h('div', { className: 'selected-bookmark-timer__header' },
-        h('div', { className: 'selected-bookmark-timer__headline' },
+        h('div', { className: 'selected-bookmark-timer__headline', key: `headline-${selectedBookmark?.id || 'empty'}` },
           h('strong', null, selectedBookmarkTimerTitle),
-          selectedBookmarkTimerDescription && h('small', null, selectedBookmarkTimerDescription),
+          h('small', {
+            key: `description-${selectedBookmark?.id || 'empty'}-${selectedBookmarkTimerDescription ? 'visible' : 'hidden'}`,
+            hidden: !selectedBookmarkTimerDescription,
+          }, selectedBookmarkTimerDescription),
         ),
         h('div', { className: 'selected-bookmark-timer__actions' },
           isBookmarkTimerFullscreen && h(
