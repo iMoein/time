@@ -148,6 +148,8 @@ button {
 html.app-viewport-fullscreen-active,
 body.app-viewport-fullscreen-active {
   overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
 }
 
 .page-shell--rtl {
@@ -2144,13 +2146,18 @@ body.app-viewport-fullscreen-active {
 
 .hero-panel.app-viewport-fullscreen,
 .selected-bookmark-timer.app-viewport-fullscreen {
-  position: fixed;
-  inset: 0;
+  position: fixed !important;
+  inset: 0 !important;
   z-index: 2147483000;
-  width: 100vw;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
   min-height: 100vh;
   min-height: 100dvh;
-  overflow: hidden;
+  max-height: 100dvh;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+  touch-action: none;
 }
 
 .hero-panel:fullscreen::backdrop {
@@ -3059,7 +3066,7 @@ body.app-viewport-fullscreen-active {
   color: var(--fullscreen-text);
 }
 .selected-bookmark-timer.app-viewport-fullscreen {
-  position: fixed;
+  position: fixed !important;
 }
 .selected-bookmark-timer.fullscreen-background--dark:fullscreen,
 .selected-bookmark-timer.app-viewport-fullscreen.fullscreen-background--dark {
@@ -3132,24 +3139,33 @@ body.app-viewport-fullscreen-active {
   justify-self: stretch;
   text-align: right;
 }
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions,
-.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__actions {
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__top-controls,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__top-controls,
+.selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls {
   position: absolute;
   inset-block-start: clamp(1rem, 3vw, 2rem);
-  inset-inline-end: clamp(1rem, 3vw, 2rem);
+  left: 50%;
   z-index: 2;
+  display: inline-flex;
+  gap: .55rem;
+  flex-wrap: nowrap;
+  justify-content: center;
+  width: max-content;
+  max-width: calc(100vw - 1.5rem);
   opacity: 0;
   pointer-events: none;
-  transform: translateY(-0.35rem);
+  transform: translate(-50%, -0.35rem);
   transition: opacity 180ms ease, transform 180ms ease;
 }
-.selected-bookmark-timer.fullscreen-controls-visible:fullscreen .selected-bookmark-timer__actions,
-.selected-bookmark-timer.app-viewport-fullscreen.fullscreen-controls-visible .selected-bookmark-timer__actions,
-.selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions:focus-within,
-.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__actions:focus-within {
+.selected-bookmark-timer.fullscreen-controls-visible:fullscreen .selected-bookmark-timer__top-controls,
+.selected-bookmark-timer.app-viewport-fullscreen.fullscreen-controls-visible .selected-bookmark-timer__top-controls,
+.selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls.fullscreen-controls-visible,
+.selected-bookmark-timer:fullscreen .selected-bookmark-timer__top-controls:focus-within,
+.selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__top-controls:focus-within,
+.selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls:focus-within {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0);
+  transform: translate(-50%, 0);
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__focus,
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__effect-button,
@@ -3833,16 +3849,143 @@ body.app-viewport-fullscreen-active {
 
   .selected-bookmark-timer:fullscreen .selected-bookmark-timer__actions,
   .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__actions {
-    position: absolute;
-    inset-block-start: 1rem;
-    inset-inline-end: 1rem;
-    justify-content: flex-end;
-    width: auto;
+    position: static;
+    justify-content: center;
+    width: 100%;
   }
 
   .selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid,
   .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__grid {
     grid-area: auto;
+  }
+
+  .selected-bookmark-timer.app-viewport-fullscreen {
+    align-content: center;
+    gap: clamp(.62rem, 2.3vh, 1.15rem);
+    padding: max(.85rem, env(safe-area-inset-top)) .75rem max(.85rem, env(safe-area-inset-bottom));
+  }
+
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__header {
+    justify-content: center;
+    width: min(100%, 42rem);
+  }
+
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__headline {
+    justify-items: center;
+    width: 100%;
+    text-align: center;
+  }
+
+  :root[dir="rtl"] .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__headline {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__headline strong {
+    font-size: clamp(.92rem, 4.6vw, 1.28rem);
+    line-height: 1.35;
+  }
+
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__headline small {
+    font-size: clamp(.64rem, 2.9vw, .82rem);
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  :root[dir="rtl"] .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__headline small {
+    text-align: center;
+  }
+
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__top-controls {
+    position: fixed !important;
+    top: max(1rem, env(safe-area-inset-top)) !important;
+    right: auto !important;
+    left: var(--app-viewport-center-x, 50%) !important;
+    bottom: auto !important;
+    inset-block-start: max(1rem, env(safe-area-inset-top)) !important;
+    inset-block-end: auto !important;
+    inset-inline-start: auto !important;
+    inset-inline-end: auto !important;
+    display: inline-flex;
+    justify-content: center;
+    width: max-content;
+    max-width: calc(100vw - 1.3rem);
+    gap: .38rem;
+    flex-wrap: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(-50%, -0.35rem, 0) !important;
+  }
+
+  .selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls {
+    position: fixed !important;
+    top: max(1rem, env(safe-area-inset-top)) !important;
+    right: auto !important;
+    left: var(--app-viewport-center-x, 50%) !important;
+    bottom: auto !important;
+    inset-block-start: auto !important;
+    inset-block-end: auto !important;
+    inset-inline-start: auto !important;
+    inset-inline-end: auto !important;
+    z-index: 2147483600;
+    display: inline-flex;
+    justify-content: center;
+    width: max-content;
+    max-width: calc(100vw - 1.3rem);
+    gap: .38rem;
+    flex-wrap: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(-50%, -0.35rem, 0) !important;
+  }
+
+  .selected-bookmark-timer.app-viewport-fullscreen.fullscreen-controls-visible .selected-bookmark-timer__top-controls,
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__top-controls:focus-within,
+  .selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls.fullscreen-controls-visible,
+  .selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls:focus-within {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate3d(-50%, 0, 0) !important;
+  }
+
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__focus,
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__effect-button,
+  .selected-bookmark-timer.app-viewport-fullscreen .fullscreen-background-button,
+  .selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls .selected-bookmark-timer__focus,
+  .selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls .selected-bookmark-timer__effect-button,
+  .selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls .fullscreen-background-button {
+    min-height: 2.5rem;
+    border-radius: .75rem;
+    padding-inline: .78rem;
+    font-size: clamp(.78rem, 3.2vw, 1rem);
+    white-space: nowrap;
+  }
+
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    width: min(100%, 42rem);
+    gap: clamp(.22rem, 1.5vw, .42rem);
+  }
+
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__unit {
+    min-height: clamp(3.15rem, 9.7vh, 4.6rem);
+    border-radius: .58rem;
+    gap: .12rem;
+    padding: .26rem .08rem;
+  }
+
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__unit strong {
+    font-size: clamp(1rem, 6.5vw, 1.72rem);
+    line-height: .95;
+  }
+
+  .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__unit span {
+    overflow: hidden;
+    max-width: 100%;
+    font-size: clamp(.46rem, 2.15vw, .58rem);
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

@@ -1689,14 +1689,62 @@ function useFullscreenControlsAutoHide(isFullscreen, setControlsVisible) {
   }, [isFullscreen]);
 }
 
-function useFallbackFullscreenMode(isActive, onExit) {
+function useFallbackFullscreenMode(isActive, onExit, portalSelector = '') {
   useEffect(() => {
     if (!isActive) {
       return undefined;
     }
 
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const portalElement = portalSelector ? document.querySelector(portalSelector) : null;
+    const portalParent = portalElement?.parentNode || null;
+    const portalMarker = portalElement ? document.createComment('app-viewport-fullscreen-marker') : null;
+
+    if (portalElement && portalParent && portalMarker) {
+      portalParent.insertBefore(portalMarker, portalElement);
+      document.body.appendChild(portalElement);
+    }
+
+    const controlsElement = portalElement?.querySelector('.selected-bookmark-timer__top-controls') || null;
+    const controlsParent = controlsElement?.parentNode || null;
+    const controlsMarker = controlsElement ? document.createComment('app-viewport-fullscreen-controls-marker') : null;
+    const previousControlsStyles = controlsElement
+      ? {
+        position: controlsElement.style.position,
+        top: controlsElement.style.top,
+        left: controlsElement.style.left,
+        right: controlsElement.style.right,
+        bottom: controlsElement.style.bottom,
+        zIndex: controlsElement.style.zIndex,
+      }
+      : null;
+
+    if (controlsElement && controlsParent && controlsMarker) {
+      controlsParent.insertBefore(controlsMarker, controlsElement);
+      document.body.appendChild(controlsElement);
+    }
+
     document.documentElement.classList.add('app-viewport-fullscreen-active');
     document.body.classList.add('app-viewport-fullscreen-active');
+
+    const syncViewportFullscreenMetrics = () => {
+      const viewport = window.visualViewport;
+      const centerX = (viewport?.offsetLeft || 0) + (viewport?.width || window.innerWidth) / 2;
+      const top = (viewport?.offsetTop || 0) + 16;
+      document.documentElement.style.setProperty('--app-viewport-center-x', `${centerX}px`);
+      if (controlsElement) {
+        controlsElement.style.position = 'fixed';
+        controlsElement.style.top = `${top}px`;
+        controlsElement.style.left = `${centerX}px`;
+        controlsElement.style.right = 'auto';
+        controlsElement.style.bottom = 'auto';
+        controlsElement.style.zIndex = '2147483600';
+      }
+    };
+    const preventPageScroll = (event) => {
+      event.preventDefault();
+    };
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
@@ -1704,14 +1752,50 @@ function useFallbackFullscreenMode(isActive, onExit) {
       }
     };
 
+    syncViewportFullscreenMetrics();
+    window.addEventListener('resize', syncViewportFullscreenMetrics);
+    window.visualViewport?.addEventListener('resize', syncViewportFullscreenMetrics);
+    window.visualViewport?.addEventListener('scroll', syncViewportFullscreenMetrics);
+    document.addEventListener('wheel', preventPageScroll, { passive: false });
+    document.addEventListener('touchmove', preventPageScroll, { passive: false });
     document.addEventListener('keydown', handleKeyDown);
 
     return () => {
       document.documentElement.classList.remove('app-viewport-fullscreen-active');
       document.body.classList.remove('app-viewport-fullscreen-active');
+      if (controlsElement && controlsMarker?.parentNode) {
+        if (previousControlsStyles) {
+          controlsElement.style.position = previousControlsStyles.position;
+          controlsElement.style.top = previousControlsStyles.top;
+          controlsElement.style.left = previousControlsStyles.left;
+          controlsElement.style.right = previousControlsStyles.right;
+          controlsElement.style.bottom = previousControlsStyles.bottom;
+          controlsElement.style.zIndex = previousControlsStyles.zIndex;
+        }
+        controlsMarker.parentNode.insertBefore(controlsElement, controlsMarker);
+        controlsMarker.parentNode.removeChild(controlsMarker);
+      }
+      if (portalElement && portalMarker?.parentNode) {
+        portalMarker.parentNode.insertBefore(portalElement, portalMarker);
+        portalMarker.parentNode.removeChild(portalMarker);
+      }
+      window.scrollTo(scrollX, scrollY);
+      document.documentElement.style.removeProperty('--app-viewport-center-x');
+      window.removeEventListener('resize', syncViewportFullscreenMetrics);
+      window.visualViewport?.removeEventListener('resize', syncViewportFullscreenMetrics);
+      window.visualViewport?.removeEventListener('scroll', syncViewportFullscreenMetrics);
+      document.removeEventListener('wheel', preventPageScroll);
+      document.removeEventListener('touchmove', preventPageScroll);
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isActive]);
+}
+
+function shouldPreferViewportFullscreenFallback() {
+  return Boolean(
+    window.matchMedia?.('(max-width: 900px)').matches
+    || window.matchMedia?.('(pointer: coarse)').matches
+  );
 }
 
 function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset = 0, fullscreenBackground = 'dark', timeOfDay = 'night', onFullscreenBackgroundToggle = () => {}, onInteractionChange = () => {} }) {
@@ -1876,7 +1960,11 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  useFallbackFullscreenMode(isBookmarkTimerFallbackFullscreen, () => setIsBookmarkTimerFallbackFullscreen(false));
+  useFallbackFullscreenMode(
+    isBookmarkTimerFallbackFullscreen,
+    () => setIsBookmarkTimerFallbackFullscreen(false),
+    '.selected-bookmark-timer',
+  );
   useFullscreenControlsAutoHide(isBookmarkTimerFullscreen, setBookmarkFullscreenControlsVisible);
 
   const toggleBookmarkTimerFullscreen = () => {
@@ -1890,6 +1978,12 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
 
     if (isBookmarkTimerFallbackFullscreen) {
       setIsBookmarkTimerFallbackFullscreen(false);
+      return;
+    }
+
+    if (shouldPreferViewportFullscreenFallback()) {
+      setIsBookmarkTimerFallbackFullscreen(true);
+      setBookmarkFullscreenControlsVisible(true);
       return;
     }
 
@@ -2277,6 +2371,21 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
         className: `selected-bookmark-timer fullscreen-background--${fullscreenBackground === 'dark' ? 'dark' : 'light'}${isBookmarkTimerFullscreen ? ' app-viewport-fullscreen' : ''}${bookmarkFullscreenControlsVisible ? ' fullscreen-controls-visible' : ''}`,
         'aria-live': 'polite',
       },
+      isBookmarkTimerFullscreen && h('div', { className: `selected-bookmark-timer__top-controls${isBookmarkTimerFallbackFullscreen ? ' app-viewport-fullscreen-controls' : ''}${bookmarkFullscreenControlsVisible ? ' fullscreen-controls-visible' : ''}` },
+        h(
+          'button',
+          { type: 'button', className: 'fullscreen-background-button', onClick: onFullscreenBackgroundToggle },
+          fullscreenBackground === 'dark' ? t.light_background : t.dark_background,
+        ),
+        selectedBookmark && getBookmarkEffectType(selectedBookmark) !== 'none' && h(
+          'button',
+          { type: 'button', className: 'selected-bookmark-timer__effect-button', onClick: runSelectedBookmarkEffect },
+          t.run_bookmark_effect,
+        ),
+        h('button', { type: 'button', className: 'selected-bookmark-timer__focus', onClick: toggleBookmarkTimerFullscreen },
+          t.exit_fullscreen,
+        ),
+      ),
       h('div', { className: 'selected-bookmark-timer__header' },
         h('div', { className: 'selected-bookmark-timer__headline', key: `headline-${selectedBookmark?.id || 'empty'}` },
           h('strong', null, selectedBookmarkTimerTitle),
@@ -2285,19 +2394,9 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
             hidden: !selectedBookmarkTimerDescription,
           }, selectedBookmarkTimerDescription),
         ),
-        h('div', { className: 'selected-bookmark-timer__actions' },
-          isBookmarkTimerFullscreen && h(
-            'button',
-            { type: 'button', className: 'fullscreen-background-button', onClick: onFullscreenBackgroundToggle },
-            fullscreenBackground === 'dark' ? t.light_background : t.dark_background,
-          ),
-          isBookmarkTimerFullscreen && selectedBookmark && getBookmarkEffectType(selectedBookmark) !== 'none' && h(
-            'button',
-            { type: 'button', className: 'selected-bookmark-timer__effect-button', onClick: runSelectedBookmarkEffect },
-            t.run_bookmark_effect,
-          ),
+        !isBookmarkTimerFullscreen && h('div', { className: 'selected-bookmark-timer__actions' },
           h('button', { type: 'button', className: 'selected-bookmark-timer__focus', onClick: toggleBookmarkTimerFullscreen },
-            isBookmarkTimerFullscreen ? t.exit_fullscreen : t.fullscreen,
+            t.fullscreen,
           ),
         ),
       ),
