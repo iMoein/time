@@ -3745,10 +3745,31 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
     dateTools: h(AgeConverterCard, { city: selectedCityConfig, timeZoneOptions: activeSnapshots, t, language, timeOffset, fullscreenBackground, timeOfDay: selectedCityView.timeOfDay, onFullscreenBackgroundToggle: toggleFullscreenBackground, onInteractionChange: setIsAgePickerActive }),
   };
 
+  const footerLinks = [
+    { label: 'imoein.com', href: 'https://imoein.com/' },
+    { label: 'پروژه‌ها', href: 'https://imoein.com/portfolio.html?lang=fa' },
+    { label: 'رزومه فارسی', href: 'https://imoein.com/resume/moein-ghezelbash-fa.html' },
+    { label: 'رزومه انگلیسی', href: 'https://imoein.com/resume/moein-ghezelbash-en.html' },
+  ];
+
   return h(
     'main',
     { className: `page-shell${isFa ? ' page-shell--rtl' : ''}`, 'aria-label': `${t.time_in} ${selectedCityView.label}` },
-    cardOrder.map((cardId) => cardComponents[cardId]),
+    ...cardOrder.map((cardId) => cardComponents[cardId]),
+    h(
+      'footer',
+      { className: 'site-footer' },
+      h(
+        'nav',
+        { className: 'site-footer__nav', 'aria-label': 'پیوندهای Moein Ghezelbash' },
+        footerLinks.map((link) => h(
+          'a',
+          { key: link.href, className: 'site-footer__link', href: link.href },
+          link.label,
+        )),
+      ),
+      h('p', { className: 'site-footer__copyright' }, '© ۲۰۲۶ Moein Ghezelbash.'),
+    ),
   );
 }
 
