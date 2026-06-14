@@ -3172,7 +3172,10 @@ body.app-viewport-fullscreen-active {
 .selected-bookmark-timer:fullscreen .fullscreen-background-button,
 .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__focus,
 .selected-bookmark-timer.app-viewport-fullscreen .selected-bookmark-timer__effect-button,
-.selected-bookmark-timer.app-viewport-fullscreen .fullscreen-background-button {
+.selected-bookmark-timer.app-viewport-fullscreen .fullscreen-background-button,
+.selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls .selected-bookmark-timer__focus,
+.selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls .selected-bookmark-timer__effect-button,
+.selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls .fullscreen-background-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3912,9 +3915,9 @@ body.app-viewport-fullscreen-active {
     max-width: calc(100vw - 1.5rem);
     gap: .38rem;
     flex-wrap: wrap;
-    opacity: 1;
-    pointer-events: auto;
-    transform: translate3d(0, 0, 0) !important;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(0, -0.35rem, 0) !important;
   }
 
   .selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls {
@@ -3934,9 +3937,9 @@ body.app-viewport-fullscreen-active {
     max-width: calc(100vw - 1.5rem);
     gap: .38rem;
     flex-wrap: wrap;
-    opacity: 1;
-    pointer-events: auto;
-    transform: translate3d(0, 0, 0) !important;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(0, -0.35rem, 0) !important;
   }
 
   .selected-bookmark-timer.app-viewport-fullscreen.fullscreen-controls-visible .selected-bookmark-timer__top-controls,
