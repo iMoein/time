@@ -3409,7 +3409,14 @@ function App() {
   useEffect(() => {
     let mounted = true;
     const loadPublicConfig = () => fetch('/api/public-config')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('Public config API unavailable');
+        return res.json();
+      })
+      .catch(() => fetch('/config.json').then((res) => {
+        if (!res.ok) throw new Error('Static config unavailable');
+        return res.json();
+      }))
       .then((cfg) => {
         if (!mounted) return;
         if (cfg.ntpHost) {
