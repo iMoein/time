@@ -1,0 +1,13 @@
+{
+  "name": "Time.ir | ساعت دقیق ایران و جهان",
+  "short_name": "Time.ir",
+  "description": "ساعت دقیق ایران، تهران و جهان همراه با تقویم شمسی، میلادی، مناسبت‌ها و تعطیلات رسمی.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "lang": "fa-IR",
+  "dir": "rtl",
+  "categories": ["utilities", "productivity", "reference"]
+}
