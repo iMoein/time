@@ -14,6 +14,18 @@ A lightweight Node.js and React single-page world-clock app inspired by Time.is,
 - Fullscreen button for dashboard-style usage.
 - Responsive UI that works on desktop, tablet, and mobile.
 
+
+## Deploy to GitHub Pages
+
+This repository is configured to publish the static public app to GitHub Pages at <https://time.imoein.com>.
+
+1. In the GitHub repository, open **Settings → Pages**.
+2. Set **Source** to **GitHub Actions**.
+3. Make sure the custom domain is set to `time.imoein.com`. The repository-level `CNAME` file keeps this domain in each Pages deployment.
+4. Push to `main` or `master`, or run the **Deploy GitHub Pages** workflow manually from the **Actions** tab.
+
+> The public clock page is static and can run on GitHub Pages. Server-backed admin and NTP API routes require the Node.js server and are not available from GitHub Pages.
+
 ## Run locally
 
 ```bash
