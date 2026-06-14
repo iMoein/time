@@ -9,7 +9,8 @@ function apply(){const t=langPack();$('loginTitle').textContent=t.loginTitle;$('
 function getSaved(){try{return JSON.parse(localStorage.getItem(githubStorageKey)||'{}')||{};}catch{return {};}}
 function fillSaved(){const s=getSaved();$('githubOwner').value=s.owner||'';$('githubRepo').value=s.repo||'';$('githubBranch').value=s.branch||'main';$('githubToken').value=s.token||'';}
 function save(settings){localStorage.setItem(githubStorageKey,JSON.stringify(settings));}
-function getNextPath(){const next=new URL(location.href).searchParams.get('next')||'/admin-dashboard.html';return next.startsWith('/admin-')&&!next.startsWith('/admin-login')?next:'/admin-dashboard.html';}
+function adminPath(file){return new URL(file,location.href).pathname;}
+function getNextPath(){const next=new URL(location.href).searchParams.get('next')||adminPath('admin-dashboard.html');return /(^|\/)admin-(?!login)[^/]*\.html(?:$|[?#])/.test(next)?next:adminPath('admin-dashboard.html');}
 function headers(token){return {'Accept':'application/vnd.github+json','Authorization':`Bearer ${token}`,'X-GitHub-Api-Version':'2022-11-28'};}
 async function verify({owner,repo,branch,token}){const base=`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`;const repoRes=await fetch(base,{headers:headers(token)});const repoData=await repoRes.json().catch(()=>({}));if(!repoRes.ok)throw new Error(repoData.message||'GitHub repository check failed');const branchRes=await fetch(`${base}/branches/${encodeURIComponent(branch)}`,{headers:headers(token)});const branchData=await branchRes.json().catch(()=>({}));if(!branchRes.ok)throw new Error(branchData.message||'GitHub branch check failed');return true;}
 $('langToggle').onclick=()=>{const fa=document.documentElement.lang==='fa';document.documentElement.lang=fa?'en':'fa';document.documentElement.dir=fa?'ltr':'rtl';$('langToggle').textContent=fa?'FA':'EN';apply();};

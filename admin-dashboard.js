@@ -6,7 +6,8 @@ let dataMode='server';
 const githubStorageKey='time-admin-github-settings';
 const githubContentCache=new Map();
 function hasStoredGithubLogin(){try{const s=JSON.parse(localStorage.getItem(githubStorageKey)||'{}');return Boolean(s.owner&&s.repo&&s.branch&&s.token&&s.connectedAt);}catch{return false;}}
-if(!hasStoredGithubLogin()&&location.pathname!=='/admin-login.html'){location.replace('/admin-login.html?next='+encodeURIComponent(location.pathname+location.search));}
+function adminPath(file){return new URL(file,location.href).pathname;}
+if(!hasStoredGithubLogin()&&!location.pathname.endsWith('/admin-login.html')){location.replace(new URL('admin-login.html?next='+encodeURIComponent(location.pathname+location.search),location.href));}
 
 async function api(path,opts={}){const r=await fetch(path,{credentials:'include',headers:{'Content-Type':'application/json'},...opts});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Request failed');e.status=r.status;throw e;}return d;}
 function getGithubSettings(){try{return JSON.parse(localStorage.getItem(githubStorageKey)||'{}')||{};}catch{return {};}}
@@ -31,9 +32,9 @@ const setStatus=(id,m)=>{const el=$(id);if(el)el.textContent=m||'';};
 const on=(id,event,fn)=>{const el=$(id);if(el)el.addEventListener(event,fn);};
 const pick=(obj,keys,def)=>{for(const k of keys){if(obj&&obj[k]!==undefined&&obj[k]!==null)return obj[k];}return def;};
 
-function tabFromPath(){const map={'/admin-dashboard.html':'overview','/admin-defaults.html':'defaults','/admin-ntp.html':'ntp','/admin-json.html':'json'};return map[location.pathname]||new URL(location.href).searchParams.get('tab')||'overview';}
+function tabFromPath(){const file=location.pathname.split('/').pop();const map={'admin-dashboard.html':'overview','admin-defaults.html':'defaults','admin-ntp.html':'ntp','admin-json.html':'json'};return map[file]||new URL(location.href).searchParams.get('tab')||'overview';}
 
-function activateTab(tab,push=true){const t=['overview','defaults','ntp','json'].includes(tab)?tab:'overview';document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));document.querySelectorAll('.tab').forEach(sec=>sec.classList.toggle('active',sec.id===`tab-${t}`));if(push){const routes={overview:'/admin-dashboard.html',defaults:'/admin-defaults.html',ntp:'/admin-ntp.html',json:'/admin-json.html'};const target=routes[t]||routes.overview;if(location.pathname!==target){location.href=target;return;}}if(t==='json'&&$('jsonFileSelect').options.length===0)loadJsonFiles().catch(()=>setStatus('jsonStatus','Unable to load JSON files'));if((t==='defaults'||t==='ntp')&&$('defaultSelectedCityInput').options.length===0)loadConfig().catch(()=>setStatus('defaultsStatus','Unable to load config'));}
+function activateTab(tab,push=true){const t=['overview','defaults','ntp','json'].includes(tab)?tab:'overview';document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));document.querySelectorAll('.tab').forEach(sec=>sec.classList.toggle('active',sec.id===`tab-${t}`));if(push){const routes={overview:adminPath('admin-dashboard.html'),defaults:adminPath('admin-defaults.html'),ntp:adminPath('admin-ntp.html'),json:adminPath('admin-json.html')};const target=routes[t]||routes.overview;if(location.pathname!==target){location.href=target;return;}}if(t==='json'&&$('jsonFileSelect').options.length===0)loadJsonFiles().catch(()=>setStatus('jsonStatus','Unable to load JSON files'));if((t==='defaults'||t==='ntp')&&$('defaultSelectedCityInput').options.length===0)loadConfig().catch(()=>setStatus('defaultsStatus','Unable to load config'));}
 function renderCities(){ $('defaultCityChips').innerHTML=selectedCities.map((c,i)=>`<span class='chip'>${c} <button class='chip' type='button' data-up='${c}' ${i===0?'disabled':''}>↑</button><button class='chip' type='button' data-down='${c}' ${i===selectedCities.length-1?'disabled':''}>↓</button><button class='chip' type='button' data-rm='${c}'>×</button></span>`).join(''); $('defaultSelectedCityInput').innerHTML=selectedCities.map(c=>`<option value='${c}'>${c}</option>`).join('');}
 function renderOcc(selected=[]){const allowed=occasionOrder.filter(o=>visibleOccasionTypes.includes(o));$('occasionSelect').innerHTML=allowed.map(o=>`<option value='${o}' ${selected.includes(o)?'selected':''}>${o}</option>`).join('');renderOccVisibility();}
 
@@ -72,7 +73,7 @@ async function checkAuth(){
       await loadJsonFiles().catch(err=>{setStatus('jsonStatus',err.message||'JSON list load failed');$('metricJson').textContent='0';});
     }
   }catch(err){
-    if(err.status===401){location.href='/admin-login.html';return;}
+    if(err.status===401){location.href=adminPath('admin-login.html');return;}
     showGithubMode('Node admin API is unavailable here. Use GitHub mode to edit repository data.');
     const tab=tabFromPath();
     activateTab(tab,false);
@@ -85,7 +86,7 @@ async function checkAuth(){
 
 on('githubSaveBtn','click',async()=>{const settings={owner:$('githubOwner')?.value.trim(),repo:$('githubRepo')?.value.trim(),branch:$('githubBranch')?.value.trim()||'main',token:$('githubToken')?.value.trim()};setGithubSettings(settings);githubContentCache.clear();showGithubMode('Connecting to GitHub...');try{await loadConfig();await loadJsonFiles();setStatus('githubStatus','Connected. Changes are committed directly to GitHub.');}catch(e){setStatus('githubStatus',e.message);}});
 on('githubForgetBtn','click',()=>{localStorage.removeItem(githubStorageKey);githubContentCache.clear();fillGithubForm();setStatus('githubStatus','Token removed from this browser.');});
-on('logoutBtn','click',async()=>{if(dataMode==='github'){localStorage.removeItem(githubStorageKey);location.href='/admin-dashboard.html';return;}await api('/api/admin/logout',{method:'POST'});location.href='/admin-login.html';});
+on('logoutBtn','click',async()=>{if(dataMode==='github'){localStorage.removeItem(githubStorageKey);location.href=adminPath('admin-dashboard.html');return;}await api('/api/admin/logout',{method:'POST'});location.href=adminPath('admin-login.html');});
 on('langToggle','click',()=>{const fa=document.documentElement.lang==='fa';document.documentElement.lang=fa?'en':'fa';document.documentElement.dir=fa?'ltr':'rtl';const t=$('langToggle');if(t)t.textContent=fa?'FA':'EN';});
 on('passwordForm','submit',async e=>{e.preventDefault();if($('newPassword')?.value!==$('confirmPassword')?.value)return setStatus('passwordStatus','Passwords do not match');try{await api('/api/admin/change-password',{method:'POST',body:JSON.stringify({newPassword:$('newPassword')?.value||''})});await checkAuth();
 updateLocalClock();
