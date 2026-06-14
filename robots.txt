@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /admin-login.html
+Disallow: /admin-dashboard.html
+Disallow: /admin-defaults.html
+Disallow: /admin-json.html
+Disallow: /admin-ntp.html
+Disallow: /api/admin/
+
+Sitemap: https://time.imoein.com/sitemap.xml
