@@ -3541,11 +3541,11 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
     }
 
     const title = language === 'fa'
-      ? `ساعت ${selectedCity.localFaLabel || selectedCity.label} | ${selectedCity.time} | Time.ir`
-      : `${selectedCity.label} time now | ${selectedCity.time} | Time.ir`;
+      ? `ساعت در ${selectedCity.localFaLabel || selectedCity.label} | تاریخ امروز و ساعت دقیق`
+      : `Time in ${selectedCity.label} now | Today date and exact time`;
     const description = language === 'fa'
-      ? `ساعت دقیق ${selectedCity.localFaLabel || selectedCity.label}، تاریخ شمسی و میلادی، مناسبت‌ها، تعطیلات رسمی و منطقه زمانی ${selectedCity.timeZone} در Time.ir.`
-      : `Current time in ${selectedCity.label}, ${selectedCity.country}, with Persian and Gregorian dates, occasions, official holidays and ${selectedCity.timeZone} time zone details on Time.ir.`;
+      ? `ساعت دقیق ${selectedCity.localFaLabel || selectedCity.label}، تاریخ شمسی و میلادی، مناسبت‌ها، تعطیلات رسمی و منطقه زمانی ${selectedCity.timeZone} برای امروز.`
+      : `Current time in ${selectedCity.label}, ${selectedCity.country}, with Persian and Gregorian dates, occasions, official holidays and ${selectedCity.timeZone} time zone details for today.`;
 
     document.title = title;
     document.documentElement.lang = language === 'fa' ? 'fa' : 'en';
