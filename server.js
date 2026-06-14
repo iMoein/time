@@ -18,7 +18,7 @@ const sessions = new Map();
 const captchas = new Map();
 const loginAttempts = new Map();
 
-const contentTypes = {'.css':'text/css; charset=utf-8','.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.woff':'font/woff','.ttf':'font/ttf'};
+const contentTypes = {'.css':'text/css; charset=utf-8','.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json; charset=utf-8','.xml':'application/xml; charset=utf-8','.txt':'text/plain; charset=utf-8','.woff':'font/woff','.ttf':'font/ttf'};
 
 function sendJson(response, statusCode, payload){response.writeHead(statusCode,{'Content-Type':'application/json; charset=utf-8'});response.end(JSON.stringify(payload));}
 function parseCookies(header=''){return Object.fromEntries(header.split(';').map(v=>v.trim()).filter(Boolean).map(v=>{const i=v.indexOf('=');return [v.slice(0,i),decodeURIComponent(v.slice(i+1))];}));}

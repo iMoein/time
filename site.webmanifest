@@ -1,0 +1,13 @@
+{
+  "name": "ساعت در تهران و تقویم ایران",
+  "short_name": "ساعت ایران",
+  "description": "ساعت دقیق در تهران و شهرهای جهان همراه با تاریخ امروز، تقویم شمسی، میلادی، مناسبت‌ها و تعطیلات رسمی.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "lang": "fa-IR",
+  "dir": "rtl",
+  "categories": ["utilities", "productivity", "reference"]
+}
