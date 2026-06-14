@@ -1730,13 +1730,11 @@ function useFallbackFullscreenMode(isActive, onExit, portalSelector = '') {
 
     const syncViewportFullscreenMetrics = () => {
       const viewport = window.visualViewport;
-      const centerX = (viewport?.offsetLeft || 0) + (viewport?.width || window.innerWidth) / 2;
       const top = (viewport?.offsetTop || 0) + 16;
-      document.documentElement.style.setProperty('--app-viewport-center-x', `${centerX}px`);
       if (controlsElement) {
         controlsElement.style.position = 'fixed';
         controlsElement.style.top = `${top}px`;
-        controlsElement.style.left = `${centerX}px`;
+        controlsElement.style.left = 'auto';
         controlsElement.style.right = 'auto';
         controlsElement.style.bottom = 'auto';
         controlsElement.style.zIndex = '2147483600';
@@ -1780,7 +1778,6 @@ function useFallbackFullscreenMode(isActive, onExit, portalSelector = '') {
         portalMarker.parentNode.removeChild(portalMarker);
       }
       window.scrollTo(scrollX, scrollY);
-      document.documentElement.style.removeProperty('--app-viewport-center-x');
       window.removeEventListener('resize', syncViewportFullscreenMetrics);
       window.visualViewport?.removeEventListener('resize', syncViewportFullscreenMetrics);
       window.visualViewport?.removeEventListener('scroll', syncViewportFullscreenMetrics);
