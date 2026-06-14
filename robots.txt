@@ -8,4 +8,4 @@ Disallow: /admin-json.html
 Disallow: /admin-ntp.html
 Disallow: /api/admin/
 
-Sitemap: https://time.ir/sitemap.xml
+Sitemap: https://time.imoein.com/sitemap.xml
