@@ -1,16 +1,18 @@
-<!doctype html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Admin Login</title><link rel="stylesheet" href="/admin-login.css"/></head><body>
+<!doctype html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>GitHub Admin Connect</title><link rel="stylesheet" href="/admin-login.css"/></head><body>
 <main class="login-shell">
   <section class="login-card">
-    <h2 id="loginTitle">ورود امن مدیریت</h2>
+    <h2 id="loginTitle">اتصال مدیریت به گیت‌هاب</h2>
+    <p id="loginHelp" class="help-text">برای مدیریت داده‌ها روی GitHub Pages، مشخصات ریپازیتوری و یک fine-grained token با دسترسی Contents read/write را وارد کنید.</p>
     <form id="loginForm" class="grid2">
-      <label><span id="usernameLabel">نام کاربری</span><input name="username" required/></label>
-      <label><span id="passwordLabel">رمز عبور</span><input name="password" type="password" required/></label>
-      <label class="full captcha-inline"><div class="row"><button id="refreshCaptcha" type="button" class="chip">↻</button><input name="captcha" placeholder="Enter captcha" required/><code id="captchaText">------</code></div></label>
-      <button class="btn-primary full" id="loginBtn" type="submit">ورود</button>
+      <label><span id="ownerLabel">مالک ریپازیتوری</span><input id="githubOwner" name="owner" placeholder="username یا org" autocomplete="off" required/></label>
+      <label><span id="repoLabel">نام ریپازیتوری</span><input id="githubRepo" name="repo" placeholder="time" autocomplete="off" required/></label>
+      <label><span id="branchLabel">برنچ</span><input id="githubBranch" name="branch" placeholder="main" autocomplete="off" required/></label>
+      <label><span id="tokenLabel">توکن گیت‌هاب</span><input id="githubToken" name="token" type="password" placeholder="github_pat_..." autocomplete="off" required/></label>
+      <button class="btn-primary full" id="loginBtn" type="submit">اتصال و ورود به داشبورد</button>
     </form>
     <p id="loginStatus" class="status"></p>
-    <div class="lang-row"><button id="langToggle" class="chip">EN</button></div>
+    <div class="lang-row"><button id="langToggle" class="chip">EN</button><button id="forgetBtn" class="chip danger" type="button">پاک کردن اتصال</button></div>
   </section>
-  <aside class="login-art"><div class="logo-dot">⏱</div><h2 id="welcomeTitle">خوش آمدید</h2><p id="welcomeDesc">برای دسترسی به پنل مدیریت هوشمند زمان وارد شوید و تنظیمات پروژه را یکپارچه کنترل کنید.</p></aside>
+  <aside class="login-art"><div class="logo-dot">⏱</div><h2 id="welcomeTitle">مدیریت بدون سرور</h2><p id="welcomeDesc">داده‌های سایت مستقیماً از همین مرورگر در GitHub commit می‌شوند و بعد از اجرای GitHub Pages workflow منتشر خواهند شد.</p></aside>
 </main>
 <script type="module" src="/admin-login.js"></script></body></html>
