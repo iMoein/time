@@ -3540,8 +3540,22 @@ const selectedCityConfig = activeCities.find((city) => city.id === (selectedCity
       return;
     }
 
-    document.title = `${selectedCity.label} · ${selectedCity.time}`;
-  }, [selectedCity]);
+    const title = language === 'fa'
+      ? `ساعت ${selectedCity.localFaLabel || selectedCity.label} | ${selectedCity.time} | Time.ir`
+      : `${selectedCity.label} time now | ${selectedCity.time} | Time.ir`;
+    const description = language === 'fa'
+      ? `ساعت دقیق ${selectedCity.localFaLabel || selectedCity.label}، تاریخ شمسی و میلادی، مناسبت‌ها، تعطیلات رسمی و منطقه زمانی ${selectedCity.timeZone} در Time.ir.`
+      : `Current time in ${selectedCity.label}, ${selectedCity.country}, with Persian and Gregorian dates, occasions, official holidays and ${selectedCity.timeZone} time zone details on Time.ir.`;
+
+    document.title = title;
+    document.documentElement.lang = language === 'fa' ? 'fa' : 'en';
+    document.documentElement.dir = language === 'fa' ? 'rtl' : 'ltr';
+    document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', description);
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', title);
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', description);
+  }, [language, selectedCity]);
 
   const numberLocale = isFa ? 'fa-IR-u-nu-arabext' : 'en-US';
   const formatLocaleNumber = (value) => new Intl.NumberFormat(numberLocale).format(value);
