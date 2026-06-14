@@ -2,8 +2,31 @@ const OCC=['iran','iranCurrent','iranAncient','international','globalOfficial','
 const NTP=[['ntp.time.ir','Iran NTP'],['pool.ntp.org','NTP Pool Global'],['time.google.com','Google Public NTP'],['time.cloudflare.com','Cloudflare Time'],['time.windows.com','Microsoft'],['time.apple.com','Apple'],['time.facebook.com','Meta'],['time.nist.gov','NIST (US)'],['europe.pool.ntp.org','Europe NTP Pool'],['asia.pool.ntp.org','Asia NTP Pool'],['north-america.pool.ntp.org','North America Pool'],['south-america.pool.ntp.org','South America Pool'],['africa.pool.ntp.org','Africa Pool'],['oceania.pool.ntp.org','Oceania Pool'],['time1.google.com','Google Node 1'],['time2.google.com','Google Node 2'],['time3.google.com','Google Node 3'],['time4.google.com','Google Node 4'],['custom','Custom']];
 const $=id=>document.getElementById(id);
 let selectedCities=[],cityPool=[],visibleOccasionTypes=[...OCC],occasionOrder=[...OCC];
+let dataMode='server';
+const githubStorageKey='time-admin-github-settings';
+const githubContentCache=new Map();
+function hasStoredGithubLogin(){try{const s=JSON.parse(localStorage.getItem(githubStorageKey)||'{}');return Boolean(s.owner&&s.repo&&s.branch&&s.token&&s.connectedAt);}catch{return false;}}
+if(!hasStoredGithubLogin()&&location.pathname!=='/admin-login.html'){location.replace('/admin-login.html?next='+encodeURIComponent(location.pathname+location.search));}
 
 async function api(path,opts={}){const r=await fetch(path,{credentials:'include',headers:{'Content-Type':'application/json'},...opts});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Request failed');e.status=r.status;throw e;}return d;}
+function getGithubSettings(){try{return JSON.parse(localStorage.getItem(githubStorageKey)||'{}')||{};}catch{return {};}}
+function setGithubSettings(settings){localStorage.setItem(githubStorageKey,JSON.stringify(settings));}
+function fillGithubForm(){const s=getGithubSettings();if($('githubOwner'))$('githubOwner').value=s.owner||'';if($('githubRepo'))$('githubRepo').value=s.repo||'';if($('githubBranch'))$('githubBranch').value=s.branch||'main';if($('githubToken'))$('githubToken').value=s.token||'';}
+function showGithubMode(message='Connect GitHub to manage data from Pages.'){dataMode='github';if($('githubModeCard'))$('githubModeCard').classList.remove('hidden');if($('forcePasswordCard'))$('forcePasswordCard').classList.add('hidden');if($('dashboardContent'))$('dashboardContent').classList.remove('hidden');setStatus('githubStatus',message);fillGithubForm();}
+function requireGithubSettings(){const s=getGithubSettings();if(!s.owner||!s.repo||!s.branch||!s.token||!s.connectedAt)throw new Error('Connect from the login page first.');return s;}
+function githubHeaders(settings){return {'Accept':'application/vnd.github+json','Authorization':`Bearer ${settings.token}`,'X-GitHub-Api-Version':'2022-11-28'};}
+function encodeBase64Utf8(value){return btoa(unescape(encodeURIComponent(value)));}
+function decodeBase64Utf8(value){return decodeURIComponent(escape(atob(String(value||'').replace(/\n/g,''))));}
+function githubApiUrl(settings,path){return `https://api.github.com/repos/${encodeURIComponent(settings.owner)}/${encodeURIComponent(settings.repo)}${path}`;}
+async function githubRequest(path,options={}){const settings=requireGithubSettings();const r=await fetch(githubApiUrl(settings,path),{...options,headers:{...githubHeaders(settings),'Content-Type':'application/json',...(options.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.message||'GitHub request failed');e.status=r.status;throw e;}return d;}
+async function githubReadJson(path){const settings=requireGithubSettings();const ref=encodeURIComponent(settings.branch);const data=await githubRequest(`/contents/${path}?ref=${ref}`);githubContentCache.set(path,data.sha);return JSON.parse(decodeBase64Utf8(data.content));}
+async function githubWriteJson(path,content,message){const settings=requireGithubSettings();let sha=githubContentCache.get(path);if(!sha){try{const ref=encodeURIComponent(settings.branch);const existing=await githubRequest(`/contents/${path}?ref=${ref}`);sha=existing.sha;}catch{}}const payload={message,branch:settings.branch,content:encodeBase64Utf8(JSON.stringify(content,null,2)+'\n')};if(sha)payload.sha=sha;const saved=await githubRequest(`/contents/${path}`,{method:'PUT',body:JSON.stringify(payload)});if(saved.content?.sha)githubContentCache.set(path,saved.content.sha);return saved;}
+async function githubListJsonFiles(){const settings=requireGithubSettings();const tree=await githubRequest(`/git/trees/${encodeURIComponent(settings.branch)}?recursive=1`);return (tree.tree||[]).filter(item=>item.type==='blob'&&item.path.startsWith('src/data/')&&item.path.endsWith('.json')).map(item=>item.path.replace(/^src\//,'')).sort();}
+async function dataReadConfig(){return dataMode==='github'?githubReadJson('config.json'):api('/api/admin/config');}
+async function dataWriteConfig(config){return dataMode==='github'?githubWriteJson('config.json',config,'Update app defaults from admin panel'):api('/api/admin/config',{method:'POST',body:JSON.stringify(config)});}
+async function dataListJsonFiles(){return dataMode==='github'?githubListJsonFiles():api('/api/admin/json-files').then(raw=>pick(raw,['files'],pick(raw?.data||{},['files'],[])));}
+async function dataReadJson(file){return dataMode==='github'?githubReadJson('src/'+file):api('/api/admin/json-file?file='+encodeURIComponent(file)).then(raw=>pick(raw,['content'],pick(raw?.data||{},['content'],{})));}
+async function dataWriteJson(file,content){return dataMode==='github'?githubWriteJson('src/'+file,content,`Update ${file} from admin panel`):api('/api/admin/json-file',{method:'POST',body:JSON.stringify({file,content})});}
 const setStatus=(id,m)=>{const el=$(id);if(el)el.textContent=m||'';};
 const on=(id,event,fn)=>{const el=$(id);if(el)el.addEventListener(event,fn);};
 const pick=(obj,keys,def)=>{for(const k of keys){if(obj&&obj[k]!==undefined&&obj[k]!==null)return obj[k];}return def;};
@@ -25,16 +48,18 @@ function renderNtp(){ const preset=$('ntpPreset'); if(!preset)return; preset.inn
 function renderOccVisibility(){const root=$("occasionVisibilityList");if(!root)return;root.innerHTML=occasionOrder.map((o,i)=>`<div class="toggle-row"><label class="toggle-check"><input type="checkbox" data-occ="${o}" ${visibleOccasionTypes.includes(o)?"checked":""}/> <span>${o}</span></label><div class="order-btns"><button type="button" class="mini" data-occ-up="${o}" ${i===0?"disabled":""}>↑</button><button type="button" class="mini" data-occ-down="${o}" ${i===occasionOrder.length-1?"disabled":""}>↓</button></div></div>`).join("");}
 
 
-async function loadConfig(){const raw=await api('/api/admin/config');const d=raw?.config||raw?.data||raw||{};const ntpHost=pick(d,['ntpHost','ntp_host'],'pool.ntp.org');const cityIds=pick(d,['defaultCityIds','default_city_ids'],[]);const selected=pick(d,['defaultSelectedCityId','default_selected_city_id'],'');const occasions=pick(d,['defaultOccasionTypes','default_occasion_types'],[]);const visibleOcc=pick(d,['visibleOccasionTypes','visible_occasion_types'],OCC);const occOrd=pick(d,['occasionFilterOrder','occasion_filter_order'],OCC);if($('ntpHost'))$('ntpHost').value=ntpHost;updateNtpMeta(ntpHost);selectedCities=[...(Array.isArray(cityIds)?cityIds:[])];renderCities();if($('defaultSelectedCityInput'))$('defaultSelectedCityInput').value=selected||selectedCities[0]||'';visibleOccasionTypes=Array.isArray(visibleOcc)?visibleOcc.filter(o=>OCC.includes(o)): [...OCC];occasionOrder=Array.isArray(occOrd)?occOrd.filter(o=>OCC.includes(o)):[...OCC];renderOcc(Array.isArray(occasions)?occasions:[]);if($('metricCities'))$('metricCities').textContent=String(selectedCities.length);if($('metricNtp'))$('metricNtp').textContent=ntpHost||'-';return d;}
-async function loadJsonFiles(){const raw=await api('/api/admin/json-files');const files=pick(raw,['files'],pick(raw?.data||{},['files'],[]));const list=Array.isArray(files)?files:[];if($('jsonFileSelect'))$('jsonFileSelect').innerHTML=list.map(f=>`<option value='${f}'>${f}</option>`).join('');if($('metricJson'))$('metricJson').textContent=String(list.length);if(list[0]&&$('jsonEditor')) await loadJson(list[0]);}
-async function loadJson(file){const raw=await api('/api/admin/json-file?file='+encodeURIComponent(file));const content=pick(raw,['content'],pick(raw?.data||{},['content'],{}));if($('jsonEditor'))$('jsonEditor').value=JSON.stringify(content,null,2);}
+async function loadConfig(){const raw=await dataReadConfig();const d=raw?.config||raw?.data||raw||{};const ntpHost=pick(d,['ntpHost','ntp_host'],'pool.ntp.org');const cityIds=pick(d,['defaultCityIds','default_city_ids'],[]);const selected=pick(d,['defaultSelectedCityId','default_selected_city_id'],'');const occasions=pick(d,['defaultOccasionTypes','default_occasion_types'],[]);const visibleOcc=pick(d,['visibleOccasionTypes','visible_occasion_types'],OCC);const occOrd=pick(d,['occasionFilterOrder','occasion_filter_order'],OCC);if($('ntpHost'))$('ntpHost').value=ntpHost;updateNtpMeta(ntpHost);selectedCities=[...(Array.isArray(cityIds)?cityIds:[])];renderCities();if($('defaultSelectedCityInput'))$('defaultSelectedCityInput').value=selected||selectedCities[0]||'';visibleOccasionTypes=Array.isArray(visibleOcc)?visibleOcc.filter(o=>OCC.includes(o)): [...OCC];occasionOrder=Array.isArray(occOrd)?occOrd.filter(o=>OCC.includes(o)):[...OCC];renderOcc(Array.isArray(occasions)?occasions:[]);if($('metricCities'))$('metricCities').textContent=String(selectedCities.length);if($('metricNtp'))$('metricNtp').textContent=ntpHost||'-';return d;}
+async function loadJsonFiles(){const files=await dataListJsonFiles();const list=Array.isArray(files)?files:[];if($('jsonFileSelect'))$('jsonFileSelect').innerHTML=list.map(f=>`<option value='${f}'>${f}</option>`).join('');if($('metricJson'))$('metricJson').textContent=String(list.length);if(list[0]&&$('jsonEditor')) await loadJson(list[0]);}
+async function loadJson(file){const content=await dataReadJson(file);if($('jsonEditor'))$('jsonEditor').value=JSON.stringify(content,null,2);}
 async function initCities(){const z=Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[];cityPool=z.map(v=>v.toLowerCase().replace(/[^a-z0-9]+/g,'-'));}
 function suggest(){const q=$('citySearchInput').value.trim().toLowerCase();$('citySuggestions').innerHTML=cityPool.filter(c=>c.includes(q)&&!selectedCities.includes(c)).slice(0,10).map(c=>`<button data-add='${c}' type='button'>${c}</button>`).join('');}
 
 async function checkAuth(){
   try{
-    const s=await api('/api/admin/session');
-    if(s.forcePasswordChange){$('forcePasswordCard').classList.remove('hidden');$('dashboardContent').classList.add('hidden');return;}
+    if(dataMode==='server'){
+      const s=await api('/api/admin/session');
+      if(s.forcePasswordChange){$('forcePasswordCard').classList.remove('hidden');$('dashboardContent').classList.add('hidden');return;}
+    }
     $('forcePasswordCard').classList.add('hidden');
     $('dashboardContent').classList.remove('hidden');
     const tab=tabFromPath();
@@ -48,12 +73,19 @@ async function checkAuth(){
     }
   }catch(err){
     if(err.status===401){location.href='/admin-login.html';return;}
-    const m=err.message||'Session check failed';
-    setStatus('defaultsStatus',m);setStatus('jsonStatus',m);setStatus('ntpStatus',m);
+    showGithubMode('Node admin API is unavailable here. Use GitHub mode to edit repository data.');
+    const tab=tabFromPath();
+    activateTab(tab,false);
+    if(getGithubSettings().token){
+      await loadConfig().catch(e=>setStatus('defaultsStatus',e.message));
+      if(tab==='json'||tab==='overview')await loadJsonFiles().catch(e=>setStatus('jsonStatus',e.message));
+    }
   }
 }
 
-on('logoutBtn','click',async()=>{await api('/api/admin/logout',{method:'POST'});location.href='/admin-login.html';});
+on('githubSaveBtn','click',async()=>{const settings={owner:$('githubOwner')?.value.trim(),repo:$('githubRepo')?.value.trim(),branch:$('githubBranch')?.value.trim()||'main',token:$('githubToken')?.value.trim()};setGithubSettings(settings);githubContentCache.clear();showGithubMode('Connecting to GitHub...');try{await loadConfig();await loadJsonFiles();setStatus('githubStatus','Connected. Changes are committed directly to GitHub.');}catch(e){setStatus('githubStatus',e.message);}});
+on('githubForgetBtn','click',()=>{localStorage.removeItem(githubStorageKey);githubContentCache.clear();fillGithubForm();setStatus('githubStatus','Token removed from this browser.');});
+on('logoutBtn','click',async()=>{if(dataMode==='github'){localStorage.removeItem(githubStorageKey);location.href='/admin-dashboard.html';return;}await api('/api/admin/logout',{method:'POST'});location.href='/admin-login.html';});
 on('langToggle','click',()=>{const fa=document.documentElement.lang==='fa';document.documentElement.lang=fa?'en':'fa';document.documentElement.dir=fa?'ltr':'rtl';const t=$('langToggle');if(t)t.textContent=fa?'FA':'EN';});
 on('passwordForm','submit',async e=>{e.preventDefault();if($('newPassword')?.value!==$('confirmPassword')?.value)return setStatus('passwordStatus','Passwords do not match');try{await api('/api/admin/change-password',{method:'POST',body:JSON.stringify({newPassword:$('newPassword')?.value||''})});await checkAuth();
 updateLocalClock();
@@ -70,19 +102,19 @@ on('occasionVisibilityList','change',e=>{const input=e.target.closest('input[typ
 if($("ntpPreset"))renderNtp();
 on('ntpPreset','change',e=>{if(e.target.value!=='custom'&&$('ntpHost'))$('ntpHost').value=e.target.value;updateNtpMeta($('ntpHost')?.value||'');});
 on('ntpQuickServers','click',e=>{const btn=e.target.closest('[data-ntp]');if(!btn)return;const host=btn.dataset.ntp;document.querySelectorAll('#ntpQuickServers .ntp-chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');if($('ntpHost'))$('ntpHost').value=host;if($('ntpPreset'))$('ntpPreset').value=host;updateNtpMeta(host);});
-async function runNtpProbe(statusText){try{const host=$('ntpHost')?.value||'pool.ntp.org';const st=Date.now();const d=await api('/api/ntp?host='+encodeURIComponent(host));updateNtpMeta(d.host||host);if($('ntpDelay'))$('ntpDelay').textContent=(Date.now()-st)+'ms';setStatus('ntpStatus',statusText);}catch(err){setStatus('ntpStatus',err.message);}}
+async function runNtpProbe(statusText){if(dataMode==='github'){setStatus('ntpStatus','NTP probing needs the Node server; GitHub Pages will use the browser clock fallback.');return;}try{const host=$('ntpHost')?.value||'pool.ntp.org';const st=Date.now();const d=await api('/api/ntp?host='+encodeURIComponent(host));updateNtpMeta(d.host||host);if($('ntpDelay'))$('ntpDelay').textContent=(Date.now()-st)+'ms';setStatus('ntpStatus',statusText);}catch(err){setStatus('ntpStatus',err.message);}}
 on('ntpTestBtn','click',()=>runNtpProbe('Synced successfully'));
 on('ntpLatencyBtn','click',()=>runNtpProbe('Latency test completed'));
 on('ntpServersDelayBtn','click',showNtpServersDelay);
 window.addEventListener('online',updateNetworkState);
 window.addEventListener('offline',updateNetworkState);
 
-async function saveAll(){await api('/api/admin/config',{method:'POST',body:JSON.stringify({ntpHost:$('ntpHost').value,defaultCityIds:selectedCities,defaultSelectedCityId:$('defaultSelectedCityInput').value,defaultOccasionTypes:[...$('occasionSelect').selectedOptions].map(o=>o.value),visibleOccasionTypes,occasionFilterOrder:occasionOrder})});setStatus('defaultsStatus','Saved');setStatus('ntpStatus','Saved');}
+async function saveAll(){await dataWriteConfig({ntpHost:$('ntpHost').value,defaultCityIds:selectedCities,defaultSelectedCityId:$('defaultSelectedCityInput').value,defaultOccasionTypes:[...$('occasionSelect').selectedOptions].map(o=>o.value),visibleOccasionTypes,occasionFilterOrder:occasionOrder});setStatus('defaultsStatus',dataMode==='github'?'Saved to GitHub. Pages will update after the deploy workflow finishes.':'Saved');setStatus('ntpStatus',dataMode==='github'?'Saved to GitHub. Pages will update after the deploy workflow finishes.':'Saved');}
 on('defaultsSaveBtn','click',()=>saveAll().catch(e=>setStatus('defaultsStatus',e.message)));
 on('ntpSaveBtn','click',()=>saveAll().catch(e=>setStatus('ntpStatus',e.message)));
 
 on('jsonLoadBtn','click',()=>{const f=$('jsonFileSelect')?.value;if(f)loadJson(f);});
-on('jsonSaveBtn','click',async()=>{try{await api('/api/admin/json-file',{method:'POST',body:JSON.stringify({file:$('jsonFileSelect')?.value,content:JSON.parse($('jsonEditor')?.value||'{}')})});setStatus('jsonStatus','Saved');}catch(e){setStatus('jsonStatus',e.message);}});
+on('jsonSaveBtn','click',async()=>{try{await dataWriteJson($('jsonFileSelect')?.value,JSON.parse($('jsonEditor')?.value||'{}'));setStatus('jsonStatus',dataMode==='github'?'Saved to GitHub. Pages will update after the deploy workflow finishes.':'Saved');}catch(e){setStatus('jsonStatus',e.message);}});
 
 document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',e=>{const href=btn.getAttribute('href');if(href&&href!==location.pathname){return;}e.preventDefault();activateTab(btn.dataset.tab,true);}));
 
