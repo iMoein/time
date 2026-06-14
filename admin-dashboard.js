@@ -5,13 +5,15 @@ let selectedCities=[],cityPool=[],visibleOccasionTypes=[...OCC],occasionOrder=[.
 let dataMode='server';
 const githubStorageKey='time-admin-github-settings';
 const githubContentCache=new Map();
+function hasStoredGithubLogin(){try{const s=JSON.parse(localStorage.getItem(githubStorageKey)||'{}');return Boolean(s.owner&&s.repo&&s.branch&&s.token&&s.connectedAt);}catch{return false;}}
+if(!hasStoredGithubLogin()&&location.pathname!=='/admin-login.html'){location.replace('/admin-login.html?next='+encodeURIComponent(location.pathname+location.search));}
 
 async function api(path,opts={}){const r=await fetch(path,{credentials:'include',headers:{'Content-Type':'application/json'},...opts});const d=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(d.error||'Request failed');e.status=r.status;throw e;}return d;}
 function getGithubSettings(){try{return JSON.parse(localStorage.getItem(githubStorageKey)||'{}')||{};}catch{return {};}}
 function setGithubSettings(settings){localStorage.setItem(githubStorageKey,JSON.stringify(settings));}
 function fillGithubForm(){const s=getGithubSettings();if($('githubOwner'))$('githubOwner').value=s.owner||'';if($('githubRepo'))$('githubRepo').value=s.repo||'';if($('githubBranch'))$('githubBranch').value=s.branch||'main';if($('githubToken'))$('githubToken').value=s.token||'';}
 function showGithubMode(message='Connect GitHub to manage data from Pages.'){dataMode='github';if($('githubModeCard'))$('githubModeCard').classList.remove('hidden');if($('forcePasswordCard'))$('forcePasswordCard').classList.add('hidden');if($('dashboardContent'))$('dashboardContent').classList.remove('hidden');setStatus('githubStatus',message);fillGithubForm();}
-function requireGithubSettings(){const s=getGithubSettings();if(!s.owner||!s.repo||!s.branch||!s.token)throw new Error('Enter GitHub owner, repository, branch and token first.');return s;}
+function requireGithubSettings(){const s=getGithubSettings();if(!s.owner||!s.repo||!s.branch||!s.token||!s.connectedAt)throw new Error('Connect from the login page first.');return s;}
 function githubHeaders(settings){return {'Accept':'application/vnd.github+json','Authorization':`Bearer ${settings.token}`,'X-GitHub-Api-Version':'2022-11-28'};}
 function encodeBase64Utf8(value){return btoa(unescape(encodeURIComponent(value)));}
 function decodeBase64Utf8(value){return decodeURIComponent(escape(atob(String(value||'').replace(/\n/g,''))));}
