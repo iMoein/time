@@ -3144,7 +3144,7 @@ body.app-viewport-fullscreen-active {
 .selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls {
   position: absolute;
   inset-block-start: clamp(1rem, 3vw, 2rem);
-  left: 50%;
+  inset-inline-end: clamp(1rem, 3vw, 2rem);
   z-index: 2;
   display: inline-flex;
   gap: .55rem;
@@ -3154,7 +3154,7 @@ body.app-viewport-fullscreen-active {
   max-width: calc(100vw - 1.5rem);
   opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, -0.35rem);
+  transform: translateY(-0.35rem);
   transition: opacity 180ms ease, transform 180ms ease;
 }
 .selected-bookmark-timer.fullscreen-controls-visible:fullscreen .selected-bookmark-timer__top-controls,
@@ -3165,7 +3165,7 @@ body.app-viewport-fullscreen-active {
 .selected-bookmark-timer__top-controls.app-viewport-fullscreen-controls:focus-within {
   opacity: 1;
   pointer-events: auto;
-  transform: translate(-50%, 0);
+  transform: translateY(0);
 }
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__focus,
 .selected-bookmark-timer:fullscreen .selected-bookmark-timer__effect-button,
