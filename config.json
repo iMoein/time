@@ -1,8 +1,5 @@
 {
   "ntpHost": "time.apple.com",
-  "adminUsername": "admin",
-  "adminPassword": "admin",
-  "passwordChanged": true,
   "defaultCityIds": [
     "tehran",
     "london",
@@ -10,7 +7,7 @@
     "europe-paris",
     "america-new-york"
   ],
-  "defaultSelectedCityId": "america-new-york",
+  "defaultSelectedCityId": "tehran",
   "defaultOccasionTypes": [
     "iranCurrent",
     "iranAncient",
