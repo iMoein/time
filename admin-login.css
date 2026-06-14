@@ -30,3 +30,5 @@ code{padding:9px 12px;border:1px dashed #98accd;border-radius:12px;background:#f
 html[dir="rtl"] .login-shell{direction:ltr} html[dir="rtl"] .login-card, html[dir="rtl"] .login-art{direction:rtl}
 .login-card h2{margin:0 0 6px}.login-card{min-height:460px;align-content:center}
 .captcha-inline input::placeholder{text-align:center}
+.help-text{margin:0;color:#607089;line-height:1.8;font-size:.95rem}
+.danger{border-color:#fecaca!important;color:#991b1b!important;background:#fff5f5!important}
