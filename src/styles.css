@@ -2959,6 +2959,40 @@ body.app-viewport-fullscreen-active {
 .date-difference-panel__result .info-pill {
   min-height: 5.05rem;
 }
+.date-offset-panel {
+  display: grid;
+  gap: .85rem;
+}
+.date-offset-panel__controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+}
+.date-offset-panel__controls label {
+  display: grid;
+  min-width: 0;
+  gap: .35rem;
+  color: #475569;
+  font-size: .85rem;
+}
+.date-offset-panel__controls input,
+.date-offset-panel__controls select {
+  min-width: 0;
+  min-height: 2.55rem;
+  border: 1px solid rgba(148, 163, 184, .45);
+  border-radius: .7rem;
+  padding: .5rem .65rem;
+  background: #fff;
+  font: inherit;
+}
+.date-offset-panel__result {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.35fr;
+  gap: .75rem;
+}
+.date-offset-panel__result .info-pill {
+  min-height: 5.05rem;
+}
 .selected-bookmark-timer {
   display: grid;
   gap: .75rem;
@@ -3779,7 +3813,10 @@ body.app-viewport-fullscreen-active {
   .age-converter-card__result { grid-template-columns: 1fr; }
   .age-converter-card__result > :nth-child(n) { grid-column: 1 / -1; }
   .date-difference-panel__dates,
-  .date-difference-panel__result { grid-template-columns: 1fr; }
+  .date-difference-panel__result,
+  .date-offset-panel__result { grid-template-columns: 1fr; }
+  .date-offset-panel__controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .date-offset-panel__controls label:last-child { grid-column: 1 / -1; }
   .date-field-set__controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .selected-bookmark-timer__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .selected-bookmark-timer:fullscreen .selected-bookmark-timer__grid,
@@ -3813,6 +3850,8 @@ body.app-viewport-fullscreen-active {
 }
 
 @media (max-width: 640px) {
+  .date-offset-panel__controls { grid-template-columns: 1fr; }
+  .date-offset-panel__controls label:last-child { grid-column: auto; }
   .selected-bookmark-timer {
     grid-template-areas:
       "headline"

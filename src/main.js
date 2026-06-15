@@ -1805,6 +1805,10 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
   const [day, setDay] = useState(todayPersian.day);
   const [differenceStartDate, setDifferenceStartDate] = useState(() => getCurrentDateFieldsForCalendar(todayDate, 'persian'));
   const [differenceEndDate, setDifferenceEndDate] = useState(() => getCurrentDateFieldsForCalendar(todayDate, 'gregorian'));
+  const [offsetOrigin, setOffsetOrigin] = useState('today');
+  const [offsetDirection, setOffsetDirection] = useState('after');
+  const [offsetDays, setOffsetDays] = useState('36');
+  const [offsetBaseDate, setOffsetBaseDate] = useState(() => getCurrentDateFieldsForCalendar(todayDate, 'persian'));
   const [dateBookmarks, setDateBookmarks] = useState(getInitialDateBookmarks);
   const [selectedBookmarkId, setSelectedBookmarkId] = useState('');
   const [bookmarkTitle, setBookmarkTitle] = useState('');
@@ -1909,6 +1913,21 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
   const differenceDistanceLabel = language === 'fa'
     ? `${formatLocaleNumber(differenceDistance.years, language)} سال ${formatLocaleNumber(differenceDistance.months, language)} ماه ${formatLocaleNumber(differenceDistance.days, language)} روز`
     : `${formatLocaleNumber(differenceDistance.years, language)}y ${formatLocaleNumber(differenceDistance.months, language)}m ${formatLocaleNumber(differenceDistance.days, language)}d`;
+  const normalizedOffsetDays = Math.min(100000, Math.max(0, Number.parseInt(offsetDays, 10) || 0));
+  const offsetStartDate = offsetOrigin === 'today' ? todayDate : getDateFromCalendarFields(offsetBaseDate);
+  const offsetResultDate = new Date(offsetStartDate.getTime());
+  offsetResultDate.setUTCDate(offsetResultDate.getUTCDate() + (offsetDirection === 'before' ? -normalizedOffsetDays : normalizedOffsetDays));
+  const offsetStartGregorian = getCalendarPartsFromUtc(offsetStartDate, 'gregorian');
+  const offsetResultGregorian = getCalendarPartsFromUtc(offsetResultDate, 'gregorian');
+  const offsetResultPersian = getPersianDatePartsFromUtc(offsetResultDate);
+  const offsetResultWeekday = new Intl.DateTimeFormat(language === 'fa' ? 'fa-IR' : 'en-US', {
+    timeZone: 'UTC',
+    weekday: 'long',
+  }).format(offsetResultDate);
+  const offsetStartLabel = `${offsetStartGregorian.year}/${formatNumber(offsetStartGregorian.month)}/${formatNumber(offsetStartGregorian.day)}`;
+  const offsetSummary = language === 'fa'
+    ? `${formatLocaleNumber(normalizedOffsetDays, language)} روز ${offsetDirection === 'before' ? t.before : t.after} از ${offsetStartLabel}`
+    : `${formatLocaleNumber(normalizedOffsetDays, language)} ${t.days} ${offsetDirection === 'before' ? t.before.toLowerCase() : t.after.toLowerCase()} ${offsetStartLabel}`;
 
   const resetConverterDateForCalendar = (nextCalendarType) => {
     const nextTodayDate = getZonedTodayDate(city.timeZone);
@@ -2292,6 +2311,7 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
           },
           h('option', { value: 'convert' }, t.date_conversion),
           h('option', { value: 'difference' }, t.date_difference),
+          h('option', { value: 'offset' }, t.date_offset),
           ),
         ),
       ),
@@ -2342,7 +2362,8 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
         ] }),
       ),
         ]
-        : h('div', { className: 'date-difference-panel' },
+        : calculatorMode === 'difference'
+          ? h('div', { className: 'date-difference-panel' },
           h('div', { className: 'date-difference-panel__dates' },
             h(DateFieldSet, { title: t.start_date, value: differenceStartDate, onChange: setDifferenceStartDate, t, onFocus: handleFocusIn, onBlur: handleFocusOut }),
             h(DateFieldSet, { title: t.end_date, value: differenceEndDate, onChange: setDifferenceEndDate, t, onFocus: handleFocusIn, onBlur: handleFocusOut }),
@@ -2353,7 +2374,63 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
             h(InfoPill, { label: t.total_months, value: `${formatLocaleNumber(differenceTotalMonths, language)} ${t.months_unit}` }),
             h(InfoPill, { label: t.difference_result, value: differenceDistanceLabel }),
           ),
-        ),
+          )
+          : h('div', { className: 'date-offset-panel' },
+            h('div', { className: 'date-offset-panel__controls' },
+              h('label', null, t.date_origin,
+                h('select', {
+                  value: offsetOrigin,
+                  onMouseDown: handleFocusIn,
+                  onFocus: handleFocusIn,
+                  onBlur: handleFocusOut,
+                  onChange: (event) => setOffsetOrigin(event.target.value),
+                },
+                h('option', { value: 'today' }, t.current_date),
+                h('option', { value: 'custom' }, t.custom_date),
+                ),
+              ),
+              h('label', null, t.direction,
+                h('select', {
+                  value: offsetDirection,
+                  onMouseDown: handleFocusIn,
+                  onFocus: handleFocusIn,
+                  onBlur: handleFocusOut,
+                  onChange: (event) => setOffsetDirection(event.target.value),
+                },
+                h('option', { value: 'after' }, t.after),
+                h('option', { value: 'before' }, t.before),
+                ),
+              ),
+              h('label', null, t.number_of_days,
+                h('input', {
+                  type: 'number',
+                  min: 0,
+                  max: 100000,
+                  inputMode: 'numeric',
+                  value: offsetDays,
+                  onFocus: handleFocusIn,
+                  onBlur: handleFocusOut,
+                  onChange: (event) => setOffsetDays(event.target.value),
+                }),
+              ),
+            ),
+            offsetOrigin === 'custom' && h(DateFieldSet, {
+              title: t.base_date,
+              value: offsetBaseDate,
+              onChange: setOffsetBaseDate,
+              t,
+              onFocus: handleFocusIn,
+              onBlur: handleFocusOut,
+            }),
+            h('div', { className: 'date-offset-panel__result' },
+              h(SplitPill, { label: t.result_date, items: [
+                { label: t.gregorian, value: `${offsetResultGregorian.year}/${formatNumber(offsetResultGregorian.month)}/${formatNumber(offsetResultGregorian.day)}` },
+                { label: t.solar_hijri, value: `${offsetResultPersian.year}/${formatNumber(offsetResultPersian.month)}/${formatNumber(offsetResultPersian.day)}` },
+              ] }),
+              h(InfoPill, { label: t.weekday, value: offsetResultWeekday }),
+              h(InfoPill, { label: t.calculation_summary, value: offsetSummary }),
+            ),
+          ),
     ),
     h(
       'section',
