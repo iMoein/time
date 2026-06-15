@@ -14,7 +14,7 @@
     { "persianYear": 1403, "gregorianYear": 2024, "instantUtc": "2024-03-20T03:06:00Z", "officialSecondConfirmed": false },
     { "persianYear": 1404, "gregorianYear": 2025, "instantUtc": "2025-03-20T09:01:00Z", "officialSecondConfirmed": false },
     { "persianYear": 1405, "gregorianYear": 2026, "instantUtc": "2026-03-20T14:46:00Z", "officialSecondConfirmed": false },
-    { "persianYear": 1406, "gregorianYear": 2027, "instantUtc": "2027-03-20T20:24:00Z", "officialSecondConfirmed": false },
+    { "persianYear": 1406, "gregorianYear": 2027, "instantUtc": "2027-03-20T20:24:18Z", "officialSecondConfirmed": true },
     { "persianYear": 1407, "gregorianYear": 2028, "instantUtc": "2028-03-20T02:17:00Z", "officialSecondConfirmed": false },
     { "persianYear": 1408, "gregorianYear": 2029, "instantUtc": "2029-03-20T08:02:00Z", "officialSecondConfirmed": false },
     { "persianYear": 1409, "gregorianYear": 2030, "instantUtc": "2030-03-20T13:51:00Z", "officialSecondConfirmed": false },
