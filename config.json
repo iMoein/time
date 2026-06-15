@@ -11,10 +11,7 @@
   "defaultOccasionTypes": [
     "iran",
     "international",
-    "islamic",
-    "islamicShia",
-    "islamicSunni",
-    "islamicShared"
+    "islamic"
   ],
   "visibleOccasionTypes": [
     "international",
