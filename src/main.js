@@ -1807,7 +1807,7 @@ function AgeConverterCard({ city, timeZoneOptions = [], t, language, timeOffset 
   const [differenceEndDate, setDifferenceEndDate] = useState(() => getCurrentDateFieldsForCalendar(todayDate, 'gregorian'));
   const [offsetOrigin, setOffsetOrigin] = useState('today');
   const [offsetDirection, setOffsetDirection] = useState('after');
-  const [offsetDays, setOffsetDays] = useState('36');
+  const [offsetDays, setOffsetDays] = useState('0');
   const [offsetBaseDate, setOffsetBaseDate] = useState(() => getCurrentDateFieldsForCalendar(todayDate, 'persian'));
   const [dateBookmarks, setDateBookmarks] = useState(getInitialDateBookmarks);
   const [selectedBookmarkId, setSelectedBookmarkId] = useState('');
