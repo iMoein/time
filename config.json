@@ -11,25 +11,17 @@
   "defaultOccasionTypes": [
     "iranCurrent",
     "iran",
-    "iranAncient",
     "marketing",
     "international",
     "globalOfficial",
-    "islamic",
-    "islamicShia",
-    "islamicSunni",
-    "islamicShared"
+    "islamicShia"
   ],
   "visibleOccasionTypes": [
-    "iranAncient",
     "iranCurrent",
     "international",
     "iran",
     "globalOfficial",
-    "islamic",
     "islamicShia",
-    "islamicSunni",
-    "islamicShared",
     "marketing"
   ],
   "occasionFilterOrder": [
